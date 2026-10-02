@@ -3,6 +3,7 @@ import SwiftUI
 import MeasureMeCore
 
 /// Screen 4 (part 2): live camera with positioning guidance, quality checks and automatic capture.
+@MainActor
 struct CaptureScreen: View {
     @Bindable var flow: MeasureFlowModel
     @Environment(AppSettings.self) private var settings
@@ -179,6 +180,7 @@ struct CaptureScreen: View {
     }
 }
 
+@MainActor
 struct ChecklistView: View {
     let report: FrameQualityReport
 
@@ -197,6 +199,7 @@ struct ChecklistView: View {
 }
 
 /// Dashed outline showing where to stand.
+@MainActor
 struct BodyGuideOverlay: View {
     let rect: CGRect
     let view: CaptureView
@@ -213,6 +216,7 @@ struct BodyGuideOverlay: View {
 }
 
 /// Live joints from Vision, drawn over the preview.
+@MainActor
 struct SkeletonOverlay: View {
     let joints: [BodyJoint: DetectedJoint]
     let rect: CGRect

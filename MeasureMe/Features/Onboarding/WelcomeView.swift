@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// Screen 1: welcome, adult-use notice, privacy explanation and explicit consent.
+@MainActor
 struct WelcomeView: View {
     @Environment(AppSettings.self) private var settings
     @State private var step = 0
@@ -147,6 +148,7 @@ struct WelcomeView: View {
     }
 }
 
+@MainActor
 struct InfoRow: View {
     let symbol: String
     let title: String

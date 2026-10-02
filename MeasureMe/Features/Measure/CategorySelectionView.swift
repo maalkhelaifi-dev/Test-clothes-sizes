@@ -2,6 +2,7 @@ import SwiftUI
 import MeasureMeCore
 
 /// Screen 3: clothing category, fit preference and which measurements to capture.
+@MainActor
 struct CategorySelectionView: View {
     @Bindable var flow: MeasureFlowModel
     let onClose: () -> Void

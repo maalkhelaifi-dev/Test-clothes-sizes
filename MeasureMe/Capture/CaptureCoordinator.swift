@@ -83,10 +83,10 @@ final class CaptureCoordinator {
         }
         camera.attachRotationCoordinator()
         let pipeline = self.pipeline
-        pipeline.onResult = { [weak self] result in
+        pipeline.onResult = { @Sendable [weak self] result in
             Task { @MainActor [weak self] in self?.handle(result) }
         }
-        camera.onFrame = { frame in pipeline.process(frame) }
+        camera.onFrame = { @Sendable frame in pipeline.process(frame) }
         motion.start()
         speech.activateAudioSession()
         camera.start()

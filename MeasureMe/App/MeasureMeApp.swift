@@ -14,6 +14,7 @@ struct MeasureMeApp: App {
 }
 
 /// Shows onboarding (welcome, adult notice, privacy and consent) until it has been completed.
+@MainActor
 struct RootView: View {
     @Environment(AppModel.self) private var model
     @Environment(AppSettings.self) private var settings
@@ -37,6 +38,7 @@ struct RootView: View {
     }
 }
 
+@MainActor
 struct MainTabView: View {
     var body: some View {
         TabView {

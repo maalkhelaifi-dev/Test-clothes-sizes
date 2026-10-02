@@ -2,6 +2,7 @@ import SwiftUI
 import MeasureMeCore
 
 /// Screen 6: measurement results with confidence indicators and manual editing.
+@MainActor
 struct MeasurementResultsView: View {
     @Bindable var flow: MeasureFlowModel
     let onDone: () -> Void
@@ -135,6 +136,7 @@ struct MeasurementResultsView: View {
 }
 
 /// One editable measurement with its estimate, confidence and how-to-measure help.
+@MainActor
 struct MeasurementEditRow: View {
     let kind: MeasurementKind
     let unit: LengthUnit
@@ -212,6 +214,7 @@ struct MeasurementEditRow: View {
     }
 }
 
+@MainActor
 struct AddMeasurementSheet: View {
     @Binding var selected: Set<MeasurementKind>
     @Environment(\.dismiss) private var dismiss

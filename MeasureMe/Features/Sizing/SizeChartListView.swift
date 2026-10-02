@@ -3,6 +3,7 @@ import UniformTypeIdentifiers
 import MeasureMeCore
 
 /// Screen 9: brand size-chart management.
+@MainActor
 struct SizeChartListView: View {
     @Environment(AppModel.self) private var model
     @Environment(AppSettings.self) private var settings
@@ -111,6 +112,7 @@ struct ShareSheet: UIViewControllerRepresentable {
     func updateUIViewController(_ vc: UIActivityViewController, context: Context) {}
 }
 
+@MainActor
 struct ChartRow: View {
     let chart: SizeChart
 
@@ -131,6 +133,7 @@ struct ChartRow: View {
     }
 }
 
+@MainActor
 struct SizeChartDetailView: View {
     @Environment(AppModel.self) private var model
     @Environment(AppSettings.self) private var settings

@@ -2,6 +2,7 @@ import SwiftUI
 import MeasureMeCore
 
 /// Screen 7: brand and product size recommendation.
+@MainActor
 struct RecommendationView: View {
     @Environment(AppModel.self) private var model
 
@@ -239,6 +240,7 @@ struct RecommendationView: View {
     }
 }
 
+@MainActor
 struct ComparisonRow: View {
     let comparison: MeasurementComparison
     let sizeLabel: String
@@ -292,6 +294,7 @@ struct ComparisonRow: View {
     }
 }
 
+@MainActor
 struct SizeChartTable: View {
     let chart: SizeChart
     let unit: LengthUnit

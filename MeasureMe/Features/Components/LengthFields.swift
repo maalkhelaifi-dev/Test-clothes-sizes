@@ -2,6 +2,7 @@ import SwiftUI
 import MeasureMeCore
 
 /// A text field bound to a centimetre value, displayed and edited in the chosen unit.
+@MainActor
 struct LengthField: View {
     let title: String
     @Binding var valueCM: Double?
@@ -58,6 +59,7 @@ struct LengthField: View {
 }
 
 /// Height input: centimetres, or feet + inches for imperial users.
+@MainActor
 struct HeightField: View {
     @Binding var heightCM: Double?
     let unit: LengthUnit

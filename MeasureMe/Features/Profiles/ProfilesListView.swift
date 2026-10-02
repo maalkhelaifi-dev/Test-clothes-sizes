@@ -2,6 +2,7 @@ import SwiftUI
 import MeasureMeCore
 
 /// Screen 8 (part 1): saved profiles.
+@MainActor
 struct ProfilesListView: View {
     @Environment(AppModel.self) private var model
     @State private var showingNewProfile = false
@@ -45,6 +46,7 @@ struct ProfilesListView: View {
     }
 }
 
+@MainActor
 struct ProfileRow: View {
     let profile: PersonProfile
 

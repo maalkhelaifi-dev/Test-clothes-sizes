@@ -3,6 +3,7 @@ import MeasureMeCore
 
 /// Add or update a size chart copied from an official source.
 /// The source URL and verification date are required, so charts are never invented.
+@MainActor
 struct SizeChartEditorView: View {
     @Environment(AppModel.self) private var model
     @Environment(\.dismiss) private var dismiss
@@ -82,25 +83,29 @@ struct SizeChartEditorView: View {
                     }
                 }
 
-                ForEach($sizes) { $size in
+                ForEach(sizes) { size in
                     Section {
-                        TextField("Size label (e.g. M, 40, 32R)", text: $size.label)
+                        TextField("Size label (e.g. M, 40, 32R)", text: labelBinding(size.id))
                         ForEach(orderedKinds, id: \.self) { kind in
                             HStack {
                                 Text(kind.displayName).font(.subheadline)
                                 Spacer()
-                                LengthField(title: useRanges ? "min" : "value", valueCM: binding($size.minCM, kind), unit: unit)
+                                LengthField(title: useRanges ? "min" : "value", valueCM: rangeBinding(size.id, kind, isMax: false), unit: unit)
                                     .frame(maxWidth: 110)
                                 if useRanges {
                                     Text("–")
-                                    LengthField(title: "max", valueCM: binding($size.maxCM, kind), unit: unit)
+                                    LengthField(title: "max", valueCM: rangeBinding(size.id, kind, isMax: true), unit: unit)
                                         .frame(maxWidth: 110)
                                 }
                             }
                         }
                         if sizes.count > 1 {
                             Button("Remove this size", role: .destructive) {
-                                sizes.removeAll { $0.id == size.id }
+                                let id = size.id
+                                // Defer removal so fields in the row finish updating first.
+                                DispatchQueue.main.async {
+                                    withAnimation { sizes.removeAll { $0.id == id } }
+                                }
                             }
                         }
                     } header: {
@@ -152,8 +157,23 @@ struct SizeChartEditorView: View {
         }
     }
 
-    private func binding(_ dict: Binding<[MeasurementKind: Double]>, _ kind: MeasurementKind) -> Binding<Double?> {
-        Binding(get: { dict.wrappedValue[kind] }, set: { dict.wrappedValue[kind] = $0 })
+    // Bindings look sizes up by id, so a removed row can never index out of range.
+    private func labelBinding(_ id: UUID) -> Binding<String> {
+        Binding(
+            get: { sizes.first { $0.id == id }?.label ?? "" },
+            set: { v in if let i = sizes.firstIndex(where: { $0.id == id }) { sizes[i].label = v } })
+    }
+
+    private func rangeBinding(_ id: UUID, _ kind: MeasurementKind, isMax: Bool) -> Binding<Double?> {
+        Binding(
+            get: {
+                guard let s = sizes.first(where: { $0.id == id }) else { return nil }
+                return isMax ? s.maxCM[kind] : s.minCM[kind]
+            },
+            set: { v in
+                guard let i = sizes.firstIndex(where: { $0.id == id }) else { return }
+                if isMax { sizes[i].maxCM[kind] = v } else { sizes[i].minCM[kind] = v }
+            })
     }
 
     private var validURL: URL? {

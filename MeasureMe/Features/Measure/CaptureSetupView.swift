@@ -2,6 +2,7 @@ import SwiftUI
 import MeasureMeCore
 
 /// Screen 4 (part 1): how to prepare, device capabilities and capture options.
+@MainActor
 struct CaptureSetupView: View {
     @Bindable var flow: MeasureFlowModel
     @Environment(AppSettings.self) private var settings

@@ -27,7 +27,7 @@ A native iPhone app (Swift, SwiftUI, iOS 17+) that guides you through front and 
 | Part | Status |
 |---|---|
 | `MeasureMeKit` core package (units, measurement model, validation, size charts, recommender, estimator geometry, capture-quality rules) | **Compiled and tested**: 58 unit tests pass with `swift test` (Swift 6.1, Linux). |
-| iOS app target (`MeasureMe/`: camera, Vision, SwiftUI screens) | **Written but not compiled by the author.** It was built in an environment without Xcode or an iPhone. The included GitHub Actions workflow builds it on macOS; run it there or in Xcode before relying on it. |
+| iOS app target (`MeasureMe/`: camera, Vision, SwiftUI screens) | **Builds for the iOS Simulator** in GitHub Actions (`macos-15` runner, `xcodebuild build`, no signing). View structs are annotated `@MainActor`, so it should also build with Xcode 15, but CI only exercises the runner's default Xcode. Not run interactively: it was written without access to Xcode or an iPhone. |
 | Behaviour on a physical iPhone (camera, LiDAR, Vision accuracy, live checks) | **Not tested.** Needs a device. See [ACCURACY_TESTING.md](ACCURACY_TESTING.md). |
 | Brand size charts | **Demo data only** (fictional brands, marked `DEMO DATA` everywhere). There are no real brand charts. |
 
@@ -251,7 +251,7 @@ See **[ACCURACY_TESTING.md](ACCURACY_TESTING.md)** for how to test against tape-
 | Vision 3D pose height cross-check | Behaviour with streamed LiDAR depth not yet observed | Device testing |
 | Camera, rotation, depth-format selection, front-camera path | Hardware-dependent | Testing on several iPhone generations, including non-Pro models |
 | Brand size charts | Only fictional demo data is bundled | Verified charts copied from official sources, with URL and date |
-| App target compilation | Written without Xcode | Build in Xcode or via the included CI workflow, and fix any SDK-level issues |
+| UI walkthrough on Simulator and device | CI only builds the app; it doesn't launch it | Manually test every screen, including VoiceOver and Dynamic Type |
 
 ## Apple documentation used
 

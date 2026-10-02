@@ -2,6 +2,7 @@ import SwiftUI
 import MeasureMeCore
 
 /// Screen 5: capture quality review and retake options.
+@MainActor
 struct CaptureReviewView: View {
     @Bindable var flow: MeasureFlowModel
 
@@ -79,6 +80,7 @@ struct CaptureReviewView: View {
     }
 }
 
+@MainActor
 struct QualityMeter: View {
     let score: Double
 

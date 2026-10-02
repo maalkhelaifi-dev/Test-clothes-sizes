@@ -1,6 +1,7 @@
 import SwiftUI
 import MeasureMeCore
 
+@MainActor
 struct SettingsView: View {
     @Environment(AppModel.self) private var model
     @Environment(AppSettings.self) private var settings
@@ -101,6 +102,7 @@ struct SettingsView: View {
     }
 }
 
+@MainActor
 struct LimitationsView: View {
     var body: some View {
         List {

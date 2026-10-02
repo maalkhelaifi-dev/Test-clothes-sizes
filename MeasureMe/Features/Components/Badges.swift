@@ -1,6 +1,7 @@
 import SwiftUI
 import MeasureMeCore
 
+@MainActor
 struct ConfidenceBadge: View {
     let confidence: ConfidenceLevel
 
@@ -40,6 +41,7 @@ struct ConfidenceBadge: View {
     }
 }
 
+@MainActor
 struct SourceBadge: View {
     let source: MeasurementSource
 
@@ -51,6 +53,7 @@ struct SourceBadge: View {
 }
 
 /// Prominent label shown wherever demo chart data appears.
+@MainActor
 struct DemoDataBadge: View {
     var body: some View {
         Label("DEMO DATA", systemImage: "exclamationmark.octagon.fill")
@@ -63,6 +66,7 @@ struct DemoDataBadge: View {
     }
 }
 
+@MainActor
 struct ChartTrustView: View {
     let chart: SizeChart
 

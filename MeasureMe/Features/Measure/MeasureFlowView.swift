@@ -2,6 +2,7 @@ import SwiftUI
 import MeasureMeCore
 
 /// Container for one measuring session (camera or manual).
+@MainActor
 struct MeasureFlowView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var flow: MeasureFlowModel

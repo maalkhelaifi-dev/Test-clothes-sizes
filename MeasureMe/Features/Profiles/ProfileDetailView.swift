@@ -1,6 +1,7 @@
 import SwiftUI
 import MeasureMeCore
 
+@MainActor
 struct ProfileDetailView: View {
     @Environment(AppModel.self) private var model
     @Environment(AppSettings.self) private var settings
@@ -124,6 +125,7 @@ struct ProfileDetailView: View {
     }
 }
 
+@MainActor
 struct MeasurementSummaryRow: View {
     let value: MeasurementValue
     let unit: LengthUnit
@@ -146,6 +148,7 @@ struct MeasurementSummaryRow: View {
     }
 }
 
+@MainActor
 struct SessionDetailView: View {
     @Environment(AppModel.self) private var model
     @Environment(\.dismiss) private var dismiss

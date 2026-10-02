@@ -2,6 +2,7 @@ import SwiftUI
 import MeasureMeCore
 
 /// Screen 2: person profile and height entry.
+@MainActor
 struct ProfileEditorView: View {
     @Environment(AppModel.self) private var model
     @Environment(AppSettings.self) private var settings
