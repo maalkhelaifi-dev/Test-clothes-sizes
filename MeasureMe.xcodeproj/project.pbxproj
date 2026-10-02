@@ -10,6 +10,7 @@
 		CE9691124189ED8D174EFF96 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75308716681CF77B513B0AE5 /* AppModel.swift */; };
 		21CDCF6E266D588EA3808456 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E30EC707C7046ACB7D4639 /* AppSettings.swift */; };
 		D9A0C60FF12FEE0A51E7C5AF /* MeasureMeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFE42A36F0EA819D53CB5830 /* MeasureMeApp.swift */; };
+		C266745DF21A9E2C57FAD014 /* ScreenshotHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1151A846541BCB5E6D0BFC6C /* ScreenshotHost.swift */; };
 		CF10A563439B320096EFDC8C /* BodyAnalysisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044E332C3D331982442CB4EB /* BodyAnalysisService.swift */; };
 		CD92B62897B341977DCC41FA /* CameraCapabilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B04A8B0884E858CB9D723FA /* CameraCapabilities.swift */; };
 		BF158D43835603FA5AAD1089 /* CameraService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52444699F2E3624B4E7E19A7 /* CameraService.swift */; };
@@ -48,6 +49,7 @@
 		75308716681CF77B513B0AE5 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		42E30EC707C7046ACB7D4639 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		AFE42A36F0EA819D53CB5830 /* MeasureMeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureMeApp.swift; sourceTree = "<group>"; };
+		1151A846541BCB5E6D0BFC6C /* ScreenshotHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotHost.swift; sourceTree = "<group>"; };
 		044E332C3D331982442CB4EB /* BodyAnalysisService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyAnalysisService.swift; sourceTree = "<group>"; };
 		0B04A8B0884E858CB9D723FA /* CameraCapabilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraCapabilities.swift; sourceTree = "<group>"; };
 		52444699F2E3624B4E7E19A7 /* CameraService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraService.swift; sourceTree = "<group>"; };
@@ -134,6 +136,7 @@
 				75308716681CF77B513B0AE5,
 				42E30EC707C7046ACB7D4639,
 				AFE42A36F0EA819D53CB5830,
+				1151A846541BCB5E6D0BFC6C,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -322,6 +325,7 @@
 				CE9691124189ED8D174EFF96 /* AppModel.swift in Sources */,
 				21CDCF6E266D588EA3808456 /* AppSettings.swift in Sources */,
 				D9A0C60FF12FEE0A51E7C5AF /* MeasureMeApp.swift in Sources */,
+				C266745DF21A9E2C57FAD014 /* ScreenshotHost.swift in Sources */,
 				CF10A563439B320096EFDC8C /* BodyAnalysisService.swift in Sources */,
 				CD92B62897B341977DCC41FA /* CameraCapabilities.swift in Sources */,
 				BF158D43835603FA5AAD1089 /* CameraService.swift in Sources */,

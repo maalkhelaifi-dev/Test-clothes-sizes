@@ -30,6 +30,16 @@ public struct MeasurementEstimate: Equatable, Identifiable, Sendable {
     public let method: String
     public let unavailableReason: String?
 
+    public init(kind: MeasurementKind, valueCM: Double?, confidence: ConfidenceLevel, uncertaintyCM: Double,
+                method: String, unavailableReason: String?) {
+        self.kind = kind
+        self.valueCM = valueCM
+        self.confidence = confidence
+        self.uncertaintyCM = uncertaintyCM
+        self.method = method
+        self.unavailableReason = unavailableReason
+    }
+
     public var isAvailable: Bool { valueCM != nil }
 
     public static func unavailable(_ kind: MeasurementKind, _ reason: String) -> MeasurementEstimate {
@@ -41,6 +51,12 @@ public struct EstimationResult: Equatable, Sendable {
     public var estimates: [MeasurementKind: MeasurementEstimate]
     public var warnings: [String]
     public var framesUsed: Int
+
+    public init(estimates: [MeasurementKind: MeasurementEstimate], warnings: [String], framesUsed: Int) {
+        self.estimates = estimates
+        self.warnings = warnings
+        self.framesUsed = framesUsed
+    }
 
     /// Available estimates as stored measurement values (source = camera estimate).
     public func measurementSet(capturedAt date: Date = Date()) -> MeasurementSet {

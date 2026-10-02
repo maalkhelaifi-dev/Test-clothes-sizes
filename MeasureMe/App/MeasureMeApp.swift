@@ -6,9 +6,19 @@ struct MeasureMeApp: App {
 
     var body: some Scene {
         WindowGroup {
+            #if DEBUG
+            if let scene = ScreenshotScene.fromLaunchArguments() {
+                ScreenshotHost(scene: scene)
+            } else {
+                RootView()
+                    .environment(model)
+                    .environment(model.settings)
+            }
+            #else
             RootView()
                 .environment(model)
                 .environment(model.settings)
+            #endif
         }
     }
 }

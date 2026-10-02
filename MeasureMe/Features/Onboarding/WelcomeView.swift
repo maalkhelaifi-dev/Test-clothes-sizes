@@ -4,12 +4,16 @@ import SwiftUI
 @MainActor
 struct WelcomeView: View {
     @Environment(AppSettings.self) private var settings
-    @State private var step = 0
+    @State private var step: Int
     @State private var isAdult = false
     @State private var understandsEstimates = false
     @State private var cameraConsent = false
 
     private let stepCount = 4
+
+    init(initialStep: Int = 0) {
+        _step = State(initialValue: initialStep)
+    }
 
     var body: some View {
         NavigationStack {
