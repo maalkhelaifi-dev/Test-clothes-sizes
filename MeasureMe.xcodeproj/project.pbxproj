@@ -1,0 +1,515 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 60;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CE9691124189ED8D174EFF96 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75308716681CF77B513B0AE5 /* AppModel.swift */; };
+		21CDCF6E266D588EA3808456 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E30EC707C7046ACB7D4639 /* AppSettings.swift */; };
+		D9A0C60FF12FEE0A51E7C5AF /* MeasureMeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFE42A36F0EA819D53CB5830 /* MeasureMeApp.swift */; };
+		CF10A563439B320096EFDC8C /* BodyAnalysisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044E332C3D331982442CB4EB /* BodyAnalysisService.swift */; };
+		CD92B62897B341977DCC41FA /* CameraCapabilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B04A8B0884E858CB9D723FA /* CameraCapabilities.swift */; };
+		BF158D43835603FA5AAD1089 /* CameraService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52444699F2E3624B4E7E19A7 /* CameraService.swift */; };
+		4B107B0E8377CD0417B48851 /* CaptureCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64725363CFBF9A5EBBFC5E04 /* CaptureCoordinator.swift */; };
+		9C6A817EBE33315200D1F32A /* LiveCapturePipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E5AA8CB2F96CC6386909C0 /* LiveCapturePipeline.swift */; };
+		959E8B7536744443BE420E1D /* MotionMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91A80E2BDF69AE58BBDBF11 /* MotionMonitor.swift */; };
+		B8E172D0544483E280520983 /* PixelBufferUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0212AAFCFE7AC4F3E6B0CBA /* PixelBufferUtils.swift */; };
+		6A213E7AB63FE51976A5B90B /* SpeechGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24F137E47130DAC03DA37AF4 /* SpeechGuide.swift */; };
+		61E349177E52336C7B913AFE /* VisionConversions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352F67CD5522B861B68CED56 /* VisionConversions.swift */; };
+		E8AD3D8C5978A2C1E23572E6 /* Badges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94774544FDEC69CC0EEBDF69 /* Badges.swift */; };
+		5439ACF5A00F0945A2D6248C /* LengthFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC0A2BED8A992D9779E52697 /* LengthFields.swift */; };
+		85180840A201259AF0289B94 /* CaptureReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC008D0C09AF22309B66E029 /* CaptureReviewView.swift */; };
+		3200B9ABD63550637B9CD967 /* CaptureScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0CBCF1203D6382A001A9D93 /* CaptureScreen.swift */; };
+		12D1E8FF4A94CDA1216B59B7 /* CaptureSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146122A1CFCBD28AD35C106C /* CaptureSetupView.swift */; };
+		5B8F3D6A296F62A73B0819F6 /* CategorySelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35040FCD8EB09D00E44AD915 /* CategorySelectionView.swift */; };
+		64B8BC7829E317064DE0926F /* MeasureFlowModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20550EB7885DA9C1CA5CC85A /* MeasureFlowModel.swift */; };
+		DF7842C5F6A6E5652C027EE4 /* MeasureFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8147875A0565F92EB5547721 /* MeasureFlowView.swift */; };
+		D1AA2BC343FA7A1E89A9988E /* MeasurementResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC5E7FFC291F142AB3416C39 /* MeasurementResultsView.swift */; };
+		AFCED9C89E496D0C21278197 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 906324A1EC2F17E234752C73 /* WelcomeView.swift */; };
+		C542B829AB72F268C45951FB /* ProfileDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F78C803A11B5B94E81624DF /* ProfileDetailView.swift */; };
+		B8F29900638D40525A9BF52B /* ProfileEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C95C647D9AE90C51503EF2B /* ProfileEditorView.swift */; };
+		A0AC3FA710C979F12E08B304 /* ProfilesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B3C98FDB84E34789E39B15 /* ProfilesListView.swift */; };
+		7E347F64E68A10FEC15D65EF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFED756BA077FB3046CFE058 /* SettingsView.swift */; };
+		93AA8ADCA1A90DF1AAFCC920 /* RecommendationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A44202E458BD30D4983D161 /* RecommendationView.swift */; };
+		28DBCCD388E36D80EBB1E409 /* SizeChartEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1370B9089A5FE65084EA61 /* SizeChartEditorView.swift */; };
+		5226E6F8A0C02F4AAC2B24BA /* SizeChartListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDFEDDE1C2A658523E8911B /* SizeChartListView.swift */; };
+		6B111812AD4C49CFA4AC911B /* LocalStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B6C521EA5B94400A707FED7 /* LocalStore.swift */; };
+		C83A647AE20E1C663972E2AD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B038770C90DC09A1C99127C6 /* Assets.xcassets */; };
+		F695561C5767A86EC61A6363 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 9DE1C56054FD5E31A5F06434 /* PrivacyInfo.xcprivacy */; };
+		9B9DFE58090A6FA21DF24483 /* MeasureMeCore in Frameworks */ = {isa = PBXBuildFile; productRef = 0A79E324C0B8BBA81A5316DD /* MeasureMeCore */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		F91288DB192297DC903FE08C /* MeasureMe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MeasureMe.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		628C321F349CB51FB4D29F45 /* MeasureMeKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MeasureMeKit; sourceTree = "<group>"; };
+		75308716681CF77B513B0AE5 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		42E30EC707C7046ACB7D4639 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		AFE42A36F0EA819D53CB5830 /* MeasureMeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureMeApp.swift; sourceTree = "<group>"; };
+		044E332C3D331982442CB4EB /* BodyAnalysisService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyAnalysisService.swift; sourceTree = "<group>"; };
+		0B04A8B0884E858CB9D723FA /* CameraCapabilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraCapabilities.swift; sourceTree = "<group>"; };
+		52444699F2E3624B4E7E19A7 /* CameraService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraService.swift; sourceTree = "<group>"; };
+		64725363CFBF9A5EBBFC5E04 /* CaptureCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureCoordinator.swift; sourceTree = "<group>"; };
+		F3E5AA8CB2F96CC6386909C0 /* LiveCapturePipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveCapturePipeline.swift; sourceTree = "<group>"; };
+		B91A80E2BDF69AE58BBDBF11 /* MotionMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionMonitor.swift; sourceTree = "<group>"; };
+		C0212AAFCFE7AC4F3E6B0CBA /* PixelBufferUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelBufferUtils.swift; sourceTree = "<group>"; };
+		24F137E47130DAC03DA37AF4 /* SpeechGuide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechGuide.swift; sourceTree = "<group>"; };
+		352F67CD5522B861B68CED56 /* VisionConversions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionConversions.swift; sourceTree = "<group>"; };
+		94774544FDEC69CC0EEBDF69 /* Badges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Badges.swift; sourceTree = "<group>"; };
+		FC0A2BED8A992D9779E52697 /* LengthFields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LengthFields.swift; sourceTree = "<group>"; };
+		CC008D0C09AF22309B66E029 /* CaptureReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureReviewView.swift; sourceTree = "<group>"; };
+		B0CBCF1203D6382A001A9D93 /* CaptureScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureScreen.swift; sourceTree = "<group>"; };
+		146122A1CFCBD28AD35C106C /* CaptureSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureSetupView.swift; sourceTree = "<group>"; };
+		35040FCD8EB09D00E44AD915 /* CategorySelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategorySelectionView.swift; sourceTree = "<group>"; };
+		20550EB7885DA9C1CA5CC85A /* MeasureFlowModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureFlowModel.swift; sourceTree = "<group>"; };
+		8147875A0565F92EB5547721 /* MeasureFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureFlowView.swift; sourceTree = "<group>"; };
+		AC5E7FFC291F142AB3416C39 /* MeasurementResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasurementResultsView.swift; sourceTree = "<group>"; };
+		906324A1EC2F17E234752C73 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		2F78C803A11B5B94E81624DF /* ProfileDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileDetailView.swift; sourceTree = "<group>"; };
+		6C95C647D9AE90C51503EF2B /* ProfileEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditorView.swift; sourceTree = "<group>"; };
+		65B3C98FDB84E34789E39B15 /* ProfilesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilesListView.swift; sourceTree = "<group>"; };
+		AFED756BA077FB3046CFE058 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		6A44202E458BD30D4983D161 /* RecommendationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendationView.swift; sourceTree = "<group>"; };
+		5B1370B9089A5FE65084EA61 /* SizeChartEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeChartEditorView.swift; sourceTree = "<group>"; };
+		CCDFEDDE1C2A658523E8911B /* SizeChartListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeChartListView.swift; sourceTree = "<group>"; };
+		7B6C521EA5B94400A707FED7 /* LocalStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStore.swift; sourceTree = "<group>"; };
+		B038770C90DC09A1C99127C6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		9DE1C56054FD5E31A5F06434 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C18F88D444D8FE65E18D39E9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9B9DFE58090A6FA21DF24483 /* MeasureMeCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4EAE695AD1F489F78EA3E1C6 = {
+			isa = PBXGroup;
+			children = (
+				628C321F349CB51FB4D29F45 /* MeasureMeKit */,
+				86ABC03C7068400D63128C81 /* MeasureMe */,
+				258A5BC7AC11AE7435452A2E /* Frameworks */,
+				1D5F545FBA1B7116946BB4C6 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1D5F545FBA1B7116946BB4C6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F91288DB192297DC903FE08C /* MeasureMe.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		258A5BC7AC11AE7435452A2E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		86ABC03C7068400D63128C81 /* MeasureMe */ = {
+			isa = PBXGroup;
+			children = (
+				9E4E8E8A321099D837D2C49D,
+				5131D04F26A67CD4B324A0E8,
+				C727C4D9F39B1FA0111CAB68,
+				1F737CE37C8FA848D83DA5C1,
+				6FADE41094BB434549AA7604,
+			);
+			path = MeasureMe;
+			sourceTree = "<group>";
+		};
+		9E4E8E8A321099D837D2C49D /* App */ = {
+			isa = PBXGroup;
+			children = (
+				75308716681CF77B513B0AE5,
+				42E30EC707C7046ACB7D4639,
+				AFE42A36F0EA819D53CB5830,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		5131D04F26A67CD4B324A0E8 /* Capture */ = {
+			isa = PBXGroup;
+			children = (
+				044E332C3D331982442CB4EB,
+				0B04A8B0884E858CB9D723FA,
+				52444699F2E3624B4E7E19A7,
+				64725363CFBF9A5EBBFC5E04,
+				F3E5AA8CB2F96CC6386909C0,
+				B91A80E2BDF69AE58BBDBF11,
+				C0212AAFCFE7AC4F3E6B0CBA,
+				24F137E47130DAC03DA37AF4,
+				352F67CD5522B861B68CED56,
+			);
+			path = Capture;
+			sourceTree = "<group>";
+		};
+		C727C4D9F39B1FA0111CAB68 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				DA274AFE230174FED22DA375,
+				D3426FA0BDA27E91FACDBA89,
+				3B19EA4519FA6A1A3A729500,
+				DEBE7180B73FF89042F79B15,
+				A8CC17CD81CAE86BEBF6A124,
+				D1931F132FEB3C383C3A30FC,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		DA274AFE230174FED22DA375 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				94774544FDEC69CC0EEBDF69,
+				FC0A2BED8A992D9779E52697,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		D3426FA0BDA27E91FACDBA89 /* Measure */ = {
+			isa = PBXGroup;
+			children = (
+				CC008D0C09AF22309B66E029,
+				B0CBCF1203D6382A001A9D93,
+				146122A1CFCBD28AD35C106C,
+				35040FCD8EB09D00E44AD915,
+				20550EB7885DA9C1CA5CC85A,
+				8147875A0565F92EB5547721,
+				AC5E7FFC291F142AB3416C39,
+			);
+			path = Measure;
+			sourceTree = "<group>";
+		};
+		3B19EA4519FA6A1A3A729500 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				906324A1EC2F17E234752C73,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		DEBE7180B73FF89042F79B15 /* Profiles */ = {
+			isa = PBXGroup;
+			children = (
+				2F78C803A11B5B94E81624DF,
+				6C95C647D9AE90C51503EF2B,
+				65B3C98FDB84E34789E39B15,
+			);
+			path = Profiles;
+			sourceTree = "<group>";
+		};
+		A8CC17CD81CAE86BEBF6A124 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				AFED756BA077FB3046CFE058,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		D1931F132FEB3C383C3A30FC /* Sizing */ = {
+			isa = PBXGroup;
+			children = (
+				6A44202E458BD30D4983D161,
+				5B1370B9089A5FE65084EA61,
+				CCDFEDDE1C2A658523E8911B,
+			);
+			path = Sizing;
+			sourceTree = "<group>";
+		};
+		1F737CE37C8FA848D83DA5C1 /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				7B6C521EA5B94400A707FED7,
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
+		6FADE41094BB434549AA7604 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B038770C90DC09A1C99127C6,
+				9DE1C56054FD5E31A5F06434,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		ACC9652797AB670E77D9DAEA /* MeasureMe */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FF064009BFBAE8E986428C4F /* Build configuration list for PBXNativeTarget "MeasureMe" */;
+			buildPhases = (
+				C4D5163706E5908DC9E032F3 /* Sources */,
+				C18F88D444D8FE65E18D39E9 /* Frameworks */,
+				4FDAD6DB49035FA75C21467D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MeasureMe;
+			packageProductDependencies = (
+				0A79E324C0B8BBA81A5316DD /* MeasureMeCore */,
+			);
+			productName = MeasureMe;
+			productReference = F91288DB192297DC903FE08C /* MeasureMe.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		46F86FAA6BBF9AC94A7E4595 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					ACC9652797AB670E77D9DAEA = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = A1806D8FE767B99D399E13F3 /* Build configuration list for PBXProject "MeasureMe" */;
+			compatibilityVersion = "Xcode 15.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 4EAE695AD1F489F78EA3E1C6;
+			packageReferences = (
+				8386EDD26E6CD3EE90A585DA /* XCLocalSwiftPackageReference "MeasureMeKit" */,
+			);
+			productRefGroup = 1D5F545FBA1B7116946BB4C6 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				ACC9652797AB670E77D9DAEA /* MeasureMe */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4FDAD6DB49035FA75C21467D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C83A647AE20E1C663972E2AD /* Assets.xcassets in Resources */,
+				F695561C5767A86EC61A6363 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C4D5163706E5908DC9E032F3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CE9691124189ED8D174EFF96 /* AppModel.swift in Sources */,
+				21CDCF6E266D588EA3808456 /* AppSettings.swift in Sources */,
+				D9A0C60FF12FEE0A51E7C5AF /* MeasureMeApp.swift in Sources */,
+				CF10A563439B320096EFDC8C /* BodyAnalysisService.swift in Sources */,
+				CD92B62897B341977DCC41FA /* CameraCapabilities.swift in Sources */,
+				BF158D43835603FA5AAD1089 /* CameraService.swift in Sources */,
+				4B107B0E8377CD0417B48851 /* CaptureCoordinator.swift in Sources */,
+				9C6A817EBE33315200D1F32A /* LiveCapturePipeline.swift in Sources */,
+				959E8B7536744443BE420E1D /* MotionMonitor.swift in Sources */,
+				B8E172D0544483E280520983 /* PixelBufferUtils.swift in Sources */,
+				6A213E7AB63FE51976A5B90B /* SpeechGuide.swift in Sources */,
+				61E349177E52336C7B913AFE /* VisionConversions.swift in Sources */,
+				E8AD3D8C5978A2C1E23572E6 /* Badges.swift in Sources */,
+				5439ACF5A00F0945A2D6248C /* LengthFields.swift in Sources */,
+				85180840A201259AF0289B94 /* CaptureReviewView.swift in Sources */,
+				3200B9ABD63550637B9CD967 /* CaptureScreen.swift in Sources */,
+				12D1E8FF4A94CDA1216B59B7 /* CaptureSetupView.swift in Sources */,
+				5B8F3D6A296F62A73B0819F6 /* CategorySelectionView.swift in Sources */,
+				64B8BC7829E317064DE0926F /* MeasureFlowModel.swift in Sources */,
+				DF7842C5F6A6E5652C027EE4 /* MeasureFlowView.swift in Sources */,
+				D1AA2BC343FA7A1E89A9988E /* MeasurementResultsView.swift in Sources */,
+				AFCED9C89E496D0C21278197 /* WelcomeView.swift in Sources */,
+				C542B829AB72F268C45951FB /* ProfileDetailView.swift in Sources */,
+				B8F29900638D40525A9BF52B /* ProfileEditorView.swift in Sources */,
+				A0AC3FA710C979F12E08B304 /* ProfilesListView.swift in Sources */,
+				7E347F64E68A10FEC15D65EF /* SettingsView.swift in Sources */,
+				93AA8ADCA1A90DF1AAFCC920 /* RecommendationView.swift in Sources */,
+				28DBCCD388E36D80EBB1E409 /* SizeChartEditorView.swift in Sources */,
+				5226E6F8A0C02F4AAC2B24BA /* SizeChartListView.swift in Sources */,
+				6B111812AD4C49CFA4AC911B /* LocalStore.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		D48F58F8CA231B2301441318 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("DEBUG=1", "$(inherited)");
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		6AFE22E70BE079CBB63426F8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		41EC14BFA61A85B336E4F999 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Measure Me";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Measure Me uses the camera to estimate your body measurements on this iPhone. Photos are processed on-device and are not uploaded.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks");
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.MeasureMe;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		8668ED08E8535986A57FA16B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Measure Me";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Measure Me uses the camera to estimate your body measurements on this iPhone. Photos are processed on-device and are not uploaded.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks");
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.MeasureMe;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A1806D8FE767B99D399E13F3 /* Build configuration list for PBXProject "MeasureMe" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D48F58F8CA231B2301441318 /* Debug */,
+				6AFE22E70BE079CBB63426F8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FF064009BFBAE8E986428C4F /* Build configuration list for PBXNativeTarget "MeasureMe" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				41EC14BFA61A85B336E4F999 /* Debug */,
+				8668ED08E8535986A57FA16B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		8386EDD26E6CD3EE90A585DA /* XCLocalSwiftPackageReference "MeasureMeKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = MeasureMeKit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0A79E324C0B8BBA81A5316DD /* MeasureMeCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8386EDD26E6CD3EE90A585DA /* XCLocalSwiftPackageReference "MeasureMeKit" */;
+			productName = MeasureMeCore;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 46F86FAA6BBF9AC94A7E4595 /* Project object */;
+}

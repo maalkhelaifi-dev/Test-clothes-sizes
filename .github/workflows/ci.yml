@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  core-tests-linux:
+    name: Core package tests (Linux)
+    runs-on: ubuntu-latest
+    container: swift:6.1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run MeasureMeCore tests
+        working-directory: MeasureMeKit
+        run: swift test
+
+  ios-build:
+    name: Build iOS app + run core tests (macOS)
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Show Xcode version
+        run: xcodebuild -version
+      - name: Run MeasureMeCore tests (macOS)
+        working-directory: MeasureMeKit
+        run: swift test
+      - name: Build app for iOS Simulator
+        run: |
+          xcodebuild build \
+            -project MeasureMe.xcodeproj \
+            -scheme MeasureMe \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO
