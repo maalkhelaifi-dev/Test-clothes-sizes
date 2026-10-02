@@ -1,0 +1,916 @@
+{
+  "formatVersion": 1,
+  "unit": "cm",
+  "charts": [
+    {
+      "id": "00000000-0000-0000-0000-000000d30001",
+      "brand": "Aurora Basics (Demo)",
+      "category": "tops",
+      "audience": "unisex",
+      "region": "international",
+      "sizeSystem": "Letter (XS\u2013XXL)",
+      "measurementType": "body",
+      "sizes": [
+        {
+          "label": "XS",
+          "measurements": {
+            "chest": {
+              "minCM": 82,
+              "maxCM": 87
+            },
+            "waist": {
+              "minCM": 68,
+              "maxCM": 73
+            }
+          }
+        },
+        {
+          "label": "S",
+          "measurements": {
+            "chest": {
+              "minCM": 88,
+              "maxCM": 93
+            },
+            "waist": {
+              "minCM": 74,
+              "maxCM": 79
+            }
+          }
+        },
+        {
+          "label": "M",
+          "measurements": {
+            "chest": {
+              "minCM": 94,
+              "maxCM": 99
+            },
+            "waist": {
+              "minCM": 80,
+              "maxCM": 85
+            }
+          }
+        },
+        {
+          "label": "L",
+          "measurements": {
+            "chest": {
+              "minCM": 100,
+              "maxCM": 106
+            },
+            "waist": {
+              "minCM": 86,
+              "maxCM": 92
+            }
+          }
+        },
+        {
+          "label": "XL",
+          "measurements": {
+            "chest": {
+              "minCM": 107,
+              "maxCM": 113
+            },
+            "waist": {
+              "minCM": 93,
+              "maxCM": 100
+            }
+          }
+        },
+        {
+          "label": "XXL",
+          "measurements": {
+            "chest": {
+              "minCM": 114,
+              "maxCM": 121
+            },
+            "waist": {
+              "minCM": 101,
+              "maxCM": 109
+            }
+          }
+        }
+      ],
+      "source": {
+        "isDemoData": true,
+        "notes": "DEMO DATA: fictional brand created for testing this app. Not based on any real brand's size chart. Do not use for purchases."
+      }
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000d30002",
+      "brand": "Aurora Basics (Demo)",
+      "category": "trousers",
+      "audience": "unisex",
+      "region": "eu",
+      "sizeSystem": "Waist (W)",
+      "measurementType": "body",
+      "sizes": [
+        {
+          "label": "W28",
+          "measurements": {
+            "waist": {
+              "minCM": 70,
+              "maxCM": 73.5
+            },
+            "hips": {
+              "minCM": 86,
+              "maxCM": 89.5
+            }
+          }
+        },
+        {
+          "label": "W30",
+          "measurements": {
+            "waist": {
+              "minCM": 74,
+              "maxCM": 77.5
+            },
+            "hips": {
+              "minCM": 90,
+              "maxCM": 93.5
+            }
+          }
+        },
+        {
+          "label": "W32",
+          "measurements": {
+            "waist": {
+              "minCM": 78,
+              "maxCM": 81.5
+            },
+            "hips": {
+              "minCM": 94,
+              "maxCM": 97.5
+            }
+          }
+        },
+        {
+          "label": "W34",
+          "measurements": {
+            "waist": {
+              "minCM": 82,
+              "maxCM": 86
+            },
+            "hips": {
+              "minCM": 98,
+              "maxCM": 101.5
+            }
+          }
+        },
+        {
+          "label": "W36",
+          "measurements": {
+            "waist": {
+              "minCM": 86.5,
+              "maxCM": 91
+            },
+            "hips": {
+              "minCM": 102,
+              "maxCM": 106
+            }
+          }
+        },
+        {
+          "label": "W38",
+          "measurements": {
+            "waist": {
+              "minCM": 91.5,
+              "maxCM": 96
+            },
+            "hips": {
+              "minCM": 106.5,
+              "maxCM": 111
+            }
+          }
+        }
+      ],
+      "source": {
+        "isDemoData": true,
+        "notes": "DEMO DATA: fictional brand created for testing this app. Not based on any real brand's size chart. Do not use for purchases."
+      }
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000d30003",
+      "brand": "Aurora Basics (Demo)",
+      "category": "skirts",
+      "audience": "womens",
+      "region": "eu",
+      "sizeSystem": "EU numeric",
+      "measurementType": "body",
+      "sizes": [
+        {
+          "label": "34",
+          "measurements": {
+            "waist": {
+              "minCM": 62,
+              "maxCM": 65
+            },
+            "hips": {
+              "minCM": 86,
+              "maxCM": 89
+            }
+          }
+        },
+        {
+          "label": "36",
+          "measurements": {
+            "waist": {
+              "minCM": 66,
+              "maxCM": 69
+            },
+            "hips": {
+              "minCM": 90,
+              "maxCM": 93
+            }
+          }
+        },
+        {
+          "label": "38",
+          "measurements": {
+            "waist": {
+              "minCM": 70,
+              "maxCM": 73
+            },
+            "hips": {
+              "minCM": 94,
+              "maxCM": 97
+            }
+          }
+        },
+        {
+          "label": "40",
+          "measurements": {
+            "waist": {
+              "minCM": 74,
+              "maxCM": 77
+            },
+            "hips": {
+              "minCM": 98,
+              "maxCM": 101
+            }
+          }
+        },
+        {
+          "label": "42",
+          "measurements": {
+            "waist": {
+              "minCM": 78,
+              "maxCM": 82
+            },
+            "hips": {
+              "minCM": 102,
+              "maxCM": 106
+            }
+          }
+        },
+        {
+          "label": "44",
+          "measurements": {
+            "waist": {
+              "minCM": 83,
+              "maxCM": 87
+            },
+            "hips": {
+              "minCM": 107,
+              "maxCM": 111
+            }
+          }
+        }
+      ],
+      "source": {
+        "isDemoData": true,
+        "notes": "DEMO DATA: fictional brand created for testing this app. Not based on any real brand's size chart. Do not use for purchases."
+      }
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000d30004",
+      "brand": "Fieldline Outfitters (Demo)",
+      "category": "shirts",
+      "audience": "mens",
+      "region": "us",
+      "sizeSystem": "Neck size (in)",
+      "measurementType": "body",
+      "sizes": [
+        {
+          "label": "14.5",
+          "measurements": {
+            "neck": {
+              "minCM": 36.5,
+              "maxCM": 37.5
+            },
+            "chest": {
+              "minCM": 86,
+              "maxCM": 91
+            },
+            "sleeveLength": {
+              "minCM": 80,
+              "maxCM": 82
+            }
+          }
+        },
+        {
+          "label": "15",
+          "measurements": {
+            "neck": {
+              "minCM": 38,
+              "maxCM": 38.5
+            },
+            "chest": {
+              "minCM": 91,
+              "maxCM": 96
+            },
+            "sleeveLength": {
+              "minCM": 81,
+              "maxCM": 83
+            }
+          }
+        },
+        {
+          "label": "15.5",
+          "measurements": {
+            "neck": {
+              "minCM": 39,
+              "maxCM": 40
+            },
+            "chest": {
+              "minCM": 96,
+              "maxCM": 101
+            },
+            "sleeveLength": {
+              "minCM": 82,
+              "maxCM": 84
+            }
+          }
+        },
+        {
+          "label": "16",
+          "measurements": {
+            "neck": {
+              "minCM": 40.5,
+              "maxCM": 41
+            },
+            "chest": {
+              "minCM": 101,
+              "maxCM": 106
+            },
+            "sleeveLength": {
+              "minCM": 84,
+              "maxCM": 86
+            }
+          }
+        },
+        {
+          "label": "16.5",
+          "measurements": {
+            "neck": {
+              "minCM": 41.5,
+              "maxCM": 42.5
+            },
+            "chest": {
+              "minCM": 106,
+              "maxCM": 111
+            },
+            "sleeveLength": {
+              "minCM": 85,
+              "maxCM": 87
+            }
+          }
+        },
+        {
+          "label": "17",
+          "measurements": {
+            "neck": {
+              "minCM": 43,
+              "maxCM": 44
+            },
+            "chest": {
+              "minCM": 111,
+              "maxCM": 117
+            },
+            "sleeveLength": {
+              "minCM": 86,
+              "maxCM": 88
+            }
+          }
+        }
+      ],
+      "source": {
+        "isDemoData": true,
+        "notes": "DEMO DATA: fictional brand created for testing this app. Not based on any real brand's size chart. Do not use for purchases."
+      }
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000d30005",
+      "brand": "Fieldline Outfitters (Demo)",
+      "category": "outerwear",
+      "audience": "unisex",
+      "region": "us",
+      "sizeSystem": "Letter (S\u2013XL)",
+      "measurementType": "garment",
+      "sizes": [
+        {
+          "label": "S",
+          "measurements": {
+            "chest": {
+              "minCM": 56,
+              "maxCM": 56
+            },
+            "shoulderWidth": {
+              "minCM": 44,
+              "maxCM": 44
+            }
+          }
+        },
+        {
+          "label": "M",
+          "measurements": {
+            "chest": {
+              "minCM": 59,
+              "maxCM": 59
+            },
+            "shoulderWidth": {
+              "minCM": 46,
+              "maxCM": 46
+            }
+          }
+        },
+        {
+          "label": "L",
+          "measurements": {
+            "chest": {
+              "minCM": 62,
+              "maxCM": 62
+            },
+            "shoulderWidth": {
+              "minCM": 48,
+              "maxCM": 48
+            }
+          }
+        },
+        {
+          "label": "XL",
+          "measurements": {
+            "chest": {
+              "minCM": 65,
+              "maxCM": 65
+            },
+            "shoulderWidth": {
+              "minCM": 50,
+              "maxCM": 50
+            }
+          }
+        }
+      ],
+      "source": {
+        "isDemoData": true,
+        "notes": "DEMO DATA: fictional brand created for testing this app. Not based on any real brand's size chart. Do not use for purchases."
+      },
+      "garmentConvention": "flatHalfWidth"
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000d30006",
+      "brand": "Tidewater Tailoring (Demo)",
+      "category": "dresses",
+      "audience": "womens",
+      "region": "uk",
+      "sizeSystem": "UK numeric",
+      "measurementType": "body",
+      "sizes": [
+        {
+          "label": "6",
+          "measurements": {
+            "chest": {
+              "minCM": 78,
+              "maxCM": 80.5
+            },
+            "waist": {
+              "minCM": 60,
+              "maxCM": 62.5
+            },
+            "hips": {
+              "minCM": 84,
+              "maxCM": 86.5
+            }
+          }
+        },
+        {
+          "label": "8",
+          "measurements": {
+            "chest": {
+              "minCM": 81,
+              "maxCM": 83.5
+            },
+            "waist": {
+              "minCM": 63,
+              "maxCM": 65.5
+            },
+            "hips": {
+              "minCM": 87,
+              "maxCM": 89.5
+            }
+          }
+        },
+        {
+          "label": "10",
+          "measurements": {
+            "chest": {
+              "minCM": 84,
+              "maxCM": 87.5
+            },
+            "waist": {
+              "minCM": 66,
+              "maxCM": 69.5
+            },
+            "hips": {
+              "minCM": 90,
+              "maxCM": 93.5
+            }
+          }
+        },
+        {
+          "label": "12",
+          "measurements": {
+            "chest": {
+              "minCM": 88,
+              "maxCM": 92.5
+            },
+            "waist": {
+              "minCM": 70,
+              "maxCM": 74.5
+            },
+            "hips": {
+              "minCM": 94,
+              "maxCM": 98.5
+            }
+          }
+        },
+        {
+          "label": "14",
+          "measurements": {
+            "chest": {
+              "minCM": 93,
+              "maxCM": 97.5
+            },
+            "waist": {
+              "minCM": 75,
+              "maxCM": 79.5
+            },
+            "hips": {
+              "minCM": 99,
+              "maxCM": 103.5
+            }
+          }
+        },
+        {
+          "label": "16",
+          "measurements": {
+            "chest": {
+              "minCM": 98,
+              "maxCM": 103.5
+            },
+            "waist": {
+              "minCM": 80,
+              "maxCM": 85.5
+            },
+            "hips": {
+              "minCM": 104,
+              "maxCM": 109.5
+            }
+          }
+        },
+        {
+          "label": "18",
+          "measurements": {
+            "chest": {
+              "minCM": 104,
+              "maxCM": 109
+            },
+            "waist": {
+              "minCM": 86,
+              "maxCM": 91
+            },
+            "hips": {
+              "minCM": 110,
+              "maxCM": 115
+            }
+          }
+        }
+      ],
+      "source": {
+        "isDemoData": true,
+        "notes": "DEMO DATA: fictional brand created for testing this app. Not based on any real brand's size chart. Do not use for purchases."
+      }
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000d30007",
+      "brand": "Tidewater Tailoring (Demo)",
+      "category": "jackets",
+      "audience": "unisex",
+      "region": "eu",
+      "sizeSystem": "EU chest size",
+      "measurementType": "body",
+      "sizes": [
+        {
+          "label": "44",
+          "measurements": {
+            "chest": {
+              "minCM": 86,
+              "maxCM": 89.5
+            },
+            "waist": {
+              "minCM": 74,
+              "maxCM": 77.5
+            }
+          }
+        },
+        {
+          "label": "46",
+          "measurements": {
+            "chest": {
+              "minCM": 90,
+              "maxCM": 93.5
+            },
+            "waist": {
+              "minCM": 78,
+              "maxCM": 81.5
+            }
+          }
+        },
+        {
+          "label": "48",
+          "measurements": {
+            "chest": {
+              "minCM": 94,
+              "maxCM": 97.5
+            },
+            "waist": {
+              "minCM": 82,
+              "maxCM": 85.5
+            }
+          }
+        },
+        {
+          "label": "50",
+          "measurements": {
+            "chest": {
+              "minCM": 98,
+              "maxCM": 101.5
+            },
+            "waist": {
+              "minCM": 86,
+              "maxCM": 89.5
+            }
+          }
+        },
+        {
+          "label": "52",
+          "measurements": {
+            "chest": {
+              "minCM": 102,
+              "maxCM": 105.5
+            },
+            "waist": {
+              "minCM": 90,
+              "maxCM": 93.5
+            }
+          }
+        },
+        {
+          "label": "54",
+          "measurements": {
+            "chest": {
+              "minCM": 106,
+              "maxCM": 110
+            },
+            "waist": {
+              "minCM": 94,
+              "maxCM": 98
+            }
+          }
+        }
+      ],
+      "source": {
+        "isDemoData": true,
+        "notes": "DEMO DATA: fictional brand created for testing this app. Not based on any real brand's size chart. Do not use for purchases."
+      }
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000d30008",
+      "brand": "Tidewater Tailoring (Demo)",
+      "category": "jackets",
+      "audience": "unisex",
+      "region": "eu",
+      "sizeSystem": "EU chest size",
+      "measurementType": "garment",
+      "sizes": [
+        {
+          "label": "44",
+          "measurements": {
+            "chest": {
+              "minCM": 98,
+              "maxCM": 98
+            },
+            "shoulderWidth": {
+              "minCM": 42,
+              "maxCM": 42
+            },
+            "armLength": {
+              "minCM": 61,
+              "maxCM": 61
+            }
+          }
+        },
+        {
+          "label": "46",
+          "measurements": {
+            "chest": {
+              "minCM": 102,
+              "maxCM": 102
+            },
+            "shoulderWidth": {
+              "minCM": 43.5,
+              "maxCM": 43.5
+            },
+            "armLength": {
+              "minCM": 62,
+              "maxCM": 62
+            }
+          }
+        },
+        {
+          "label": "48",
+          "measurements": {
+            "chest": {
+              "minCM": 106,
+              "maxCM": 106
+            },
+            "shoulderWidth": {
+              "minCM": 45,
+              "maxCM": 45
+            },
+            "armLength": {
+              "minCM": 63,
+              "maxCM": 63
+            }
+          }
+        },
+        {
+          "label": "50",
+          "measurements": {
+            "chest": {
+              "minCM": 110,
+              "maxCM": 110
+            },
+            "shoulderWidth": {
+              "minCM": 46.5,
+              "maxCM": 46.5
+            },
+            "armLength": {
+              "minCM": 64,
+              "maxCM": 64
+            }
+          }
+        },
+        {
+          "label": "52",
+          "measurements": {
+            "chest": {
+              "minCM": 114,
+              "maxCM": 114
+            },
+            "shoulderWidth": {
+              "minCM": 48,
+              "maxCM": 48
+            },
+            "armLength": {
+              "minCM": 65,
+              "maxCM": 65
+            }
+          }
+        },
+        {
+          "label": "54",
+          "measurements": {
+            "chest": {
+              "minCM": 118,
+              "maxCM": 118
+            },
+            "shoulderWidth": {
+              "minCM": 49.5,
+              "maxCM": 49.5
+            },
+            "armLength": {
+              "minCM": 66,
+              "maxCM": 66
+            }
+          }
+        }
+      ],
+      "source": {
+        "isDemoData": true,
+        "notes": "DEMO DATA: fictional brand created for testing this app. Not based on any real brand's size chart. Do not use for purchases."
+      },
+      "productLine": "Signature Slim Blazer",
+      "garmentConvention": "fullCircumference"
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000d30009",
+      "brand": "Tidewater Tailoring (Demo)",
+      "category": "suits",
+      "audience": "mens",
+      "region": "uk",
+      "sizeSystem": "Chest + length (R)",
+      "measurementType": "body",
+      "sizes": [
+        {
+          "label": "36R",
+          "measurements": {
+            "chest": {
+              "minCM": 89,
+              "maxCM": 93
+            },
+            "waist": {
+              "minCM": 74,
+              "maxCM": 78
+            },
+            "sleeveLength": {
+              "minCM": 80,
+              "maxCM": 83
+            }
+          }
+        },
+        {
+          "label": "38R",
+          "measurements": {
+            "chest": {
+              "minCM": 94,
+              "maxCM": 98
+            },
+            "waist": {
+              "minCM": 79,
+              "maxCM": 83
+            },
+            "sleeveLength": {
+              "minCM": 81,
+              "maxCM": 84
+            }
+          }
+        },
+        {
+          "label": "40R",
+          "measurements": {
+            "chest": {
+              "minCM": 99,
+              "maxCM": 103
+            },
+            "waist": {
+              "minCM": 84,
+              "maxCM": 88
+            },
+            "sleeveLength": {
+              "minCM": 82,
+              "maxCM": 85
+            }
+          }
+        },
+        {
+          "label": "42R",
+          "measurements": {
+            "chest": {
+              "minCM": 104,
+              "maxCM": 108
+            },
+            "waist": {
+              "minCM": 89,
+              "maxCM": 93
+            },
+            "sleeveLength": {
+              "minCM": 83,
+              "maxCM": 86
+            }
+          }
+        },
+        {
+          "label": "44R",
+          "measurements": {
+            "chest": {
+              "minCM": 109,
+              "maxCM": 113
+            },
+            "waist": {
+              "minCM": 94,
+              "maxCM": 98
+            },
+            "sleeveLength": {
+              "minCM": 84,
+              "maxCM": 87
+            }
+          }
+        }
+      ],
+      "source": {
+        "isDemoData": true,
+        "notes": "DEMO DATA: fictional brand created for testing this app. Not based on any real brand's size chart. Do not use for purchases."
+      }
+    }
+  ]
+}
