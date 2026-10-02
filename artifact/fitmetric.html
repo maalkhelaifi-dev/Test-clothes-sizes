@@ -1,0 +1,1311 @@
+<title>FitMetric</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Hanken+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one phone-width column, a tailor's-tape progress rule on top, a fixed action bar at the bottom. */
+:root{
+  --bg:#F6F2E9; --surface:#FFFDF8; --surface-2:#EEE8DC; --ink:#24221F; --ink-2:#5C574E; --line:#DCD3C3;
+  --accent:#24365E; --accent-ink:#FFFFFF; --accent-soft:#E2E6EF;
+  --ok:#3B6A48; --ok-soft:#E3EDE4; --warn:#8A5D0B; --warn-soft:#F5EAD3; --bad:#9E3626; --bad-soft:#F6E1DC;
+  --shadow:0 1px 2px rgba(36,34,31,.06),0 8px 24px rgba(36,34,31,.06);
+  --f-display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
+  --f-body:"Hanken Grotesk",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"DM Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#171614; --surface:#211F1C; --surface-2:#2B2824; --ink:#F1ECE2; --ink-2:#B4AC9E; --line:#3B3732;
+  --accent:#AFC0E6; --accent-ink:#121A2E; --accent-soft:#263049;
+  --ok:#8FC59C; --ok-soft:#1F3125; --warn:#E3B566; --warn-soft:#3A2E17; --bad:#EF9381; --bad-soft:#3D221D;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#171614; --surface:#211F1C; --surface-2:#2B2824; --ink:#F1ECE2; --ink-2:#B4AC9E; --line:#3B3732;
+  --accent:#AFC0E6; --accent-ink:#121A2E; --accent-soft:#263049;
+  --ok:#8FC59C; --ok-soft:#1F3125; --warn:#E3B566; --warn-soft:#3A2E17; --bad:#EF9381; --bad-soft:#3D221D;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); color-scheme:dark}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--f-body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{font-family:var(--f-display);font-weight:500;text-wrap:balance;margin:0;letter-spacing:-.01em}
+h1{font-size:clamp(2.4rem,9vw,3.3rem);line-height:1.02}
+h2{font-size:1.85rem;line-height:1.1}
+h3{font-size:1.2rem;line-height:1.2}
+p{margin:0}
+a{color:var(--accent)}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.eyebrow{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);font-weight:600}
+.muted{color:var(--ink-2)}
+.small{font-size:.875rem}
+.shell{max-width:540px;margin:0 auto;padding-inline:16px;padding-block:0 132px}
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);padding-block:10px 8px}
+.toprow{display:flex;align-items:center;gap:8px}
+.wordmark{font-family:var(--f-display);font-size:1.45rem;font-weight:600;letter-spacing:-.01em;margin-right:auto}
+.wordmark i{font-weight:400}
+.iconbtn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:44px;height:40px;padding:0 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:.8rem;font-weight:600}
+.iconbtn svg{width:18px;height:18px}
+/* tape progress */
+.tape{margin-top:10px}
+.tape-meta{display:flex;justify-content:space-between;align-items:baseline;font-size:.78rem;margin-bottom:6px}
+.tape-meta b{font-weight:600}
+.tape-bar{position:relative;height:22px;border-radius:4px;background:var(--surface-2);border:1px solid var(--line);overflow:hidden}
+.tape-fill{position:absolute;inset:0 auto 0 0;background:var(--accent);transition:width .45s cubic-bezier(.2,.7,.2,1)}
+.tape-ticks{position:absolute;inset:0;background:
+  repeating-linear-gradient(90deg,var(--ink-2) 0 1px,transparent 1px 100%) 0 100%/6.25% 9px no-repeat repeat-x,
+  repeating-linear-gradient(90deg,var(--ink-2) 0 1px,transparent 1px 100%) 0 100%/1.25% 4px repeat-x;opacity:.45;mix-blend-mode:normal}
+.tape-steps{position:absolute;inset:0;display:grid;grid-template-columns:repeat(8,1fr)}
+.tape-steps span{font-family:var(--f-mono);font-size:.62rem;padding:2px 0 0 4px;color:var(--ink-2)}
+.tape-steps span.on{color:var(--accent-ink)}
+/* content */
+.screen{display:flex;flex-direction:column;gap:20px;padding-top:14px;animation:rise .35s ease both}
+@keyframes rise{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.lede{font-size:1.06rem;color:var(--ink-2);max-width:60ch}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.card.flat{background:transparent}
+.card.raised{box-shadow:var(--shadow)}
+.stack{display:flex;flex-direction:column;gap:12px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.between{justify-content:space-between}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media (max-width:360px){.grid2{grid-template-columns:1fr}}
+.divider{height:1px;background:var(--line);border:0;margin:0}
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 18px;border-radius:999px;border:1px solid var(--ink);background:transparent;cursor:pointer;font-weight:600;font-size:.95rem;text-decoration:none;color:var(--ink);transition:transform .15s ease,background .15s}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.ghost{border-color:var(--line);background:var(--surface)}
+.btn.danger{border-color:var(--bad);color:var(--bad)}
+.btn.sm{min-height:38px;padding:0 14px;font-size:.85rem}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn svg{width:18px;height:18px;flex:none}
+.linkbtn{background:none;border:0;padding:4px 0;color:var(--accent);font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* choices */
+.choice{position:relative;display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;padding:14px;border-radius:var(--r);border:1px solid var(--line);background:var(--surface);cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.choice:hover{border-color:var(--ink-2)}
+.choice[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);background:var(--accent-soft)}
+.choice .ic{width:40px;height:40px;flex:none;border-radius:10px;display:grid;place-items:center;background:var(--surface-2)}
+.choice[aria-pressed="true"] .ic{background:var(--surface)}
+.choice .ic svg{width:24px;height:24px}
+.choice strong{display:block;font-weight:600}
+.choice span.sub{display:block;font-size:.82rem;color:var(--ink-2)}
+.catgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.catgrid .choice{flex-direction:column;gap:8px}
+.seg{display:flex;padding:4px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);gap:4px}
+.seg button{flex:1;min-height:40px;border-radius:999px;border:0;background:transparent;cursor:pointer;font-weight:600;font-size:.88rem;color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-weight:600;font-size:.85rem}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+/* pills */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:999px;font-size:.72rem;font-weight:600;letter-spacing:.02em;white-space:nowrap;border:1px solid transparent}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.neutral{background:var(--surface-2);color:var(--ink-2)}
+.pill.accent{background:var(--accent-soft);color:var(--accent)}
+.pill.sample{border-color:var(--warn);color:var(--warn);background:transparent;text-transform:uppercase;letter-spacing:.08em;font-size:.66rem}
+/* forms */
+label.field{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:.88rem}
+.input{width:100%;min-height:48px;border-radius:10px;border:1px solid var(--line);background:var(--surface);padding:0 12px;font-size:1rem}
+.input:focus{border-color:var(--accent)}
+.unitwrap{position:relative}
+.unitwrap .input{padding-right:44px;font-family:var(--f-mono);font-size:1.05rem}
+.unitwrap em{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-style:normal;color:var(--ink-2);font-size:.85rem;font-family:var(--f-mono)}
+textarea.input{min-height:160px;padding:10px 12px;font-family:var(--f-mono);font-size:.78rem;line-height:1.45}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:.93rem;cursor:pointer}
+.check input{width:22px;height:22px;flex:none;margin:1px 0 0;accent-color:var(--accent)}
+.err{color:var(--bad);font-size:.85rem;font-weight:500}
+/* notices */
+.notice{display:flex;gap:12px;padding:12px 14px;border-radius:12px;font-size:.9rem;background:var(--surface-2);border:1px solid var(--line)}
+.notice svg{width:20px;height:20px;flex:none;margin-top:1px}
+.notice.warn{background:var(--warn-soft);border-color:transparent;color:var(--ink)}
+.notice.warn svg{color:var(--warn)}
+.notice.bad{background:var(--bad-soft);border-color:transparent}
+.notice.bad svg{color:var(--bad)}
+.notice.ok{background:var(--ok-soft);border-color:transparent}
+.notice.ok svg{color:var(--ok)}
+.notice b{font-weight:600}
+/* welcome */
+.hero{padding-top:18px;display:flex;flex-direction:column;gap:14px}
+.hero h1 em{font-style:italic;font-weight:400}
+.rule-art{height:34px;overflow:hidden;border-top:1px solid var(--ink);background:
+  repeating-linear-gradient(90deg,var(--ink) 0 1px,transparent 1px 100%) 0 0/40px 14px repeat-x,
+  repeating-linear-gradient(90deg,var(--ink) 0 1px,transparent 1px 100%) 0 0/8px 6px repeat-x;opacity:.8;position:relative}
+.rule-art span{position:absolute;top:14px;font-family:var(--f-mono);font-size:.62rem;color:var(--ink-2)}
+.envlist{display:flex;flex-direction:column}
+.envitem{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line)}
+.envitem:first-child{border-top:0;padding-top:0}
+.envitem>div{min-width:0;flex:1}
+.envitem strong{font-weight:600;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+/* profiles */
+.avatar{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--surface-2);font-family:var(--f-display);font-size:1.15rem;flex:none}
+.choice[aria-pressed="true"] .avatar{background:var(--accent);color:var(--accent-ink)}
+/* photos */
+.slot{display:flex;flex-direction:column;gap:12px}
+.dropzone{border:1.5px dashed var(--line);border-radius:var(--r);padding:18px;display:flex;gap:14px;align-items:center;background:var(--surface)}
+.dropzone svg.fig{width:46px;height:80px;flex:none;color:var(--ink-2)}
+.thumbwrap{display:flex;gap:14px;align-items:flex-start}
+.thumb{position:relative;width:96px;flex:none;border-radius:10px;overflow:hidden;background:var(--surface-2);border:1px solid var(--line)}
+.thumb img{display:block;width:100%;height:auto}
+.thumb svg{position:absolute;inset:0;width:100%;height:100%}
+.qlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:.85rem;min-width:0;flex:1}
+.qlist li{display:flex;gap:8px;align-items:flex-start}
+.qlist li .dot{width:8px;height:8px;border-radius:50%;margin-top:7px;flex:none}
+.dot.ok{background:var(--ok)}.dot.warn{background:var(--warn)}.dot.neutral{background:var(--ink-2)}
+/* review */
+.mrow{display:grid;grid-template-columns:minmax(0,1fr) 128px;gap:8px 12px;padding:14px 0;border-top:1px solid var(--line);align-items:start}
+.mrow:first-of-type{border-top:0}
+.mrow .lbl{font-weight:600}
+.mrow .meta{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.mrow details{grid-column:1/-1;font-size:.85rem;color:var(--ink-2)}
+.mrow summary{cursor:pointer;color:var(--accent);font-weight:600;font-size:.8rem;list-style:none}
+.mrow summary::-webkit-details-marker{display:none}
+/* result */
+.sizehero{display:flex;flex-direction:column;gap:6px;padding:22px 18px;border-radius:18px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);position:relative;overflow:hidden}
+.sizehero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:12px;background:
+  repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px 100%) 0 100%/10px 12px repeat-x}
+.bigsize{font-family:var(--f-display);font-size:clamp(4rem,22vw,6rem);line-height:.95;font-weight:500;letter-spacing:-.02em}
+.bigsize small{font-size:.32em;font-family:var(--f-body);font-weight:600;letter-spacing:0;color:var(--ink-2);margin-left:8px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.paircard{padding:14px;border-radius:12px;border:1px solid var(--line);background:var(--surface);display:flex;flex-direction:column;gap:4px}
+.paircard.pick{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.paircard .sz{font-family:var(--f-display);font-size:2rem;line-height:1}
+.tablewrap{overflow-x:auto;margin-inline:-4px}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{text-align:left;padding:9px 5px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-2);font-weight:600}
+td.mono,th.mono{white-space:nowrap}
+ul.reasons{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:.93rem}
+dl.meta{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0;font-size:.86rem}
+dl.meta dt{color:var(--ink-2)}
+dl.meta dd{margin:0;min-width:0;overflow-wrap:anywhere}
+/* bottom bar */
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+.bar-in{max-width:540px;margin:0 auto;display:flex;flex-direction:column;gap:6px}
+.bar-row{display:flex;gap:10px}
+.bar-row .btn.primary{flex:1}
+.bar-hint{font-size:.78rem;color:var(--ink-2);text-align:center;min-height:1em}
+/* sheets */
+.sheet{position:fixed;inset:0;z-index:50;background:var(--bg);overflow-y:auto;padding:calc(env(safe-area-inset-top,0px) + 12px) 16px calc(env(safe-area-inset-bottom,0px) + 24px);animation:sheetin .25s ease both}
+@keyframes sheetin{from{transform:translateY(16px);opacity:.6}to{transform:none;opacity:1}}
+.sheet-in{max-width:540px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.sheet-head{display:flex;align-items:center;gap:10px;position:sticky;top:-12px;background:var(--bg);padding-block:8px;z-index:2}
+.sheet-head h2{font-size:1.5rem;margin-right:auto}
+/* live camera */
+.cam{position:relative;border-radius:16px;overflow:hidden;background:#111;aspect-ratio:3/4;max-width:100%}
+.cam video{width:100%;height:100%;object-fit:cover;display:block;transform:scaleX(-1)}
+.cam video.rear{transform:none}
+.cam .guide{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.cam .count{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--f-display);font-size:6rem;color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.5)}
+.livechecks{display:flex;gap:6px;flex-wrap:wrap}
+/* marker */
+.markstage{position:relative;overflow:auto;max-height:62vh;border-radius:12px;border:1px solid var(--line);background:var(--surface-2);touch-action:pan-x pan-y}
+.markimg{position:relative;cursor:crosshair}
+.markimg img{display:block;width:100%;height:auto;user-select:none;-webkit-user-select:none;-webkit-user-drag:none}
+.markimg svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.ptlist{display:flex;flex-wrap:wrap;gap:6px}
+.pt{min-height:34px;padding:0 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:.78rem;font-weight:600;cursor:pointer}
+.pt.done{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+.pt.cur{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);color:var(--accent)}
+.toast{position:fixed;left:50%;bottom:calc(110px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:.88rem;font-weight:600;box-shadow:var(--shadow);max-width:calc(100% - 32px);text-align:center}
+.confirmbox{border:1px solid var(--bad);background:var(--bad-soft);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px;font-size:.9rem}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+</style>
+
+<div id="app"></div>
+<div id="live" class="sheet" hidden></div>
+<div id="marker" class="sheet" hidden></div>
+
+<script>
+"use strict";
+/* ============================================================
+   FitMetric: guided measurements and sample-chart size advice.
+   All maths runs in this page. Photos stay in memory only.
+   ============================================================ */
+
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const newId = p => p + "-" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+const r1 = n => Math.round(n * 10) / 10;
+
+/* ---------- icons ---------- */
+const I = {
+  shirt:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M8.5 3 3.5 5.8l1.8 4 2.2-1V21h9V8.8l2.2 1 1.8-4L15.5 3c-.6 1.6-1.9 2.6-3.5 2.6S9.1 4.6 8.5 3Z"/><path d="M12 5.6V21"/></svg>',
+  suit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M8.5 3 3.5 5.8l1 15.2h15l1-15.2L15.5 3"/><path d="M8.5 3 12 11l3.5-8M12 11v10M9.5 16h.01M14.5 16h.01"/><path d="M10 3.5 12 7l2-3.5"/></svg>',
+  jacket:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M9 3 4 5.5 3 19h4v2h10v-2h4L20 5.5 15 3l-3 3-3-3Z"/><path d="M12 6v15M7 12h2M15 12h2"/></svg>',
+  coat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M9 2.5 4.5 5 3.5 22h17l-1-17L15 2.5 12 7 9 2.5Z"/><path d="M12 7v15M9.5 11h.01M9.5 15h.01M9.5 19h.01M6 14h3"/></svg>',
+  dress:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M9 2.5v3L8 9.5 4.5 21.5h15L16 9.5l-1-4v-3"/><path d="M8 9.5h8M9 5.5c1 .8 2 1.2 3 1.2s2-.4 3-1.2"/></svg>',
+  trousers:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M6.5 3h11l1.5 18.5h-4.6L12 10l-2.4 11.5H5L6.5 3Z"/><path d="M6.5 6h11M12 6v4"/></svg>',
+  skirt:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M7 4h10l3.5 16h-17L7 4Z"/><path d="M7 7h10M10 7l-1.5 13M14 7l1.5 13"/></svg>',
+  user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>',
+  tag:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 12V3h9l9 9-9 9-9-9Z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>',
+  lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>',
+  camera:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 8h4l2-3h6l2 3h4v12H3z"/><circle cx="12" cy="13.5" r="3.8"/></svg>',
+  image:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="9.5" r="1.8"/><path d="m21 16-5-5-9 9"/></svg>',
+  info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg>',
+  alert:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v4.5M12 17.5v.01"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>',
+  close:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+  ruler:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 16 16 3l5 5L8 21z"/><path d="m7 12 2 2M10 9l1.5 1.5M13 6l2 2M16 3l0 0"/></svg>',
+  pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/></svg>',
+  arrow:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+  back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>',
+  trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>',
+  figure:'<svg class="fig" viewBox="0 0 46 80" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="23" cy="8" r="6"/><path d="M14 18h18l3 24h-5l-1-14v48h-5V50h-2v26h-5V28l-1 14h-5l3-24Z"/><path d="M2 2h4M2 2v4M44 2h-4M44 2v4M2 78h4M2 78v-4M44 78h-4M44 78v-4" stroke-width="1.6"/></svg>',
+  figside:'<svg class="fig" viewBox="0 0 46 80" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="23" cy="8" r="6"/><path d="M19 18h9l2 12-2 12 1 34h-5l-2-26-1 26h-5l1-34-2-12 1-12Z"/><path d="M2 2h4M2 2v4M44 2h-4M44 2v4M2 78h4M2 78v-4M44 78h-4M44 78v-4" stroke-width="1.6"/></svg>'
+};
+
+/* ---------- measurement catalogue (all values stored in cm) ---------- */
+const MEAS = {
+  height:   {label:"Height", range:[140,220], how:"Stand straight against a wall without shoes. Measure from the floor to the top of the head."},
+  neck:     {label:"Neck", range:[28,55], how:"Around the base of the neck where a shirt collar sits, with one finger under the tape."},
+  shoulder: {label:"Shoulder width", range:[32,60], how:"Across the upper back from one shoulder tip (the bony point) to the other."},
+  chest:    {label:"Chest / bust", range:[70,160], how:"Around the fullest part of the chest or bust, under the arms, keeping the tape level."},
+  underbust:{label:"Underbust", range:[60,140], how:"Directly under the bust, snug and level all the way round."},
+  waist:    {label:"Waist", range:[55,160], how:"Around the natural waist, the narrowest point above the navel. Breathe out normally."},
+  hips:     {label:"Hips / seat", range:[70,170], how:"Around the fullest part of the hips and seat, with feet together."},
+  sleeve:   {label:"Shirt sleeve", range:[70,100], how:"From the centre back of the neck, over the shoulder tip, down to the wrist bone, arm slightly bent. This is how shirt sleeve sizes are measured."},
+  arm:      {label:"Arm length", range:[48,75], how:"From the shoulder tip to the wrist bone, arm relaxed at your side."},
+  bicep:    {label:"Bicep", range:[20,55], how:"Around the fullest part of the upper arm, arm relaxed."},
+  wrist:    {label:"Wrist", range:[13,24], how:"Around the wrist just above the wrist bone."},
+  inseam:   {label:"Inseam", range:[60,95], how:"From the crotch to the floor along the inside of the leg, without shoes."},
+  outseam:  {label:"Outseam", range:[85,125], how:"From the natural waist to the floor along the outside of the leg."},
+  thigh:    {label:"Thigh", range:[40,85], how:"Around the fullest part of the upper thigh."},
+  knee:     {label:"Knee", range:[30,55], how:"Around the middle of the knee, leg straight."},
+  calf:     {label:"Calf", range:[28,55], how:"Around the fullest part of the calf."},
+  ankle:    {label:"Ankle", range:[18,35], how:"Around the narrowest part above the ankle bone."}
+};
+const PHOTO_ESTIMABLE = ["shoulder","chest","waist","hips","arm","sleeve","inseam","outseam"];
+
+const CATS = {
+  shirts:   {label:"Shirts",    icon:"shirt",    req:["neck","chest","sleeve"], opt:["waist","shoulder","bicep","wrist"]},
+  suits:    {label:"Suits",     icon:"suit",     req:["chest","waist","shoulder","arm"], opt:["hips","inseam"]},
+  jackets:  {label:"Jackets",   icon:"jacket",   req:["chest","shoulder","arm"], opt:["waist","bicep"]},
+  outerwear:{label:"Outerwear", icon:"coat",     req:["chest","shoulder","arm"], opt:["hips"]},
+  dresses:  {label:"Dresses",   icon:"dress",    req:["chest","waist","hips"], opt:["underbust","shoulder"]},
+  trousers: {label:"Trousers",  icon:"trousers", req:["waist","hips","inseam"], opt:["outseam","thigh","knee","calf","ankle"]},
+  skirts:   {label:"Skirts",    icon:"skirt",    req:["waist","hips"], opt:[]}
+};
+
+const FITS = {
+  slim:{label:"Slim", sub:"Close to the body. Between sizes, we lean smaller."},
+  regular:{label:"Regular", sub:"Standard room. Between sizes, we pick the closer match."},
+  relaxed:{label:"Relaxed", sub:"Extra room. Between sizes, we lean larger."}
+};
+
+/* ---------- size charts: structured data, every built-in one is a labelled sample ---------- */
+const SAMPLE_SOURCE = {url:null, verifiedOn:null, note:"Sample values written for this demo. They do not come from any brand."};
+const span = (lo, hi) => [r1(lo), r1(hi)];
+const LETTERS = ["XS","S","M","L","XL","XXL"];
+
+function builtInCharts(){
+  const C = [];
+  const base = {isSample:true, units:"cm", source:SAMPLE_SOURCE};
+  // Shirts — collar sizes (US, inches)
+  C.push({...base, id:"s-nc-shirt-us", brand:"Northcoast Tailoring", product:"Oxford shirt", categories:["shirts"], region:"US", sizeSystem:"Collar size (in)", basis:"body",
+    keys:{neck:3, chest:2},
+    sizes:[14.5,15,15.5,16,16.5,17,17.5].map((n,i)=>({label:n+'"', body:{neck:span(n*2.54-0.635,n*2.54+0.635), chest:span(86+5*i,91+5*i)}})),
+    lengths:{m:"sleeve", title:"Sleeve", options:[{label:"32/33",range:[79,85]},{label:"34/35",range:[85,90]},{label:"36/37",range:[90,96]}]}});
+  // Shirts — collar sizes (EU, cm)
+  C.push({...base, id:"s-nc-shirt-eu", brand:"Northcoast Tailoring", product:"Oxford shirt", categories:["shirts"], region:"EU", sizeSystem:"Collar size (cm)", basis:"body",
+    keys:{neck:3, chest:2},
+    sizes:[37,38,39,40,41,42,43,44].map((n,i)=>({label:String(n), body:{neck:span(n-0.5,n+0.5), chest:span(84+3.5*i,87.5+3.5*i)}})),
+    lengths:{m:"sleeve", title:"Sleeve", options:[{label:"Sleeve 82",range:[79,84]},{label:"Sleeve 86",range:[84,88]},{label:"Sleeve 90",range:[88,96]}]}});
+  // Shirts — letter sizes
+  const ivyChest=[[80,86],[86,92],[92,98],[98,104],[104,112],[112,120]], ivyNeck=[[34,36],[36,38],[38,40],[40,42],[42,44.5],[44.5,47]], ivyWaist=[[64,70],[70,76],[76,82],[82,88],[88,96],[96,104]];
+  C.push({...base, id:"s-ivy-shirt-intl", brand:"Studio Ivy", product:"Camp-collar shirt", categories:["shirts"], region:"International", sizeSystem:"Letter (XS–XXL)", basis:"body",
+    keys:{chest:3, neck:1, waist:1},
+    sizes:LETTERS.map((l,i)=>({label:l, body:{chest:ivyChest[i], neck:ivyNeck[i], waist:ivyWaist[i]}}))});
+  // Suits & jackets — EU numeric
+  const suitLen = {m:"height", title:"Length", options:[{label:"Short",range:[155,172]},{label:"Regular",range:[172,184]},{label:"Long",range:[184,200]}]};
+  C.push({...base, id:"s-nc-suit-eu", brand:"Northcoast Tailoring", product:"Two-piece suit", categories:["suits","jackets"], region:"EU", sizeSystem:"EU numeric (44–56)", basis:"body",
+    keys:{chest:3, shoulder:1, waist:1},
+    sizes:[44,46,48,50,52,54,56].map(n=>({label:String(n), body:{chest:span(2*n-2,2*n+2), shoulder:span(n*0.94-0.9,n*0.94+0.9), waist:span(2*n-14,2*n-10)}})),
+    lengths:suitLen});
+  // Suits & jackets — UK/US chest inches
+  C.push({...base, id:"s-nc-suit-uk", brand:"Northcoast Tailoring", product:"Two-piece suit", categories:["suits","jackets"], region:"UK / US", sizeSystem:"Chest size (in)", basis:"body",
+    keys:{chest:3, shoulder:1, waist:1},
+    sizes:[36,38,40,42,44,46].map(n=>{const c=n*2.54; return {label:String(n), body:{chest:span(c-2.54,c+2.54), shoulder:span(c*0.47-1.2,c*0.47+1.2), waist:span(c-17.5,c-12.5)}};}),
+    lengths:{...suitLen, options:[{label:"S",range:[155,172]},{label:"R",range:[172,184]},{label:"L",range:[184,200]}]}});
+  // Jackets — garment chart (finished garment measurements)
+  C.push({...base, id:"s-ivy-field-garment", brand:"Studio Ivy", product:"Field jacket (garment measurements)", categories:["jackets"], region:"International", sizeSystem:"Letter (XS–XXL)", basis:"garment",
+    keys:{chest:3, shoulder:2, arm:1},
+    ease:{chest:{slim:6,regular:10,relaxed:16}, shoulder:{slim:0,regular:1,relaxed:2.5}, arm:{slim:1.5,regular:2.5,relaxed:3}},
+    tolerance:{chest:4, shoulder:1.5, arm:2},
+    sizes:LETTERS.map((l,i)=>({label:l, garment:{chest:[98,104,110,116,122,130][i], shoulder:[42,44,46,48,50,52][i], arm:[61,62.5,64,65.5,67,68][i]}}))});
+  // Outerwear — letter sizes
+  C.push({...base, id:"s-ivy-coat-intl", brand:"Studio Ivy", product:"Wool overcoat", categories:["outerwear"], region:"International", sizeSystem:"Letter (XS–XXL)", basis:"body",
+    keys:{chest:3, shoulder:1, hips:1},
+    sizes:LETTERS.map((l,i)=>({label:l, body:{chest:[[84,90],[90,96],[96,102],[102,108],[108,116],[116,124]][i], shoulder:[[40,42],[42,44],[44,46],[46,48],[48,50.5],[50.5,53]][i], hips:[[88,94],[94,100],[100,106],[106,112],[112,120],[120,128]][i]}})),
+    lengths:{m:"arm", title:"Sleeve", options:[{label:"Regular sleeve",range:[48,64]},{label:"Long sleeve",range:[64,75]}]}});
+  C.push({...base, id:"s-nc-coat-eu", brand:"Northcoast Tailoring", product:"Car coat", categories:["outerwear"], region:"EU", sizeSystem:"EU numeric (44–56)", basis:"body",
+    keys:{chest:3, shoulder:1},
+    sizes:[44,46,48,50,52,54,56].map(n=>({label:String(n), body:{chest:span(2*n-2,2*n+2), shoulder:span(n*0.94-0.9,n*0.94+0.9)}}))});
+  // Dresses & skirts — UK / EU / US labels on one sample grade
+  const dressLabels = {UK:[6,8,10,12,14,16,18], EU:[34,36,38,40,42,44,46], US:[2,4,6,8,10,12,14]};
+  for (const reg of ["UK","EU","US"]) {
+    C.push({...base, id:"s-ivy-dress-"+reg.toLowerCase(), brand:"Studio Ivy", product:"Wrap dress", categories:["dresses"], region:reg, sizeSystem:reg+" numeric", basis:"body",
+      keys:{chest:2, waist:2, hips:2},
+      sizes:dressLabels[reg].map((n,i)=>({label:String(n), body:{chest:[79+5*i,84+5*i], waist:[61+5*i,66+5*i], hips:[86+5*i,91+5*i]}}))});
+    C.push({...base, id:"s-ivy-skirt-"+reg.toLowerCase(), brand:"Studio Ivy", product:"A-line skirt", categories:["skirts"], region:reg, sizeSystem:reg+" numeric", basis:"body",
+      keys:{waist:2, hips:2},
+      sizes:dressLabels[reg].map((n,i)=>({label:String(n), body:{waist:[61+5*i,66+5*i], hips:[86+5*i,91+5*i]}}))});
+  }
+  C.push({...base, id:"s-nc-skirt-intl", brand:"Northcoast Tailoring", product:"Pencil skirt", categories:["skirts"], region:"International", sizeSystem:"Letter (XS–XL)", basis:"body",
+    keys:{waist:2, hips:2},
+    sizes:["XS","S","M","L","XL"].map((l,i)=>({label:l, body:{waist:[62+6*i,68+6*i], hips:[88+6*i,94+6*i]}}))});
+  // Trousers — US waist/inseam
+  C.push({...base, id:"s-nc-chino-us", brand:"Northcoast Tailoring", product:"Chino", categories:["trousers"], region:"US", sizeSystem:"Waist × inseam (in)", basis:"body",
+    keys:{waist:3, hips:1},
+    sizes:[28,30,32,34,36,38].map(w=>{const c=w*2.54; return {label:"W"+w, body:{waist:span(c-2.54,c+2.54), hips:span(c+14,c+19.1)}};}),
+    lengths:{m:"inseam", title:"Inseam", options:[{label:"L30",range:[73.7,78.7]},{label:"L32",range:[78.7,83.8]},{label:"L34",range:[83.8,90]}]}});
+  // Trousers — EU numeric
+  C.push({...base, id:"s-ivy-trouser-eu", brand:"Studio Ivy", product:"Pleated trouser", categories:["trousers"], region:"EU", sizeSystem:"EU numeric (44–54)", basis:"body",
+    keys:{waist:3, hips:2},
+    sizes:[44,46,48,50,52,54].map(n=>({label:String(n), body:{waist:[2*n-14,2*n-10], hips:[2*n+2,2*n+6]}})),
+    lengths:{m:"inseam", title:"Leg", options:[{label:"Short leg",range:[68,76]},{label:"Regular leg",range:[76,82]},{label:"Long leg",range:[82,90]}]}});
+  return C;
+}
+const BUILTIN = builtInCharts();
+
+/* ---------- app state ---------- */
+const STEPS = ["Welcome","Profile","Height","Garment","Brand & fit","Photos","Review","Your size"];
+const S = {
+  step:0, profiles:[], customCharts:[], activeId:null,
+  store:"connecting", storeNote:"",
+  cam:{state:"checking", detail:""},
+  consent:false,
+  photos:{front:null, side:null},
+  sheet:null, confirm:null, toast:"", toastTimer:null,
+  chartDraft:"", chartErr:"", chartOk:"",
+  newName:"", newAdult:false, newErr:"",
+  heightErr:"", photoErr:"", resultChartPick:null
+};
+let DB = null, UID = null;
+
+const active = () => S.profiles.find(p => p.id === S.activeId) || null;
+const allCharts = () => BUILTIN.concat(S.customCharts);
+const getChart = id => allCharts().find(c => c.id === id) || null;
+const units = () => active()?.units || "cm";
+
+function makeProfile(name){
+  const now = Date.now();
+  return {id:newId("p"), kind:"profile", name:name || "My profile", adult:true, units:"cm", heightCm:null, meas:{}, prefs:{category:null, chartId:null, fit:"regular"}, createdAt:now, updatedAt:now};
+}
+
+/* ---------- units ---------- */
+function toUnit(cm, u = units()){ return u === "in" ? cm / 2.54 : cm; }
+function fromUnit(v, u = units()){ return u === "in" ? v * 2.54 : v; }
+function fmtNum(cm, u = units()){
+  if (cm == null || isNaN(cm)) return "—";
+  if (u === "in") { const v = cm / 2.54; return (Math.round(v * 4) / 4).toFixed(2).replace(/\.?0+$/,""); }
+  return String(Math.round(cm * 2) / 2);
+}
+const fmt = (cm, u = units()) => cm == null ? "—" : fmtNum(cm, u) + (u === "in" ? " in" : " cm");
+const fmtRange = (rg, u = units()) => fmtNum(rg[0], u) + "–" + fmtNum(rg[1], u) + (u === "in" ? " in" : " cm");
+function fmtHeight(cm, u = units()){
+  if (!cm) return "—";
+  if (u === "in") { const t = Math.round(cm / 2.54); return Math.floor(t / 12) + "′ " + (t % 12) + "″"; }
+  return Math.round(cm) + " cm";
+}
+
+/* ---------- persistence: private db subtree when available, otherwise this session only ---------- */
+const writeChains = {}, writeTimers = {};
+function persist(p, now = false){
+  if (!p) return;
+  p.updatedAt = Date.now();
+  if (S.store !== "db") return;
+  clearTimeout(writeTimers[p.id]);
+  const run = () => {
+    const body = JSON.parse(JSON.stringify(p)); delete body._saved;
+    writeChains[p.id] = (writeChains[p.id] || Promise.resolve())
+      .then(() => DB.collection("data/users/" + UID).doc(p.id).set(body))
+      .catch(dbFailed);
+  };
+  if (now) run(); else writeTimers[p.id] = setTimeout(run, 700);
+}
+function removeDoc(id){
+  clearTimeout(writeTimers[id]);
+  if (S.store !== "db") return Promise.resolve();
+  return (writeChains[id] || Promise.resolve()).then(() => DB.collection("data/users/" + UID).doc(id).delete()).catch(dbFailed);
+}
+function dbFailed(e){
+  if (S.store !== "db") return;
+  const code = e && e.code;
+  if (code === "unavailable") { toast("Couldn't save just now. Your changes are still on screen."); return; }
+  S.store = "session";
+  S.storeNote = code === "quota_exceeded" ? "Storage is full, so new changes are kept for this session only."
+    : "Saving isn't allowed for you on this page, so profiles are kept for this session only.";
+  render();
+}
+async function initStorage(){
+  const c = window.claude;
+  if (!c || typeof c.use !== "function") { S.store = "session"; S.storeNote = "This viewer doesn't offer saved storage, so profiles last until you close the page."; render(); return; }
+  try {
+    const [user, db] = await Promise.all([c.use("user"), c.use("db")]);
+    const id = user ? await user.id() : null;
+    if (!db || !id) { S.store = "session"; S.storeNote = "Saved storage needs you to be signed in to Claude. Profiles last until you close the page."; render(); return; }
+    DB = db; UID = id; S.store = "db";
+    // Anything created before storage connected gets saved now.
+    S.profiles.forEach(p => persist(p, true));
+    DB.collection("data/users/" + UID).onSnapshot(snap => {
+      const remoteP = [], remoteC = [];
+      snap.docs.forEach(d => { const v = d.data(); if (!v) return; if (v.kind === "profile") remoteP.push(v); else if (v.kind === "chart") remoteC.push(v); });
+      const merged = new Map(S.profiles.map(p => [p.id, p]));
+      remoteP.forEach(r => { const l = merged.get(r.id); if (!l || (r.updatedAt || 0) > (l.updatedAt || 0)) merged.set(r.id, JSON.parse(JSON.stringify(r))); });
+      const remoteIds = new Set(remoteP.map(r => r.id));
+      // Drop local copies the store no longer has (deleted on another device), but keep unsaved new ones.
+      for (const [k, v] of merged) if (!remoteIds.has(k) && v._saved) merged.delete(k);
+      remoteP.forEach(r => { const m = merged.get(r.id); if (m) m._saved = true; });
+      S.profiles = [...merged.values()].sort((a,b) => a.createdAt - b.createdAt);
+      S.customCharts = remoteC.map(c => JSON.parse(JSON.stringify(c)));
+      if (S.activeId && !active()) S.activeId = null;
+      render();
+    }, () => { S.store = "session"; S.storeNote = "Lost the connection to saved storage. Changes now last for this session only."; render(); });
+    render();
+  } catch (e) {
+    S.store = "session"; S.storeNote = "Saved storage couldn't start, so profiles last until you close the page."; render();
+  }
+}
+
+/* ---------- camera capability check ---------- */
+async function detectCamera(){
+  const api = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+  if (!api) { S.cam = {state:"none", detail:"This browser view has no camera API."}; return render(); }
+  let policy = null;
+  try {
+    if (document.permissionsPolicy && document.permissionsPolicy.allowsFeature) policy = document.permissionsPolicy.allowsFeature("camera");
+    else if (document.featurePolicy && document.featurePolicy.allowsFeature) policy = document.featurePolicy.allowsFeature("camera");
+  } catch {}
+  if (policy === false) { S.cam = {state:"blocked", detail:"The Claude viewer doesn't allow Artifacts to use the camera."}; return render(); }
+  let perm = null;
+  try { if (navigator.permissions) perm = (await navigator.permissions.query({name:"camera"})).state; } catch {}
+  if (perm === "denied") S.cam = {state:"denied", detail:"Camera permission is turned off for this page."};
+  else S.cam = {state:"maybe", detail:"The camera API is present. It works only if this viewer allows it, which you'll see when you try."};
+  render();
+}
+
+/* ---------- photo quality checks (on-device, canvas) ---------- */
+function analyseImage(img){
+  const maxSide = 360, k = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
+  const w = Math.max(1, Math.round(img.naturalWidth * k)), h = Math.max(1, Math.round(img.naturalHeight * k));
+  const cv = document.createElement("canvas"); cv.width = w; cv.height = h;
+  const ctx = cv.getContext("2d", {willReadFrequently:true}); ctx.drawImage(img, 0, 0, w, h);
+  const d = ctx.getImageData(0, 0, w, h).data, g = new Float32Array(w * h);
+  let sum = 0;
+  for (let i = 0, j = 0; i < d.length; i += 4, j++) { const y = 0.2126*d[i] + 0.7152*d[i+1] + 0.0722*d[i+2]; g[j] = y; sum += y; }
+  const mean = sum / g.length;
+  let varSum = 0; for (let j = 0; j < g.length; j++) varSum += (g[j] - mean) ** 2;
+  const sd = Math.sqrt(varSum / g.length);
+  let lap = 0, lapSq = 0, n = 0;
+  for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
+    const i = y * w + x, v = 4*g[i] - g[i-1] - g[i+1] - g[i-w] - g[i+w];
+    lap += v; lapSq += v*v; n++;
+  }
+  const lapVar = n ? lapSq / n - (lap / n) ** 2 : 0;
+  const checks = [];
+  checks.push(mean < 60 ? {s:"warn", t:"Lighting: too dark. Face a window or turn on more lights."}
+    : mean > 215 ? {s:"warn", t:"Lighting: very bright. Avoid standing in front of a window."}
+    : {s:"ok", t:"Lighting looks even enough."});
+  checks.push(sd < 28 ? {s:"warn", t:"Low contrast. A plain wall that differs from your clothing helps."} : {s:"ok", t:"Body stands out from the background."});
+  checks.push(lapVar < 30 ? {s:"warn", t:"Sharpness: may be blurry. Hold the phone still or use a timer."} : {s:"ok", t:"Sharpness looks fine."});
+  checks.push(img.naturalHeight <= img.naturalWidth ? {s:"warn", t:"Landscape photo. A portrait photo fits a full body better."} : {s:"ok", t:"Portrait orientation."});
+  checks.push(img.naturalHeight < 900 ? {s:"warn", t:"Low resolution ("+img.naturalWidth+"×"+img.naturalHeight+"). Marking points will be less precise."} : {s:"ok", t:"Resolution is enough for marking points."});
+  checks.push({s:"neutral", t:"Full-body framing and posture can't be checked automatically here. Please confirm them below."});
+  return checks;
+}
+
+function loadPhoto(blob, view){
+  const url = URL.createObjectURL(blob);
+  const img = new Image();
+  img.onload = () => {
+    const prev = S.photos[view]; if (prev) URL.revokeObjectURL(prev.url);
+    S.photos[view] = {url, w:img.naturalWidth, h:img.naturalHeight, checks:analyseImage(img), confirm:{}, marks:{}};
+    S.photoErr = "";
+    render();
+    toast((view === "front" ? "Front" : "Side") + " photo added. It stays in this browser tab.");
+  };
+  img.onerror = () => { URL.revokeObjectURL(url); S.photoErr = "That file couldn't be opened as an image. Try a JPEG or PNG. On iPhone, the photo picker usually converts HEIC for you."; render(); };
+  img.src = url;
+}
+
+/* ---------- landmark points for photo estimates ---------- */
+const POINTS = {
+  front:[["head","Top of the head"],["feet","Floor between the heels"],["shoulderL","Shoulder tip, left side of photo"],["shoulderR","Shoulder tip, right side of photo"],
+    ["chestL","Chest edge at armpit level, left"],["chestR","Chest edge at armpit level, right"],["waistL","Waist edge at the narrowest point, left"],["waistR","Waist edge, right"],
+    ["hipL","Hip edge at the widest point, left"],["hipR","Hip edge, right"],["crotch","Crotch, between the legs"],["wrist","Wrist bone on the left-of-photo arm"]],
+  side:[["head","Top of the head"],["feet","Floor under the heel"],["chestF","Front of chest at armpit level"],["chestB","Back, same level as chest"],
+    ["waistF","Front of waist"],["waistB","Back of waist, same level"],["hipF","Front, at the widest hip level"],["hipB","Back of seat, same level"]]
+};
+const PAIRS = {front:[["shoulderL","shoulderR"],["chestL","chestR"],["waistL","waistR"],["hipL","hipR"],["shoulderL","wrist"],["head","feet"]], side:[["chestF","chestB"],["waistF","waistB"],["hipF","hipB"],["head","feet"]]};
+
+const ellipse = (a, b) => Math.PI * (3*(a+b) - Math.sqrt((3*a+b)*(a+3*b)));
+const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+const LV = ["Low","Medium","High"];
+const down = c => LV[Math.max(0, LV.indexOf(c) - 1)];
+
+function photoTrust(view){
+  const ph = S.photos[view]; if (!ph) return false;
+  const confirmed = ph.confirm.full && ph.confirm.fitted && ph.confirm.pose;
+  const warns = ph.checks.filter(c => c.s === "warn").length;
+  return confirmed && warns === 0;
+}
+function computeEstimates(){
+  const p = active(); const H = p?.heightCm; const out = {};
+  if (!H) return out;
+  const f = S.photos.front?.marks || {}, s = S.photos.side?.marks || {};
+  const scale = m => (m.head && m.feet && Math.abs(m.feet.y - m.head.y) > 80) ? H / Math.abs(m.feet.y - m.head.y) : null;
+  const sf = scale(f), ss = scale(s);
+  const put = (k, v, conf, how) => {
+    let c = conf;
+    const rg = MEAS[k].range, plausible = v >= rg[0] && v <= rg[1];
+    if (!plausible) c = "Low";
+    out[k] = {v:r1(v), conf:c, how, plausible};
+  };
+  const fT = photoTrust("front"), sT = photoTrust("side");
+  if (sf) {
+    let shoulderV = null;
+    if (f.shoulderL && f.shoulderR) { shoulderV = dist(f.shoulderL, f.shoulderR) * sf; put("shoulder", shoulderV, fT ? "Medium" : "Low", "Straight-line distance between the shoulder points, scaled by your height."); }
+    if (f.shoulderL && f.wrist) {
+      const armV = dist(f.shoulderL, f.wrist) * sf;
+      put("arm", armV, fT ? "Medium" : "Low", "Shoulder point to wrist point, scaled by your height. Assumes the arm hangs straight.");
+      if (shoulderV) put("sleeve", shoulderV / 2 + armV, "Low", "Half the shoulder width plus arm length. Combines two estimates, so it is less certain.");
+    }
+    if (f.crotch && f.feet) put("inseam", Math.abs(f.feet.y - f.crotch.y) * sf, fT ? "Medium" : "Low", "Vertical distance from the crotch point to the floor, scaled by your height.");
+    if (f.waistL && f.waistR && f.feet) put("outseam", Math.abs(f.feet.y - (f.waistL.y + f.waistR.y) / 2) * sf, fT ? "Medium" : "Low", "Vertical distance from waist level to the floor.");
+    if (ss) {
+      const circ = (aL, aR, bF, bB, key, word) => {
+        if (f[aL] && f[aR] && s[bF] && s[bB]) {
+          const wdt = Math.abs(f[aR].x - f[aL].x) * sf, dpt = Math.abs(s[bB].x - s[bF].x) * ss;
+          put(key, ellipse(wdt / 2, dpt / 2), "Low", "Width from the front photo ("+r1(wdt)+" cm) and depth from the side photo ("+r1(dpt)+" cm), treated as an ellipse. Real "+word+" shapes vary, so check this with a tape.");
+        }
+      };
+      circ("chestL","chestR","chestF","chestB","chest","chest");
+      circ("waistL","waistR","waistF","waistB","waist","waist");
+      circ("hipL","hipR","hipF","hipB","hips","hip");
+    }
+  }
+  return out;
+}
+
+/* ---------- recommendation engine ---------- */
+function measCm(p){ const M = {}; for (const [k, m] of Object.entries(p.meas || {})) if (m && m.v != null) M[k] = m.v; if (p.heightCm) M.height = p.heightCm; return M; }
+
+function scoreSize(chart, size, idx, M, fit){
+  const rows = []; let pen = 0, wsum = 0;
+  for (const [k, w] of Object.entries(chart.keys)) {
+    const v = M[k];
+    if (v == null) { rows.push({k, w, status:"missing"}); continue; }
+    wsum += w;
+    if (chart.basis === "garment") {
+      const g = size.garment[k], ease = (chart.ease?.[k]?.[fit]) ?? 0, tol = chart.tolerance?.[k] ?? 3;
+      const target = v + ease, diff = g - target, d = Math.abs(diff) / tol;
+      pen += w * d;
+      rows.push({k, w, v, g, ease, target, diff, status: Math.abs(diff) <= tol / 2 ? "good" : diff < 0 ? "snug" : "roomy"});
+    } else {
+      const [lo, hi] = size.body[k], width = Math.max(0.5, hi - lo);
+      let d = 0, status = "within";
+      if (v < lo - 0.3) { d = (lo - v) / width; status = "below"; }
+      else if (v > hi + 0.3) { d = (v - hi) / width; status = "above"; }
+      pen += w * d;
+      rows.push({k, w, v, lo, hi, pos:(v - lo) / width, status});
+    }
+  }
+  return {idx, label:size.label, size, rows, penalty: wsum ? pen / wsum : Infinity};
+}
+
+function pickLength(chart, M){
+  if (!chart.lengths) return null;
+  const v = M[chart.lengths.m];
+  if (v == null) return {missing:chart.lengths.m, title:chart.lengths.title};
+  const opts = chart.lengths.options;
+  let hit = opts.find(o => v >= o.range[0] && v <= o.range[1]);
+  let note = "";
+  if (!hit) {
+    if (v < opts[0].range[0]) { hit = opts[0]; note = "Shorter than this chart's shortest option, so expect to alter the length."; }
+    else { hit = opts[opts.length - 1]; note = "Longer than this chart's longest option, so the length may be short."; }
+  }
+  return {title:chart.lengths.title, m:chart.lengths.m, v, option:hit, note};
+}
+
+function recommend(chart, M, fit){
+  const keys = Object.entries(chart.keys);
+  const missing = keys.filter(([k]) => M[k] == null).map(([k]) => k);
+  const maxW = Math.max(...keys.map(([,w]) => w));
+  const missingCritical = keys.filter(([k, w]) => M[k] == null && w >= Math.min(2, maxW)).map(([k]) => k);
+  if (missingCritical.length || missing.length === keys.length) return {status:"incomplete", missing};
+  const scored = chart.sizes.map((s, i) => scoreSize(chart, s, i, M, fit));
+  const best = scored.reduce((a, b) => b.penalty < a.penalty - 1e-9 ? b : a);
+  const primaryKey = keys.slice().sort((a, b) => b[1] - a[1]).find(([k]) => M[k] != null)[0];
+  let dir = 0, betweenWhy = "";
+  if (chart.basis === "body") {
+    const above = best.rows.filter(r => r.status === "above"), below = best.rows.filter(r => r.status === "below");
+    const prim = best.rows.find(r => r.k === primaryKey);
+    if (above.length && !below.length) { dir = 1; betweenWhy = "Your " + names(above) + " " + (above.length > 1 ? "are" : "is") + " above " + best.label + "'s range."; }
+    else if (below.length && !above.length) { dir = -1; betweenWhy = "Your " + names(below) + " " + (below.length > 1 ? "are" : "is") + " below " + best.label + "'s range."; }
+    else if (above.length && below.length) { dir = prim.status === "above" ? 1 : prim.status === "below" ? -1 : (above[0].w >= below[0].w ? 1 : -1); betweenWhy = "Your " + names(above) + " point" + (above.length > 1 ? "" : "s") + " larger, while your " + names(below) + " point" + (below.length > 1 ? "" : "s") + " smaller."; }
+    else if (prim && prim.pos > 0.8) { dir = 1; betweenWhy = "Your " + MEAS[primaryKey].label.toLowerCase() + " is near the top of " + best.label + "'s range."; }
+    else if (prim && prim.pos < 0.2) { dir = -1; betweenWhy = "Your " + MEAS[primaryKey].label.toLowerCase() + " is near the bottom of " + best.label + "'s range."; }
+  } else {
+    const nbs = [scored[best.idx - 1], scored[best.idx + 1]].filter(Boolean).sort((a, b) => a.penalty - b.penalty);
+    if (nbs[0] && nbs[0].penalty - best.penalty < 0.3) { dir = nbs[0].idx > best.idx ? 1 : -1; betweenWhy = "Two garment sizes are about equally close to your measurements plus " + FITS[fit].label.toLowerCase() + " ease."; }
+  }
+  const nb = dir ? scored[best.idx + dir] : null;
+  let pick = best, between = null, edge = null;
+  if (nb) {
+    const pair = [best, nb].sort((a, b) => a.idx - b.idx);
+    if (chart.basis === "garment") pick = best;
+    else pick = fit === "slim" ? pair[0] : fit === "relaxed" ? pair[1] : (nb.penalty < best.penalty ? nb : best);
+    between = {pair, why:betweenWhy};
+  } else if (dir) {
+    edge = dir > 0 ? "You are above the largest size in this chart. The fit is likely to be tight; check the brand's extended sizes."
+      : "You are below the smallest size in this chart. The fit is likely to be loose; check the brand's petite or smaller sizes.";
+  }
+  const alts = [scored[pick.idx - 1], scored[pick.idx + 1]].filter(Boolean);
+  const confs = keys.map(([k]) => k).filter(k => M[k] != null).map(k => k === "height" ? "High" : (active().meas[k]?.conf || "High"));
+  const conf = confs.includes("Low") ? "Low" : confs.includes("Medium") ? "Medium" : "High";
+  return {status:"ok", scored, best, pick, between, edge, alts, missing, primaryKey, conf, length:pickLength(chart, M)};
+}
+function names(rows){ const n = rows.map(r => MEAS[r.k].label.toLowerCase()); return n.length > 1 ? n.slice(0, -1).join(", ") + " and " + n.at(-1) : n[0]; }
+
+function rowVerdict(chart, r){
+  if (r.status === "missing") return {t:"Not entered", c:"neutral"};
+  if (chart.basis === "garment") {
+    if (r.status === "good") return {t:"Matches", c:"ok"};
+    return r.status === "snug" ? {t:fmt(Math.abs(r.diff)) + " snugger", c:"warn"} : {t:fmt(r.diff) + " roomier", c:"warn"};
+  }
+  if (r.status === "within") return {t:"Within", c:"ok"};
+  return r.status === "above" ? {t:fmt(r.v - r.hi) + " over", c:"warn"} : {t:fmt(r.lo - r.v) + " under", c:"warn"};
+}
+
+function reasons(chart, rec, fit){
+  const out = [], s = rec.pick;
+  const kw = Object.entries(chart.keys).sort((a, b) => b[1] - a[1]);
+  out.push("This chart compares " + kw.map(([k]) => MEAS[k].label.toLowerCase()).join(", ") + ". " + MEAS[kw[0][0]].label + " counts most.");
+  for (const r of s.rows) {
+    if (r.status === "missing") { out.push(MEAS[r.k].label + " wasn't entered, so it wasn't compared."); continue; }
+    if (chart.basis === "garment") {
+      out.push(s.label + " measures " + fmt(r.g) + " at the " + MEAS[r.k].label.toLowerCase() + ". Your " + fmt(r.v) + " plus " + fmt(r.ease) + " " + fit + " ease is " + fmt(r.target) + (r.status === "good" ? ", a close match." : r.status === "snug" ? ", so it will feel snugger than your preference." : ", so it will feel roomier than your preference."));
+    } else if (r.status === "within") {
+      out.push("Your " + MEAS[r.k].label.toLowerCase() + " (" + fmt(r.v) + ") is within " + s.label + "'s " + fmtRange([r.lo, r.hi]) + ".");
+    } else {
+      out.push("Your " + MEAS[r.k].label.toLowerCase() + " (" + fmt(r.v) + ") is " + (r.status === "above" ? fmt(r.v - r.hi) + " above" : fmt(r.lo - r.v) + " below") + " " + s.label + "'s " + fmtRange([r.lo, r.hi]) + ".");
+    }
+  }
+  if (rec.between) {
+    const [a, b] = rec.between.pair;
+    out.push(rec.between.why + " That puts you between " + a.label + " and " + b.label + ".");
+    if (chart.basis === "body") out.push(fit === "slim" ? "You chose Slim, so " + a.label + " comes first for a closer fit." : fit === "relaxed" ? "You chose Relaxed, so " + b.label + " comes first for more room." : "You chose Regular, so we picked the size whose ranges match you more closely.");
+    else out.push("Your " + fit + " preference is already built into the ease above. " + rec.pick.label + " is the closer of the two.");
+  }
+  if (rec.edge) out.push(rec.edge);
+  return out;
+}
+
+/* ---------- rendering ---------- */
+function pill(text, cls){ return '<span class="pill ' + cls + '">' + esc(text) + '</span>'; }
+const confCls = c => c === "High" ? "ok" : c === "Medium" ? "accent" : "warn";
+function notice(cls, icon, html){ return '<div class="notice ' + cls + '">' + I[icon] + '<div>' + html + '</div></div>'; }
+
+function header(){
+  const st = S.store === "db" ? pill("Saved privately", "ok") : S.store === "connecting" ? pill("Connecting storage", "neutral") : pill("Session only", "warn");
+  const pct = (S.step / (STEPS.length - 1)) * 100;
+  return '<header class="top"><div class="toprow">' +
+    '<div class="wordmark">Fit<i>Metric</i></div>' + st +
+    '<button class="iconbtn" data-act="sheet" data-v="profiles" aria-label="Profiles">' + I.user + '</button>' +
+    '<button class="iconbtn" data-act="sheet" data-v="charts" aria-label="Size charts">' + I.tag + '</button>' +
+    '<button class="iconbtn" data-act="sheet" data-v="privacy" aria-label="Privacy and data">' + I.lock + '</button>' +
+    '</div>' +
+    '<div class="tape" role="progressbar" aria-valuemin="1" aria-valuemax="8" aria-valuenow="' + (S.step + 1) + '" aria-label="Progress">' +
+    '<div class="tape-meta"><span><b>' + esc(STEPS[S.step]) + '</b></span><span class="mono muted">Step ' + (S.step + 1) + ' of ' + STEPS.length + '</span></div>' +
+    '<div class="tape-bar"><div class="tape-fill" style="width:' + Math.max(4, pct) + '%"></div><div class="tape-ticks"></div>' +
+    '<div class="tape-steps">' + STEPS.map((_, i) => '<span class="' + (i <= S.step && pct >= (i / 8) * 100 + 6 ? "on" : "") + '">' + (i + 1) + '</span>').join("") + '</div></div></div></header>';
+}
+
+function screenWelcome(){
+  const camTxt = {checking:["Checking…","neutral"], maybe:["May be available","accent"], blocked:["Blocked in this viewer","warn"], denied:["Permission off","warn"], none:["Not available","warn"]}[S.cam.state];
+  const stTxt = S.store === "db" ? ["Private to you","ok"] : S.store === "connecting" ? ["Connecting…","neutral"] : ["This session only","warn"];
+  return '<section class="screen">' +
+    '<div class="hero"><p class="eyebrow">Measure · Compare · Choose</p>' +
+    '<h1>Your measurements, <em>then</em> your size.</h1>' +
+    '<p class="lede">FitMetric guides you through height, photos and a tape check, then compares you with a brand\'s size chart and explains the result.</p>' +
+    '<div class="rule-art" aria-hidden="true">' + [0,10,20,30,40,50,60,70,80,90].map((n,i)=>'<span style="left:calc(' + (i*40) + 'px + 3px)">' + n + '</span>').join("") + '</div></div>' +
+    '<div class="card"><p class="eyebrow">Before you start</p>' +
+    '<div class="stack small">' +
+    '<div class="row" style="align-items:flex-start;flex-wrap:nowrap">' + I.lock.replace('<svg','<svg width="20" height="20" style="flex:none;margin-top:2px"') + '<p><b>Privacy.</b> Photos are processed in this browser tab. They are never uploaded or saved, and they disappear when you close the page. Only measurements are saved, and you can delete them at any time.</p></div>' +
+    '<div class="row" style="align-items:flex-start;flex-wrap:nowrap">' + I.ruler.replace('<svg','<svg width="20" height="20" style="flex:none;margin-top:2px"') + '<p><b>Accuracy.</b> Photos give estimates, not tape-measure results. One photo can\'t capture every measurement, so circumferences need front and side views and are marked low confidence. You can edit every value.</p></div>' +
+    '<div class="row" style="align-items:flex-start;flex-wrap:nowrap">' + I.user.replace('<svg','<svg width="20" height="20" style="flex:none;margin-top:2px"') + '<p><b>Adults only.</b> This demo supports adult profiles. FitMetric doesn\'t ask for or guess age, gender, ethnicity or health.</p></div>' +
+    '</div></div>' +
+    '<div class="card"><p class="eyebrow">What works in this environment</p><div class="envlist">' +
+    '<div class="envitem">' + I.camera.replace('<svg','<svg width="22" height="22" style="flex:none"') + '<div><strong>Live camera ' + pill(camTxt[0], camTxt[1]) + '</strong><p class="small muted">' + esc(S.cam.detail || "Checking whether this view can use the camera.") + ' You can always take photos with the iPhone Camera app and upload them.</p></div></div>' +
+    '<div class="envitem">' + I.pin.replace('<svg','<svg width="22" height="22" style="flex:none"') + '<div><strong>Photo estimates ' + pill("You mark points", "accent") + '</strong><p class="small muted">Automatic body detection can\'t load inside Claude Artifacts. Instead, you tap points like shoulders and waist on your photo, and FitMetric measures them using your height as the scale.</p></div></div>' +
+    '<div class="envitem">' + I.lock.replace('<svg','<svg width="22" height="22" style="flex:none"') + '<div><strong>Saved profiles ' + pill(stTxt[0], stTxt[1]) + '</strong><p class="small muted">' + esc(S.store === "db" ? "Profiles are stored in your private space for this Artifact. Other viewers, including the person who shared it, can't see them." : S.store === "connecting" ? "Checking for Claude's private storage." : S.storeNote) + '</p></div></div>' +
+    '<div class="envitem">' + I.tag.replace('<svg','<svg width="22" height="22" style="flex:none"') + '<div><strong>Brand charts ' + pill("Samples", "warn") + '</strong><p class="small muted">The built-in charts use fictional brands with sample values for demonstration. They are not official size charts. You can add real charts with a source link.</p></div></div>' +
+    '</div></div></section>';
+}
+
+function screenProfile(){
+  const list = S.profiles.map(p => '<button class="choice" data-act="pick-profile" data-v="' + esc(p.id) + '" aria-pressed="' + (p.id === S.activeId) + '">' +
+    '<span class="avatar">' + esc((p.name || "?").trim().charAt(0).toUpperCase() || "?") + '</span><span style="min-width:0"><strong>' + esc(p.name) + '</strong><span class="sub">' +
+    (p.heightCm ? fmtHeight(p.heightCm, p.units) + " · " : "") + Object.keys(p.meas || {}).length + ' measurement' + (Object.keys(p.meas || {}).length === 1 ? "" : "s") + ' saved</span></span></button>').join("");
+  return '<section class="screen"><div class="stack"><p class="eyebrow">Step 2</p><h2>Who are we measuring?</h2>' +
+    '<p class="lede">Pick a profile or create one. A profile keeps one person\'s height, measurements and preferences together.</p></div>' +
+    (S.profiles.length ? '<div class="stack">' + list + '</div>' : notice("", "info", "No profiles yet. Create the first one below.")) +
+    '<form class="card" id="newprof" novalidate><h3>New profile</h3>' +
+    '<label class="field" for="np-name">Profile name<input class="input" id="np-name" maxlength="40" autocomplete="off" placeholder="For example: Me, or a nickname" value="' + esc(S.newName) + '"></label>' +
+    '<label class="check" for="np-adult"><input type="checkbox" id="np-adult"' + (S.newAdult ? " checked" : "") + '><span>This person is 18 or older. This demo supports adult profiles only.</span></label>' +
+    (S.newErr ? '<p class="err" role="alert">' + esc(S.newErr) + '</p>' : "") +
+    '<button class="btn ghost" type="submit">Create profile</button>' +
+    '<p class="small muted">Use any name you like. FitMetric doesn\'t need your real name, age or gender.</p></form></section>';
+}
+
+function screenHeight(){
+  const p = active(); const u = p.units;
+  let inputs;
+  if (u === "cm") {
+    inputs = '<label class="field" for="h-cm">Height<div class="unitwrap"><input class="input" id="h-cm" inputmode="decimal" type="number" step="0.5" min="140" max="220" value="' + (p.heightCm ? r1(p.heightCm) : "") + '" placeholder="e.g. 175"><em>cm</em></div></label>';
+  } else {
+    const t = p.heightCm ? Math.round(p.heightCm / 2.54) : null;
+    inputs = '<div class="grid2"><label class="field" for="h-ft">Feet<div class="unitwrap"><input class="input" id="h-ft" inputmode="numeric" type="number" min="4" max="7" value="' + (t ? Math.floor(t / 12) : "") + '" placeholder="5"><em>ft</em></div></label>' +
+      '<label class="field" for="h-in">Inches<div class="unitwrap"><input class="input" id="h-in" inputmode="numeric" type="number" min="0" max="11" value="' + (t ? t % 12 : "") + '" placeholder="9"><em>in</em></div></label></div>';
+  }
+  return '<section class="screen"><div class="stack"><p class="eyebrow">Step 3</p><h2>Height sets the scale.</h2>' +
+    '<p class="lede">Photo estimates measure everything relative to your height, so an accurate height matters most. Measure it without shoes.</p></div>' +
+    '<div class="card"><p class="eyebrow">Units for this profile</p>' +
+    '<div class="seg" role="group" aria-label="Units"><button data-act="units" data-v="cm" aria-pressed="' + (u === "cm") + '">Centimetres</button><button data-act="units" data-v="in" aria-pressed="' + (u === "in") + '">Inches</button></div>' +
+    inputs + (S.heightErr ? '<p class="err" role="alert">' + esc(S.heightErr) + '</p>' : "") +
+    '<p class="small muted">' + esc(MEAS.height.how) + ' Accepted range: ' + (u === "cm" ? "140–220 cm" : "4′ 7″–7′ 3″") + '.</p></div></section>';
+}
+
+function screenCategory(){
+  const cur = active().prefs.category;
+  return '<section class="screen"><div class="stack"><p class="eyebrow">Step 4</p><h2>What are you shopping for?</h2>' +
+    '<p class="lede">FitMetric only asks for the measurements this garment needs.</p></div>' +
+    '<div class="catgrid">' + Object.entries(CATS).map(([k, c]) => '<button class="choice" data-act="cat" data-v="' + k + '" aria-pressed="' + (cur === k) + '"><span class="ic">' + I[c.icon] + '</span><span><strong>' + c.label + '</strong><span class="sub">' + c.req.map(m => MEAS[m].label).join(", ") + '</span></span></button>').join("") + '</div></section>';
+}
+
+function chartsFor(cat){ return allCharts().filter(c => c.categories.includes(cat)); }
+
+function screenBrand(){
+  const p = active(); const cat = p.prefs.category; const charts = chartsFor(cat);
+  const cur = getChart(p.prefs.chartId);
+  const brands = [...new Set(charts.map(c => c.brand))];
+  const brand = cur ? cur.brand : null;
+  const regions = brand ? charts.filter(c => c.brand === brand) : [];
+  return '<section class="screen"><div class="stack"><p class="eyebrow">Step 5</p><h2>Brand, region and fit.</h2>' +
+    '<p class="lede">Sizes differ between brands and regions, so pick the chart for the label you\'re buying.</p></div>' +
+    (charts.length === 0 ? notice("warn", "alert", "No size charts exist for " + CATS[cat].label.toLowerCase() + " yet. Add one from <b>Size charts</b>.") : "") +
+    '<div class="stack"><p class="eyebrow">Brand</p>' + brands.map(b => {
+      const bc = charts.filter(c => c.brand === b); const sample = bc.every(c => c.isSample);
+      return '<button class="choice" data-act="brand" data-v="' + esc(b) + '" aria-pressed="' + (brand === b) + '"><span class="ic">' + I.tag + '</span><span style="min-width:0"><strong>' + esc(b) + ' ' + (sample ? pill("Sample chart", "sample") : pill("Added chart", "accent")) + '</strong><span class="sub">' + esc([...new Set(bc.map(c => c.product))].join(" · ")) + '</span></span></button>';
+    }).join("") + '</div>' +
+    (brand ? '<div class="stack"><p class="eyebrow">Region and product</p><div class="chips">' + regions.map(c => '<button class="chip" data-act="chart" data-v="' + esc(c.id) + '" aria-pressed="' + (cur && cur.id === c.id) + '">' + esc(c.region) + (regions.filter(x => x.region === c.region).length > 1 || new Set(regions.map(x => x.product)).size > 1 ? " · " + esc(c.product) : "") + '</button>').join("") + '</div>' +
+      (cur ? '<p class="small muted">' + esc(cur.sizeSystem) + ' · ' + (cur.basis === "garment" ? "Garment measurements (the finished piece)" : "Body measurements (the wearer)") + '</p>' : "") + '</div>' : "") +
+    '<div class="stack"><p class="eyebrow">Fit preference</p><div class="seg" role="group" aria-label="Fit preference">' +
+    Object.entries(FITS).map(([k, f]) => '<button data-act="fit" data-v="' + k + '" aria-pressed="' + (p.prefs.fit === k) + '">' + f.label + '</button>').join("") + '</div>' +
+    '<p class="small muted">' + esc(FITS[p.prefs.fit].sub) + '</p></div></section>';
+}
+
+function slotHtml(view){
+  const ph = S.photos[view], label = view === "front" ? "Front view" : "Side view";
+  const tips = view === "front" ? "Face the camera, feet hip-width apart, arms held slightly away from your sides." : "Turn 90° to your left, feet together, arms relaxed by your sides.";
+  if (!S.consent) return '<div class="card flat"><h3>' + label + '</h3><p class="small muted">Agree to on-device processing above to add this photo.</p></div>';
+  const camBtn = (S.cam.state !== "none" && S.cam.state !== "blocked") ? '<button class="btn ghost sm" data-act="live" data-v="' + view + '">' + I.camera + 'Live camera</button>' : "";
+  const fileBtn = '<label class="btn ' + (ph ? "ghost" : "primary") + ' sm" for="file-' + view + '">' + I.image + (ph ? "Replace" : "Take or choose photo") + '</label><input class="sr" type="file" accept="image/*" id="file-' + view + '" data-view="' + view + '">';
+  if (!ph) return '<div class="card slot"><div class="row between"><h3>' + label + '</h3>' + pill(view === "front" ? "Needed for estimates" : "Needed for circumferences", "neutral") + '</div>' +
+    '<div class="dropzone">' + (view === "front" ? I.figure : I.figside) + '<p class="small">' + tips + ' Whole body in frame, from just above your head to below your feet.</p></div>' +
+    '<div class="row">' + fileBtn + camBtn + '</div></div>';
+  const n = POINTS[view].length, done = POINTS[view].filter(([k]) => ph.marks[k]).length;
+  const conf = [["full","Head and feet are fully in the photo"],["fitted","Fitted clothing, no bulky layers"],["pose", view === "front" ? "Standing straight, arms slightly away from the body" : "Standing side-on, arms relaxed"]];
+  return '<div class="card slot"><div class="row between"><h3>' + label + '</h3>' + (done === n ? pill("Points marked", "ok") : pill(done + " of " + n + " points", done ? "accent" : "neutral")) + '</div>' +
+    '<div class="thumbwrap"><div class="thumb"><img src="' + ph.url + '" alt="' + label + ' photo">' + marksSvg(view, ph, true) + '</div>' +
+    '<ul class="qlist">' + ph.checks.map(c => '<li><span class="dot ' + c.s + '"></span><span>' + esc(c.t) + '</span></li>').join("") + '</ul></div>' +
+    '<div class="stack">' + conf.map(([k, t]) => '<label class="check" for="cf-' + view + '-' + k + '"><input type="checkbox" id="cf-' + view + '-' + k + '" data-act="confirm" data-view="' + view + '" data-v="' + k + '"' + (ph.confirm[k] ? " checked" : "") + '><span>' + t + '</span></label>').join("") + '</div>' +
+    '<div class="row"><button class="btn primary sm" data-act="mark" data-v="' + view + '">' + I.pin + (done ? "Edit points" : "Mark points") + '</button>' + fileBtn + camBtn +
+    '<button class="btn danger sm" data-act="rm-photo" data-v="' + view + '">' + I.trash + 'Remove</button></div></div>';
+}
+
+function marksSvg(view, ph, mini){
+  const W = ph.w, H = ph.h, rr = Math.max(W, H) / (mini ? 60 : 110), sw = Math.max(W, H) / (mini ? 200 : 380);
+  let s = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" aria-hidden="true">';
+  for (const [a, b] of PAIRS[view]) { const A = ph.marks[a], B = ph.marks[b]; if (A && B) s += '<line x1="' + A.x + '" y1="' + A.y + '" x2="' + B.x + '" y2="' + B.y + '" stroke="#F4C95D" stroke-width="' + sw + '" stroke-dasharray="' + sw*3 + ' ' + sw*2 + '"/>'; }
+  for (const [k] of POINTS[view]) { const m = ph.marks[k]; if (m) s += '<circle cx="' + m.x + '" cy="' + m.y + '" r="' + rr + '" fill="#F4C95D" stroke="#1d1b18" stroke-width="' + sw + '"/>'; }
+  return s + '</svg>';
+}
+
+function screenPhotos(){
+  const p = active(); const est = computeEstimates(); const need = CATS[p.prefs.category].req.concat(CATS[p.prefs.category].opt);
+  const estKeys = Object.keys(est).filter(k => need.includes(k));
+  const camLine = {
+    checking:"Checking camera support…",
+    maybe:"Live camera may work here. If this viewer blocks it, you'll see a clear message and can upload instead.",
+    blocked:"Live camera is blocked inside the Claude Artifact viewer. Use the iPhone Camera app, then upload the photos below.",
+    denied:"Camera permission is turned off. Allow it in your browser settings, or take photos with the Camera app and upload them.",
+    none:"This view has no camera access. Take photos with the iPhone Camera app and upload them below."
+  }[S.cam.state];
+  return '<section class="screen"><div class="stack"><p class="eyebrow">Step 6 · Optional</p><h2>Photos for estimates.</h2>' +
+    '<p class="lede">Add a front and a side photo, then mark a few points. FitMetric turns those points into estimates using your height of ' + fmtHeight(p.heightCm) + '. You can also skip this and enter everything with a tape measure.</p></div>' +
+    '<div class="card"><label class="check" for="consent"><input type="checkbox" id="consent" data-act="consent"' + (S.consent ? " checked" : "") + '><span><b>I agree to FitMetric processing my photos in this browser tab.</b> They are not uploaded, not saved, and are cleared when I close the page or remove them.</span></label></div>' +
+    (S.consent ? notice(S.cam.state === "maybe" ? "" : "warn", "camera", esc(camLine) + '<br><span class="small">Setup: prop the phone at waist height about 2–3 m away, or ask someone to help. Use a plain wall, good light and fitted clothes. Remove shoes.</span>') : "") +
+    (S.photoErr ? notice("bad", "alert", esc(S.photoErr)) : "") +
+    slotHtml("front") + slotHtml("side") +
+    (S.consent ? '<div class="card"><div class="row between"><h3>Estimates from your points</h3>' + pill("Estimates", "accent") + '</div>' +
+      (estKeys.length ? '<div class="tablewrap"><table><thead><tr><th>Measurement</th><th class="mono">Estimate</th><th>Confidence</th></tr></thead><tbody>' +
+        estKeys.map(k => '<tr><td>' + MEAS[k].label + (est[k].plausible ? "" : ' <span class="pill bad">Check</span>') + '</td><td class="mono">' + fmt(est[k].v) + '</td><td>' + pill(est[k].conf, confCls(est[k].conf)) + '</td></tr>').join("") + '</tbody></table></div>' +
+        '<p class="small muted">These go to the review step, where you can correct them. Values you typed yourself are never overwritten.</p>'
+        : '<p class="small muted">' + (S.photos.front ? "Mark the head and feet first, since they set the scale. Then mark the other points." : "No estimates yet. Add a front photo to begin.") + '</p>') +
+      '<p class="small muted">Not estimated from photos: ' + need.filter(k => !PHOTO_ESTIMABLE.includes(k)).map(k => MEAS[k].label.toLowerCase()).join(", ").replace(/^$/, "nothing for this garment") + '. Enter those with a tape on the next step.</p></div>' : "") +
+    '</section>';
+}
+
+function applyEstimates(){
+  const p = active(); const est = computeEstimates(); const need = CATS[p.prefs.category].req.concat(CATS[p.prefs.category].opt);
+  let n = 0;
+  for (const [k, e] of Object.entries(est)) {
+    if (!need.includes(k)) continue;
+    const cur = p.meas[k];
+    if (!cur || cur.src === "photo") { p.meas[k] = {v:e.v, src:"photo", conf:e.conf, at:Date.now()}; n++; }
+    else p.meas[k].photoV = e.v;
+  }
+  if (n) persist(p, true);
+  return n;
+}
+
+function screenReview(){
+  const p = active(); const cat = CATS[p.prefs.category]; const u = p.units;
+  const row = (k, required) => {
+    const m = p.meas[k]; const v = m?.v; const rg = MEAS[k].range;
+    const flags = [];
+    if (v == null) flags.push(required ? pill("Needed", "bad") : pill("Optional", "neutral"));
+    else {
+      flags.push(m.src === "photo" ? pill("Photo estimate", "accent") : pill("Manual entry", "neutral"));
+      flags.push(pill(m.conf + " confidence", confCls(m.conf)));
+      if (v < rg[0] || v > rg[1]) flags.push(pill("Outside typical adult range: please check", "bad"));
+      else if (m.conf === "Low") flags.push(pill("Check with a tape", "warn"));
+    }
+    if (!PHOTO_ESTIMABLE.includes(k) && v == null) flags.push(pill("Tape only", "neutral"));
+    const hint = m && m.src === "manual" && m.photoV != null && Math.abs(m.photoV - m.v) > 0.5 ? '<span class="small muted">Photo estimate: ' + fmt(m.photoV) + ' <button class="linkbtn" data-act="use-photo" data-v="' + k + '">Use it</button></span>' : "";
+    return '<div class="mrow"><label class="lbl" for="m-' + k + '">' + MEAS[k].label + '</label>' +
+      '<div class="unitwrap"><input class="input" id="m-' + k + '" data-meas="' + k + '" type="number" inputmode="decimal" step="' + (u === "in" ? "0.25" : "0.5") + '" value="' + (v != null ? fmtNum(v) : "") + '" placeholder="—" aria-label="' + MEAS[k].label + ' in ' + (u === "in" ? "inches" : "centimetres") + '"><em>' + u + '</em></div>' +
+      '<div class="meta">' + flags.join("") + hint + '</div>' +
+      '<details><summary>How to measure</summary><p style="margin-top:6px">' + esc(MEAS[k].how) + '</p></details></div>';
+  };
+  const missing = cat.req.filter(k => p.meas[k]?.v == null);
+  const low = cat.req.concat(cat.opt).filter(k => p.meas[k]?.conf === "Low");
+  return '<section class="screen"><div class="stack"><p class="eyebrow">Step 7</p><h2>Review your measurements.</h2>' +
+    '<p class="lede">These are body measurements, taken on you, not on a garment. Edit any value. Anything you type is marked as a manual entry.</p></div>' +
+    '<div class="seg" role="group" aria-label="Units"><button data-act="units" data-v="cm" aria-pressed="' + (u === "cm") + '">cm</button><button data-act="units" data-v="in" aria-pressed="' + (u === "in") + '">inches</button></div>' +
+    (missing.length ? notice("warn", "alert", "<b>Still needed:</b> " + missing.map(k => MEAS[k].label.toLowerCase()).join(", ") + ". You can continue, but the size advice needs them.") : notice("ok", "check", "All the measurements this garment needs are filled in.")) +
+    (low.length ? notice("", "info", "<b>Low confidence:</b> " + low.map(k => MEAS[k].label.toLowerCase()).join(", ") + ". A quick tape check will make the recommendation more reliable.") : "") +
+    '<div class="card"><div class="mrow"><span class="lbl">Height</span><span class="mono" style="text-align:right;padding-top:12px">' + fmtHeight(p.heightCm) + '</span><div class="meta">' + pill("Manual entry", "neutral") + pill("High confidence", "ok") + '<button class="linkbtn small" data-act="goto" data-v="2">Edit</button></div></div>' +
+    cat.req.map(k => row(k, true)).join("") + '</div>' +
+    (cat.opt.length ? '<div class="card"><p class="eyebrow">Optional, helps some charts</p>' + cat.opt.map(k => row(k, false)).join("") + '</div>' : "") +
+    '<p class="small muted">Manual entries are treated as tape-measured, so they get high confidence.</p></section>';
+}
+
+function screenResult(){
+  const p = active(); const chart = getChart(p.prefs.chartId); const fit = p.prefs.fit;
+  if (!chart) return '<section class="screen">' + notice("warn", "alert", "Choose a brand chart first.") + '<button class="btn primary" data-act="goto" data-v="4">Choose a chart</button></section>';
+  const M = measCm(p); const rec = recommend(chart, M, fit);
+  const sameBrand = chartsFor(p.prefs.category).filter(c => c.brand === chart.brand);
+  const switches = '<div class="card"><div class="stack"><p class="eyebrow">Fit preference</p><div class="seg" role="group" aria-label="Fit preference">' +
+    Object.entries(FITS).map(([k, f]) => '<button data-act="fit" data-v="' + k + '" aria-pressed="' + (fit === k) + '">' + f.label + '</button>').join("") + '</div></div>' +
+    (sameBrand.length > 1 ? '<div class="stack"><p class="eyebrow">Region</p><div class="chips">' + sameBrand.map(c => '<button class="chip" data-act="chart" data-v="' + esc(c.id) + '" aria-pressed="' + (c.id === chart.id) + '">' + esc(c.region) + (new Set(sameBrand.map(x => x.product)).size > 1 ? " · " + esc(c.product) : "") + '</button>').join("") + '</div></div>' : "") + '</div>';
+  const sampleBanner = chart.isSample ? notice("warn", "alert", "<b>Sample chart.</b> " + esc(chart.brand) + " is a fictional brand and these values were written for this demo. Don't use them to buy real clothes.") : "";
+  const meta = '<div class="card"><p class="eyebrow">About this chart</p><dl class="meta">' +
+    '<dt>Brand</dt><dd>' + esc(chart.brand) + (chart.isSample ? " " + pill("Sample", "sample") : "") + '</dd><dt>Product</dt><dd>' + esc(chart.product) + '</dd><dt>Region</dt><dd>' + esc(chart.region) + '</dd><dt>Size system</dt><dd>' + esc(chart.sizeSystem) + '</dd>' +
+    '<dt>Chart type</dt><dd>' + (chart.basis === "garment" ? "Garment measurements: the finished piece, laid out and measured. FitMetric adds ease (extra room) to your body measurements before comparing." : "Body measurements: the wearer's body. Your measurements are compared directly.") + '</dd>' +
+    '<dt>Source</dt><dd>' + (chart.source.url ? '<a href="' + esc(chart.source.url) + '" target="_blank" rel="noopener">' + esc(chart.source.url) + '</a>' : "None: " + esc(chart.source.note || "sample data")) + '</dd>' +
+    '<dt>Verified</dt><dd>' + esc(chart.source.verifiedOn || "Not verified (sample)") + '</dd></dl></div>';
+  if (rec.status === "incomplete") {
+    return '<section class="screen"><div class="stack"><p class="eyebrow">Step 8</p><h2>Almost there.</h2></div>' + sampleBanner +
+      notice("bad", "alert", "<b>" + esc(chart.brand) + " " + esc(chart.product) + "</b> sizes by " + Object.keys(chart.keys).map(k => MEAS[k].label.toLowerCase()).join(", ") + ". Add your <b>" + rec.missing.map(k => MEAS[k].label.toLowerCase()).join(", ") + "</b> to get a recommendation.") +
+      '<button class="btn primary" data-act="goto" data-v="6">Add measurements</button>' + switches + meta + '</section>';
+  }
+  const s = rec.pick; const len = rec.length;
+  const lenTxt = len && len.option ? '<small>' + esc(len.option.label) + '</small>' : "";
+  const hero = '<div class="sizehero"><p class="eyebrow">Recommended size · ' + esc(chart.brand) + ' ' + esc(chart.product) + '</p>' +
+    '<div class="bigsize">' + esc(s.label) + lenTxt + '</div>' +
+    '<div class="row" style="padding-bottom:10px">' + pill(FITS[fit].label + " fit", "accent") + pill(rec.conf + " confidence", confCls(rec.conf)) + pill(chart.region, "neutral") + (chart.isSample ? pill("Sample chart", "sample") : "") + '</div></div>';
+  const betweenHtml = rec.between ? '<div class="card"><h3>You\'re between ' + esc(rec.between.pair[0].label) + ' and ' + esc(rec.between.pair[1].label) + '</h3><div class="pair">' +
+    rec.between.pair.map(x => '<div class="paircard ' + (x.idx === s.idx ? "pick" : "") + '"><span class="eyebrow">' + (x.idx === s.idx ? "Our pick" : x.idx < s.idx ? "Closer fit" : "More room") + '</span><span class="sz">' + esc(x.label) + '</span><span class="small muted">' + x.rows.filter(r => r.status !== "missing").map(r => MEAS[r.k].label.split(" ")[0] + ": " + rowVerdict(chart, r).t.toLowerCase()).join(" · ") + '</span></div>').join("") +
+    '</div><p class="small muted">' + esc(rec.between.why) + ' ' + (chart.basis === "body" ? "Switch the fit preference above to see how it changes the pick." : "") + '</p></div>' : "";
+  const alts = rec.alts.filter(a => !rec.between || !rec.between.pair.some(x => x.idx === a.idx));
+  const altHtml = alts.length ? '<div class="stack"><p class="eyebrow">Nearby sizes</p><div class="pair">' + alts.map(a => {
+    const off = a.rows.filter(r => r.status !== "missing" && rowVerdict(chart, r).c !== "ok").map(r => MEAS[r.k].label.split(" ")[0] + " " + rowVerdict(chart, r).t);
+    return '<div class="paircard"><span class="eyebrow">' + (a.idx < s.idx ? "One size down" : "One size up") + '</span><span class="sz">' + esc(a.label) + '</span><span class="small muted">' + esc(off.length ? off.join(" · ") : "Also within range") + '</span></div>';
+  }).join("") + '</div></div>' : "";
+  const table = '<div class="card"><p class="eyebrow">How you compare with ' + esc(s.label) + '</p><div class="tablewrap"><table><thead><tr><th>Measurement</th><th class="mono">You (' + units() + ')</th><th class="mono">' + (chart.basis === "garment" ? "Garment" : "Range") + '</th><th>Result</th></tr></thead><tbody>' +
+    s.rows.map(r => { const vd = rowVerdict(chart, r); return '<tr><td>' + MEAS[r.k].label + "" + '</td><td class="mono">' + (r.v != null ? fmtNum(r.v) + (chart.basis === "garment" && r.ease ? '<br><span class="muted small">+' + fmtNum(r.ease) + ' ease</span>' : "") : "—") + '</td><td class="mono">' + (chart.basis === "garment" ? fmtNum(r.g) : (r.lo != null ? [r.lo, r.hi] : s.size.body[r.k]).map(x => fmtNum(x)).join("–")) + '</td><td>' + pill(vd.t, vd.c) + '</td></tr>'; }).join("") +
+    (len && len.option ? '<tr><td>' + MEAS[len.m].label + ' <span class="muted small">(length)</span></td><td class="mono">' + (len.m === "height" ? fmtHeight(len.v) : fmtNum(len.v)) + '</td><td class="mono">' + (len.m === "height" ? fmtHeight(len.option.range[0]).replace(" cm", "") + "–" + fmtHeight(len.option.range[1]) : len.option.range.map(x => fmtNum(x)).join("–")) + '</td><td>' + pill(esc(len.option.label), len.note ? "warn" : "ok") + '</td></tr>' : "") +
+    '</tbody></table></div></div>';
+  const rs = reasons(chart, rec, fit);
+  if (len && len.missing) rs.push("Add your " + MEAS[len.missing].label.toLowerCase() + " to get a " + len.title.toLowerCase() + " recommendation too.");
+  if (len && len.option) rs.push(len.title + ": " + len.option.label + ", based on your " + MEAS[len.m].label.toLowerCase() + " of " + (len.m === "height" ? fmtHeight(len.v) : fmtNum(len.v)) + "." + (len.note ? " " + len.note : ""));
+  const lowKeys = Object.keys(chart.keys).filter(k => p.meas[k]?.conf === "Low");
+  if (lowKeys.length) rs.push("Your " + lowKeys.map(k => MEAS[k].label.toLowerCase()).join(" and ") + " came from a low-confidence photo estimate. Checking with a tape could change this result.");
+  return '<section class="screen"><div class="stack"><p class="eyebrow">Step 8</p><h2>Your size.</h2></div>' + sampleBanner + hero +
+    (rec.edge ? notice("warn", "alert", esc(rec.edge)) : "") + betweenHtml + altHtml +
+    '<div class="card"><p class="eyebrow">Why this size</p><ul class="reasons">' + rs.map(r => '<li>' + esc(r) + '</li>').join("") + '</ul></div>' +
+    table + switches + meta +
+    '<div class="row"><button class="btn ghost" data-act="goto" data-v="6">Edit measurements</button><button class="btn ghost" data-act="goto" data-v="3">Try another garment</button></div></section>';
+}
+
+/* ---------- sheets ---------- */
+function sheetHtml(){
+  if (!S.sheet) return "";
+  let body = "", title = "";
+  if (S.sheet === "profiles") {
+    title = "Profiles";
+    body = (S.profiles.length ? S.profiles.map(p => '<div class="card"><div class="row between"><div class="row"><span class="avatar">' + esc((p.name || "?").charAt(0).toUpperCase()) + '</span><div><strong>' + esc(p.name) + '</strong><p class="small muted">' + (p.heightCm ? fmtHeight(p.heightCm, p.units) + " · " : "") + Object.keys(p.meas || {}).length + ' measurements</p></div></div>' +
+      '<button class="btn sm ghost" data-act="pick-profile" data-v="' + esc(p.id) + '" data-close="1">' + (p.id === S.activeId ? "In use" : "Use") + '</button></div>' +
+      (S.confirm === p.id ? '<div class="confirmbox"><p>Delete <b>' + esc(p.name) + '</b> and all of its measurements? This can\'t be undone.</p><div class="row"><button class="btn danger sm" data-act="del-profile" data-v="' + esc(p.id) + '">Delete profile</button><button class="btn ghost sm" data-act="confirm-cancel">Keep it</button></div></div>'
+        : '<button class="linkbtn small" style="color:var(--bad);align-self:flex-start" data-act="confirm-del" data-v="' + esc(p.id) + '">Delete profile and measurements</button>') + '</div>').join("")
+      : notice("", "info", "No profiles yet.")) +
+      '<button class="btn primary" data-act="goto" data-v="1" data-close="1">New profile</button>';
+  } else if (S.sheet === "charts") {
+    title = "Size charts";
+    const groups = {};
+    allCharts().forEach(c => (groups[c.brand] = groups[c.brand] || []).push(c));
+    body = notice("warn", "alert", "Built-in charts are <b>samples for demonstration</b>. Northcoast Tailoring and Studio Ivy are fictional brands. Their values are not official size charts.") +
+      Object.entries(groups).map(([b, cs]) => '<div class="card"><div class="row between"><h3>' + esc(b) + '</h3>' + (cs.every(c => c.isSample) ? pill("Sample", "sample") : pill("Added", "accent")) + '</div><div class="tablewrap"><table><thead><tr><th>Product</th><th>Region</th><th>Type</th><th>Source</th></tr></thead><tbody>' +
+        cs.map(c => '<tr><td>' + esc(c.product) + '<br><span class="small muted">' + esc(c.categories.map(k => CATS[k]?.label || k).join(", ")) + ' · ' + c.sizes.length + ' sizes</span></td><td>' + esc(c.region) + '<br><span class="small muted">' + esc(c.sizeSystem) + '</span></td><td>' + (c.basis === "garment" ? "Garment" : "Body") + '</td><td class="small">' +
+          (c.source.url ? '<a href="' + esc(c.source.url) + '" target="_blank" rel="noopener">Link</a><br>Verified ' + esc(c.source.verifiedOn) : "Sample, no source") +
+          (c.id.startsWith("c-") ? '<br><button class="linkbtn small" style="color:var(--bad)" data-act="del-chart" data-v="' + esc(c.id) + '">Remove</button>' : "") + '</td></tr>').join("") +
+        '</tbody></table></div></div>').join("") +
+      '<div class="card"><h3>Add a real chart</h3><p class="small muted">Paste chart JSON copied from a brand\'s official size guide. A source URL and the date you checked it are required. FitMetric uses the same format as the Measure Me app in this repository.</p>' +
+      '<label class="field" for="chart-json">Chart JSON<textarea class="input" id="chart-json" spellcheck="false" placeholder="Paste JSON here">' + esc(S.chartDraft) + '</textarea></label>' +
+      (S.chartErr ? '<p class="err" role="alert">' + esc(S.chartErr) + '</p>' : "") + (S.chartOk ? notice("ok", "check", esc(S.chartOk)) : "") +
+      '<div class="row"><button class="btn primary sm" data-act="add-chart">Check and add</button><button class="btn ghost sm" data-act="chart-template">Insert template</button></div>' +
+      '<p class="small muted">' + (S.store === "db" ? "Added charts are saved in your private storage." : "Added charts last for this session only.") + '</p></div>';
+  } else if (S.sheet === "privacy") {
+    title = "Privacy and data";
+    body = '<div class="card"><ul class="reasons">' +
+      '<li>Photos are read and analysed inside this browser tab. They are never uploaded, never saved, and never sent to Claude.</li>' +
+      '<li>Photos are held in memory only and are cleared when you remove them or close the page.</li>' +
+      '<li>Only your profile name, height, measurements and preferences are saved. ' + (S.store === "db" ? "They go to private storage for this Artifact that only you can read. The person who shared the Artifact can't see them." : esc(S.storeNote)) + '</li>' +
+      '<li>FitMetric doesn\'t ask for or infer identity, age, gender, ethnicity, health or any other sensitive trait. Profiles are for adults only.</li></ul></div>' +
+      '<div class="card"><h3>Photos in this session</h3><p class="small muted">' + (["front","side"].filter(v => S.photos[v]).length ? ["front","side"].filter(v => S.photos[v]).length + " photo(s) held in memory." : "No photos are held right now.") + '</p><button class="btn ghost sm" data-act="clear-photos">Clear photos now</button></div>' +
+      '<div class="card"><h3>Delete everything</h3><p class="small muted">Removes every profile, measurement and added chart from this page' + (S.store === "db" ? " and your private storage" : "") + '.</p>' +
+      (S.confirm === "__all" ? '<div class="confirmbox"><p>Delete all profiles, measurements and added charts? This can\'t be undone.</p><div class="row"><button class="btn danger sm" data-act="del-all">Delete everything</button><button class="btn ghost sm" data-act="confirm-cancel">Cancel</button></div></div>'
+        : '<button class="btn danger sm" data-act="confirm-del" data-v="__all">Delete all my data</button>') + '</div>';
+  }
+  return '<div class="sheet" role="dialog" aria-modal="true" aria-label="' + title + '"><div class="sheet-in"><div class="sheet-head"><h2>' + title + '</h2><button class="iconbtn" data-act="close-sheet" aria-label="Close">' + I.close + '</button></div>' + body + '</div></div>';
+}
+
+/* ---------- bottom bar ---------- */
+function barState(){
+  const p = active();
+  switch (S.step) {
+    case 0: return {next:"Begin", ok:true};
+    case 1: return {next:"Continue", ok:!!p, hint:p ? "Measuring for " + p.name : "Pick or create a profile"};
+    case 2: return {next:"Continue", ok:!!(p && p.heightCm >= 140 && p.heightCm <= 220), hint:p && p.heightCm ? "Height " + fmtHeight(p.heightCm) : "Enter a height"};
+    case 3: return {next:"Continue", ok:!!p.prefs.category, hint:p.prefs.category ? CATS[p.prefs.category].label : "Choose a garment"};
+    case 4: return {next:"Continue", ok:!!getChart(p.prefs.chartId), hint:getChart(p.prefs.chartId) ? getChart(p.prefs.chartId).brand + " · " + getChart(p.prefs.chartId).region : "Choose a brand and region"};
+    case 5: { const hasPts = Object.keys(computeEstimates()).length; return {next: hasPts ? "Use estimates and review" : "Enter measurements manually", ok:true, hint: S.consent && S.photos.front && !hasPts ? "Mark points to get estimates, or continue to type values" : "Photos are optional"}; }
+    case 6: { const miss = CATS[p.prefs.category].req.filter(k => p.meas[k]?.v == null).length; return {next:"See my size", ok:true, hint: miss ? miss + " needed measurement" + (miss > 1 ? "s" : "") + " still empty" : "Ready"}; }
+    case 7: return {next:"Try another garment", ok:true};
+  }
+}
+function bar(){
+  const b = barState();
+  return '<div class="bar"><div class="bar-in"><div class="bar-row">' +
+    (S.step > 0 ? '<button class="btn ghost" data-act="back" aria-label="Back">' + I.back + '</button>' : "") +
+    '<button class="btn primary" data-act="next"' + (b.ok ? "" : " disabled") + '>' + esc(b.next) + I.arrow + '</button></div>' +
+    '<div class="bar-hint" aria-live="polite">' + esc(b.hint || "") + '</div></div></div>';
+}
+
+/* ---------- main render (keeps focus and caret across re-renders) ---------- */
+function render(){
+  pendingRender = false;
+  const ae = document.activeElement, fid = ae && ae.id, sel = (ae && "selectionStart" in ae) ? [ae.selectionStart, ae.selectionEnd] : null;
+  const sheetScroll = $(".sheet:not(#live):not(#marker)")?.scrollTop;
+  if (S.step >= 2 && !active()) S.step = 1;
+  if (S.step >= 4 && !active()?.prefs.category) S.step = 3;
+  const screens = [screenWelcome, screenProfile, screenHeight, screenCategory, screenBrand, screenPhotos, screenReview, screenResult];
+  $("#app").innerHTML = '<div class="shell">' + header() + '<main id="main">' + screens[S.step]() + '</main></div>' + bar() + sheetHtml() +
+    (S.toast ? '<div class="toast" role="status">' + esc(S.toast) + '</div>' : "");
+  if (fid) { const el = document.getElementById(fid); if (el) { el.focus({preventScroll:true}); try { if (sel && el.setSelectionRange) el.setSelectionRange(sel[0], sel[1]); } catch {} } }
+  if (sheetScroll != null) { const sh = $(".sheet:not(#live):not(#marker)"); if (sh) sh.scrollTop = sheetScroll; }
+}
+function go(step){ S.step = step; S.confirm = null; render(); window.scrollTo(0, 0); }
+function toast(t){ S.toast = t; clearTimeout(S.toastTimer); S.toastTimer = setTimeout(() => { S.toast = ""; const el = $(".toast"); if (el) el.remove(); }, 2600); const el = $(".toast"); if (el) el.textContent = t; else render(); }
+
+/* ---------- events ---------- */
+// A field's change event fires on blur, often in the middle of a tap on another button.
+// Re-rendering then would swap the button out from under the tap, so wait until the pointer is released.
+let pointerIsDown = false, pendingRender = false;
+function softRender(){ if (pointerIsDown) pendingRender = true; else render(); }
+document.addEventListener("pointerdown", () => { pointerIsDown = true; }, true);
+const releasePointer = () => setTimeout(() => { pointerIsDown = false; if (pendingRender) { pendingRender = false; render(); } }, 0);
+document.addEventListener("pointerup", releasePointer, true);
+document.addEventListener("pointercancel", releasePointer, true);
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-act]"); if (!t) return;
+  const act = t.dataset.act, v = t.dataset.v, p = active();
+  if (t.tagName === "INPUT") return; // checkboxes handled on change
+  switch (act) {
+    case "next": return onNext();
+    case "back": return go(Math.max(0, S.step - 1));
+    case "goto": S.sheet = t.dataset.close ? null : S.sheet; return go(+v);
+    case "sheet": S.sheet = v; S.confirm = null; S.chartErr = ""; S.chartOk = ""; return render();
+    case "close-sheet": S.sheet = null; S.confirm = null; return render();
+    case "pick-profile": S.activeId = v; if (t.dataset.close) S.sheet = null; return render();
+    case "confirm-del": S.confirm = v; return render();
+    case "confirm-cancel": S.confirm = null; return render();
+    case "del-profile": {
+      S.profiles = S.profiles.filter(x => x.id !== v); removeDoc(v);
+      if (S.activeId === v) { S.activeId = null; clearPhotos(); if (S.step > 1) S.step = 1; }
+      S.confirm = null; toast("Profile and measurements deleted."); return render();
+    }
+    case "del-all": {
+      const ids = S.profiles.map(x => x.id).concat(S.customCharts.map(c => c.id));
+      S.profiles = []; S.customCharts = []; S.activeId = null; clearPhotos(); ids.forEach(removeDoc);
+      S.confirm = null; S.step = 0; toast("All data deleted."); return render();
+    }
+    case "units": p.units = v; persist(p); return render();
+    case "cat": p.prefs.category = v; { const c = getChart(p.prefs.chartId); if (!c || !c.categories.includes(v)) p.prefs.chartId = null; } persist(p); return render();
+    case "brand": {
+      const cs = chartsFor(p.prefs.category).filter(c => c.brand === v); const cur = getChart(p.prefs.chartId);
+      p.prefs.chartId = (cs.find(c => cur && c.region === cur.region) || cs[0]).id; persist(p); return render();
+    }
+    case "chart": p.prefs.chartId = v; persist(p); return render();
+    case "fit": p.prefs.fit = v; persist(p); return render();
+    case "live": return openLive(v);
+    case "rm-photo": { const ph = S.photos[v]; if (ph) URL.revokeObjectURL(ph.url); S.photos[v] = null; toast("Photo removed from memory."); return render(); }
+    case "mark": return openMarker(v);
+    case "use-photo": { const m = p.meas[v]; if (m && m.photoV != null) { const conf = computeEstimates()[v]?.conf || "Low"; p.meas[v] = {v:m.photoV, src:"photo", conf, at:Date.now()}; persist(p); render(); } return; }
+    case "clear-photos": clearPhotos(); toast("Photos cleared."); return render();
+    case "chart-template": S.chartDraft = JSON.stringify(TEMPLATE, null, 2); S.chartErr = ""; S.chartOk = ""; return render();
+    case "add-chart": return addChart();
+    case "del-chart": S.customCharts = S.customCharts.filter(c => c.id !== v); removeDoc(v); if (p && p.prefs.chartId === v) p.prefs.chartId = null; return render();
+  }
+});
+
+document.addEventListener("change", e => {
+  const t = e.target, p = active();
+  if (t.id === "consent") { S.consent = t.checked; if (!t.checked) clearPhotos(); return render(); }
+  if (t.dataset.act === "confirm") { const ph = S.photos[t.dataset.view]; if (ph) ph.confirm[t.dataset.v] = t.checked; return render(); }
+  if (t.type === "file" && t.dataset.view) {
+    const f = t.files && t.files[0]; t.value = "";
+    if (!S.consent) return;
+    if (!f) { S.photoErr = "No photo was selected. Choose a photo to continue, or skip this step."; return render(); }
+    if (f.type && !f.type.startsWith("image/")) { S.photoErr = "That file isn't an image. Choose a photo from your library."; return render(); }
+    return loadPhoto(f, t.dataset.view);
+  }
+  if (t.dataset.meas) {
+    const k = t.dataset.meas, raw = t.value.trim();
+    if (raw === "") { delete p.meas[k]; }
+    else { const n = parseFloat(raw); if (!isNaN(n) && n > 0) { const cm = r1(fromUnit(n)); const prev = p.meas[k]; if (!prev || Math.abs(prev.v - cm) > 0.05) p.meas[k] = {v:cm, src:"manual", conf:"High", at:Date.now(), photoV: prev?.src === "photo" ? prev.v : prev?.photoV}; } }
+    persist(p); return softRender();
+  }
+  if (t.id === "h-cm" || t.id === "h-ft" || t.id === "h-in") return softRender();
+});
+
+document.addEventListener("input", e => {
+  const t = e.target, p = active();
+  if (t.id === "np-name") { S.newName = t.value; return; }
+  if (t.id === "chart-json") { S.chartDraft = t.value; return; }
+  if (t.id === "h-cm" || t.id === "h-ft" || t.id === "h-in") {
+    let cm = null;
+    if (t.id === "h-cm") cm = parseFloat(t.value);
+    else { const ft = parseFloat($("#h-ft").value), inch = parseFloat($("#h-in").value || "0"); if (!isNaN(ft)) cm = (ft * 12 + (isNaN(inch) ? 0 : inch)) * 2.54; }
+    if (cm && cm >= 140 && cm <= 220) { p.heightCm = r1(cm); S.heightErr = ""; persist(p); }
+    else { p.heightCm = null; S.heightErr = (t.value === "") ? "" : "Enter a height between 140 and 220 cm (4′ 7″ and 7′ 3″)."; }
+    // Update only the bar and error, so typing isn't interrupted.
+    const barEl = $(".bar"); if (barEl) barEl.outerHTML = bar();
+  }
+  if (t.id === "np-adult") S.newAdult = t.checked;
+});
+document.addEventListener("change", e => { if (e.target.id === "np-adult") S.newAdult = e.target.checked; });
+document.addEventListener("submit", e => {
+  if (e.target.id !== "newprof") return;
+  e.preventDefault();
+  const name = S.newName.trim();
+  if (!S.newAdult) { S.newErr = "Please confirm this person is 18 or older. This demo supports adult profiles only."; return render(); }
+  const p = makeProfile(name || "My profile");
+  S.profiles.push(p); S.activeId = p.id; S.newName = ""; S.newAdult = false; S.newErr = "";
+  persist(p, true); toast("Profile created."); render();
+});
+
+function onNext(){
+  const p = active();
+  if (S.step === 2) { if (!p.heightCm) { S.heightErr = "Enter a height between 140 and 220 cm (4′ 7″ and 7′ 3″)."; return render(); } persist(p, true); }
+  if (S.step === 5) { const n = applyEstimates(); if (n) toast(n + " photo estimate" + (n > 1 ? "s" : "") + " added to review."); }
+  if (S.step === 6) persist(p, true);
+  if (S.step === 7) return go(3);
+  go(S.step + 1);
+}
+function clearPhotos(){ for (const v of ["front","side"]) { if (S.photos[v]) URL.revokeObjectURL(S.photos[v].url); S.photos[v] = null; } }
+
+/* ---------- custom chart import (Measure Me JSON format or FitMetric's own) ---------- */
+const TEMPLATE = {formatVersion:1, unit:"in", charts:[{brand:"Brand name", productLine:"Product name", category:"shirts", region:"us", sizeSystem:"Neck size (in)", measurementType:"body",
+  sizes:[{label:"15", measurements:{neck:{minCM:15, maxCM:15.25}, chest:{minCM:38, maxCM:40}}},{label:"15.5", measurements:{neck:{minCM:15.5, maxCM:15.75}, chest:{minCM:40, maxCM:42}}}],
+  source:{isDemoData:false, url:"https://www.example.com/size-guide", lastVerified:"2026-09-30", notes:"Copied from the official size guide."}}]};
+const KEYMAP = {shoulderWidth:"shoulder", sleeveLength:"sleeve", armLength:"arm"};
+const REGIONS = {international:"International", us:"US", uk:"UK", eu:"EU", jp:"JP", au:"AU", other:"Other"};
+const DEFAULT_W = {chest:3, neck:3, waist:2, hips:2, shoulder:1, arm:1, sleeve:1, inseam:1};
+function addChart(){
+  S.chartErr = ""; S.chartOk = "";
+  let data;
+  try { data = JSON.parse(S.chartDraft); } catch { S.chartErr = "That isn't valid JSON. Check for missing commas or quotes."; return render(); }
+  const unit = data.unit || "cm"; if (!["cm","in"].includes(unit)) { S.chartErr = 'unit must be "cm" or "in".'; return render(); }
+  const k = unit === "in" ? 2.54 : 1; const list = Array.isArray(data.charts) ? data.charts : [data]; const out = [];
+  const today = new Date().toISOString().slice(0, 10);
+  for (const [i, c] of list.entries()) {
+    const at = "Chart " + (i + 1) + ": ";
+    if (!c.brand) return fail(at + "brand is required.");
+    const cat = c.category === "tops" ? "shirts" : c.category; if (!CATS[cat]) return fail(at + "category must be one of " + Object.keys(CATS).join(", ") + ".");
+    const basis = c.measurementType || c.basis; if (!["body","garment"].includes(basis)) return fail(at + 'measurementType must be "body" or "garment".');
+    const src = c.source || {}; if (src.isDemoData) return fail(at + "imported charts must be real brand data, so source.isDemoData must be false.");
+    if (!/^https?:\/\/\S+\.\S+/.test(src.url || "")) return fail(at + "source.url must link to the brand's official size guide.");
+    const ver = String(src.lastVerified || src.verifiedOn || "").slice(0, 10); if (!/^\d{4}-\d{2}-\d{2}$/.test(ver)) return fail(at + "source.lastVerified must be a date like 2026-09-30.");
+    if (ver > today) return fail(at + "source.lastVerified can't be in the future.");
+    if (!Array.isArray(c.sizes) || c.sizes.length < 2) return fail(at + "add at least two sizes, smallest first.");
+    const sizes = [], keys = new Set();
+    for (const s of c.sizes) {
+      if (!s.label) return fail(at + "every size needs a label.");
+      const ms = s.measurements || {}; const body = {}, garment = {};
+      for (const [rk, r] of Object.entries(ms)) {
+        const mk = KEYMAP[rk] || rk; if (!MEAS[mk]) continue;
+        const lo = (r.minCM ?? r.min) * k, hi = (r.maxCM ?? r.max) * k;
+        if (!(lo > 0) || !(hi >= lo)) return fail(at + "size " + s.label + " has an invalid range for " + rk + ".");
+        if (basis === "garment") garment[mk] = r1((lo + hi) / 2); else body[mk] = [r1(lo), r1(hi)];
+        keys.add(mk);
+      }
+      sizes.push(basis === "garment" ? {label:String(s.label), garment} : {label:String(s.label), body});
+    }
+    const kw = {}; keys.forEach(m => { if (m !== "height" && m !== "inseam") kw[m] = DEFAULT_W[m] || 1; });
+    if (!Object.keys(kw).length) return fail(at + "no recognised measurements found.");
+    if (sizes.some(s => Object.keys(kw).some(m => (basis === "garment" ? s.garment[m] : s.body[m]) == null))) return fail(at + "every size must list the same measurements.");
+    const chart = {id:newId("c"), kind:"chart", isSample:false, units:"cm", brand:String(c.brand), product:String(c.productLine || c.product || "All products"), categories:[cat],
+      region:REGIONS[c.region] || String(c.region || "Other"), sizeSystem:String(c.sizeSystem || "Brand sizes"), basis, keys:kw, sizes,
+      source:{url:src.url, verifiedOn:ver, note:String(src.notes || "")}, updatedAt:Date.now()};
+    if (basis === "garment") { chart.ease = {chest:{slim:6,regular:10,relaxed:16}, waist:{slim:2,regular:4,relaxed:8}, hips:{slim:4,regular:8,relaxed:12}, shoulder:{slim:0,regular:1,relaxed:2.5}, arm:{slim:1.5,regular:2.5,relaxed:3}}; chart.tolerance = {chest:4, waist:3, hips:4, shoulder:1.5, arm:2}; }
+    out.push(chart);
+  }
+  out.forEach(c => { S.customCharts.push(c); if (S.store === "db") (writeChains[c.id] = DB.collection("data/users/" + UID).doc(c.id).set(JSON.parse(JSON.stringify(c))).catch(dbFailed)); });
+  S.chartDraft = ""; S.chartOk = "Added " + out.length + " chart" + (out.length > 1 ? "s" : "") + ". " + out.map(c => c.brand + " · " + c.product).join(", ") + ".";
+  render();
+  function fail(m){ S.chartErr = m; render(); }
+}
+
+/* ---------- live camera ---------- */
+let LIVE = {stream:null, timer:null, view:"front", facing:"user", count:null};
+async function openLive(view){
+  if (!S.consent) return;
+  LIVE.view = view;
+  const el = $("#live"); el.hidden = false;
+  el.innerHTML = '<div class="sheet-in"><div class="sheet-head"><h2>' + (view === "front" ? "Front" : "Side") + ' photo</h2><button class="iconbtn" id="live-close" aria-label="Close camera">' + I.close + '</button></div>' +
+    '<div id="live-body">' + notice("", "camera", "Asking for camera access. If a permission prompt appears, choose <b>Allow</b>.") + '</div></div>';
+  $("#live-close").onclick = closeLive;
+  await startStream();
+}
+async function startStream(){
+  stopStream();
+  const body = $("#live-body");
+  try {
+    LIVE.stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:LIVE.facing, width:{ideal:1080}, height:{ideal:1440}}, audio:false});
+  } catch (err) {
+    const name = err && err.name;
+    const msg = name === "NotAllowedError" || name === "SecurityError"
+      ? "<b>Camera access was refused.</b> Either permission was denied, or the Claude Artifact viewer doesn't allow camera access. This is expected inside Claude."
+      : name === "NotFoundError" || name === "OverconstrainedError" ? "<b>No camera was found</b> on this device."
+      : name === "NotReadableError" ? "<b>The camera is in use</b> by another app. Close it and try again."
+      : "<b>The camera couldn't start.</b>";
+    S.cam = {state: name === "NotFoundError" ? "none" : "blocked", detail: name === "NotFoundError" ? "No camera was found on this device." : "Camera access was refused when FitMetric tried it."};
+    body.innerHTML = notice("bad", "alert", msg) +
+      '<div class="card"><h3>Use the iPhone Camera app instead</h3><ol class="small" style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px"><li>Open Camera, choose Photo, and set the 3- or 10-second timer.</li><li>Prop the phone at waist height, 2–3 m away, in portrait.</li><li>Take a front photo, then turn 90° to your left for a side photo.</li><li>Come back here and tap <b>Take or choose photo</b> to pick them from your library.</li></ol></div>' +
+      '<button class="btn primary" id="live-fallback">' + I.image + 'Choose photo instead</button>';
+    $("#live-fallback").onclick = () => { closeLive(); render(); setTimeout(() => document.getElementById("file-" + LIVE.view)?.click(), 50); };
+    return;
+  }
+  body.innerHTML = '<div class="stack"><div class="cam"><video id="live-video" playsinline muted ' + (LIVE.facing === "environment" ? 'class="rear"' : "") + '></video>' +
+    '<svg class="guide" viewBox="0 0 300 400" preserveAspectRatio="none" aria-hidden="true"><rect x="45" y="16" width="210" height="368" rx="10" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="2" stroke-dasharray="8 6"/>' +
+    '<line x1="70" y1="30" x2="230" y2="30" stroke="#F4C95D" stroke-width="2"/><text x="150" y="25" fill="#fff" font-size="11" text-anchor="middle" font-family="sans-serif">Top of head here</text>' +
+    '<line x1="70" y1="372" x2="230" y2="372" stroke="#F4C95D" stroke-width="2"/><text x="150" y="392" fill="#fff" font-size="11" text-anchor="middle" font-family="sans-serif">Feet here</text>' +
+    '<line x1="150" y1="30" x2="150" y2="372" stroke="#fff" stroke-opacity=".3" stroke-width="1"/></svg><div class="count" id="live-count"></div></div>' +
+    '<div class="livechecks" id="live-checks" aria-live="polite"></div>' +
+    '<p class="small muted">' + (LIVE.view === "front" ? "Face the camera, arms slightly away from your body." : "Stand side-on, arms relaxed.") + ' Line up your head and feet with the yellow lines. Full-body framing can\'t be detected automatically here, so check it yourself.</p>' +
+    '<div class="row"><button class="btn primary" id="live-shot">' + I.camera + 'Capture in 5 s</button><button class="btn ghost sm" id="live-now">Capture now</button><button class="btn ghost sm" id="live-flip">Switch camera</button></div></div>';
+  const video = $("#live-video"); video.srcObject = LIVE.stream;
+  try { await video.play(); } catch {}
+  $("#live-shot").onclick = () => countdown(5);
+  $("#live-now").onclick = capture;
+  $("#live-flip").onclick = () => { LIVE.facing = LIVE.facing === "user" ? "environment" : "user"; startStream(); };
+  LIVE.timer = setInterval(liveCheck, 700);
+}
+function liveCheck(){
+  const v = $("#live-video"); if (!v || !v.videoWidth) return;
+  const cv = document.createElement("canvas"); cv.width = 64; cv.height = 85;
+  const ctx = cv.getContext("2d", {willReadFrequently:true}); ctx.drawImage(v, 0, 0, 64, 85);
+  const d = ctx.getImageData(0, 0, 64, 85).data; let s = 0; for (let i = 0; i < d.length; i += 4) s += 0.2126*d[i] + 0.7152*d[i+1] + 0.0722*d[i+2];
+  const mean = s / (d.length / 4);
+  const box = $("#live-checks"); if (!box) return;
+  box.innerHTML = (mean < 60 ? pill("Too dark", "warn") : mean > 215 ? pill("Too bright", "warn") : pill("Lighting OK", "ok")) +
+    (v.videoHeight >= v.videoWidth ? pill("Portrait", "ok") : pill("Turn phone to portrait", "warn")) + pill("Framing: check yourself", "neutral");
+}
+function countdown(n){
+  const c = $("#live-count"); if (!c) return;
+  if (n <= 0) { c.textContent = ""; return capture(); }
+  c.textContent = n; LIVE.count = setTimeout(() => countdown(n - 1), 1000);
+}
+function capture(){
+  const v = $("#live-video"); if (!v || !v.videoWidth) return;
+  const cv = document.createElement("canvas"); cv.width = v.videoWidth; cv.height = v.videoHeight;
+  const ctx = cv.getContext("2d");
+  if (LIVE.facing === "user") { ctx.translate(cv.width, 0); ctx.scale(-1, 1); }
+  ctx.drawImage(v, 0, 0);
+  cv.toBlob(b => { const view = LIVE.view; closeLive(); if (b) loadPhoto(b, view); else { S.photoErr = "The capture failed. Try again or upload a photo."; render(); } }, "image/jpeg", 0.92);
+}
+function stopStream(){ clearInterval(LIVE.timer); clearTimeout(LIVE.count); if (LIVE.stream) LIVE.stream.getTracks().forEach(t => t.stop()); LIVE.stream = null; }
+function closeLive(){ stopStream(); const el = $("#live"); el.hidden = true; el.innerHTML = ""; render(); }
+
+/* ---------- point marker ---------- */
+let MK = {view:"front", sel:null, zoom:1};
+function openMarker(view){
+  MK = {view, sel:null, zoom:1};
+  const ph = S.photos[view]; if (!ph) return;
+  const el = $("#marker"); el.hidden = false;
+  el.innerHTML = '<div class="sheet-in"><div class="sheet-head"><h2>Mark ' + view + ' points</h2><button class="btn primary sm" id="mk-done">Done</button></div>' +
+    '<div id="mk-prompt" class="notice" aria-live="polite"></div>' +
+    '<div class="row"><div class="seg" role="group" aria-label="Zoom" style="flex:1"><button data-z="1" aria-pressed="true">1×</button><button data-z="2" aria-pressed="false">2×</button><button data-z="3" aria-pressed="false">3×</button></div><button class="btn ghost sm" id="mk-undo">Undo</button><button class="btn ghost sm" id="mk-clear">Clear</button></div>' +
+    '<div class="markstage" id="mk-stage"><div class="markimg" id="mk-img"><img src="' + ph.url + '" alt="' + view + ' photo for marking" draggable="false"><div id="mk-svg"></div></div></div>' +
+    '<div class="ptlist" id="mk-list"></div>' +
+    '<p class="small muted">Tap a point name to re-place it. Points are only used for this calculation and stay in this tab.</p></div>';
+  $("#mk-done").onclick = closeMarker;
+  $("#mk-undo").onclick = () => { const order = POINTS[view].map(p => p[0]).filter(k => ph.marks[k]); const last = ph.marksOrder?.pop() || order.at(-1); if (last) delete ph.marks[last]; MK.sel = null; drawMarker(); };
+  $("#mk-clear").onclick = () => { ph.marks = {}; ph.marksOrder = []; MK.sel = null; drawMarker(); };
+  el.querySelectorAll("[data-z]").forEach(b => b.onclick = () => { MK.zoom = +b.dataset.z; el.querySelectorAll("[data-z]").forEach(x => x.setAttribute("aria-pressed", x === b)); $("#mk-img").style.width = (MK.zoom * 100) + "%"; });
+  $("#mk-img").addEventListener("click", ev => {
+    const img = $("#mk-img img"), r = img.getBoundingClientRect();
+    const x = (ev.clientX - r.left) / r.width * ph.w, y = (ev.clientY - r.top) / r.height * ph.h;
+    const key = MK.sel || POINTS[view].map(p => p[0]).find(k => !ph.marks[k]);
+    if (!key) return;
+    ph.marks[key] = {x:Math.round(x), y:Math.round(y)};
+    (ph.marksOrder = ph.marksOrder || []).push(key);
+    MK.sel = null; drawMarker();
+  });
+  drawMarker();
+}
+function drawMarker(){
+  const view = MK.view, ph = S.photos[view];
+  $("#mk-svg").innerHTML = marksSvg(view, ph, false);
+  const next = MK.sel || POINTS[view].map(p => p[0]).find(k => !ph.marks[k]);
+  const label = next ? POINTS[view].find(p => p[0] === next)[1] : null;
+  $("#mk-prompt").innerHTML = I.pin + '<div>' + (label ? 'Tap: <b>' + esc(label) + '</b>' : '<b>All points placed.</b> Tap Done, or tap a point name to adjust it.') + '</div>';
+  $("#mk-list").innerHTML = POINTS[view].map(([k, l]) => '<button class="pt ' + (k === next ? "cur" : ph.marks[k] ? "done" : "") + '" data-pt="' + k + '">' + (ph.marks[k] && k !== next ? "✓ " : "") + esc(l.split(",")[0]) + '</button>').join("");
+  $("#mk-list").querySelectorAll("[data-pt]").forEach(b => b.onclick = () => { MK.sel = b.dataset.pt; drawMarker(); });
+}
+function closeMarker(){ const el = $("#marker"); el.hidden = true; el.innerHTML = ""; render(); }
+
+/* ---------- boot ---------- */
+render();
+detectCamera();
+initStorage();
+</script>
