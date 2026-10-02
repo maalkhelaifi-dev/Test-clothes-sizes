@@ -6,6 +6,8 @@ A native iPhone app (Swift, SwiftUI, iOS 17+) that guides you through front and 
 
 ---
 
+**User manual with screenshots:** [docs/USER_MANUAL.md](docs/USER_MANUAL.md)
+
 ## Contents
 
 - [Status: what is verified, what is not](#status-what-is-verified-what-is-not)
