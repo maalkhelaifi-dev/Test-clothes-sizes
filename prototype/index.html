@@ -7,16 +7,20 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  /* ===== THEME TOKENS – replace with the Single Window brand values ===== */
+  /* ===== THEME TOKENS – Single Window brand ===== */
   --font:'IBM Plex Sans Arabic','Noto Sans Arabic',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
-  --bg:#f5f6f8; --card:#fff; --ink:#14181f; --muted:#5d6675; --line:#e2e6ec;
-  --brand:#0f6b5c; --brand-ink:#fff; --brand-soft:#e3f3ef; --warn:#b45309; --warn-soft:#fdf1e0;
-  --ai:#5b3fd1; --ai-soft:#efeafc; --ok:#17803d; --radius:14px;
+  --primary-color:#07366F; --secondary-color:#204B87; --accent-color:#4386C5; --button-color:#204781;
+  --background-color:#FFFFFF; --border-color:#D2D2D2; --text-color:#666666;
+  --hero:linear-gradient(90deg,#07366F 0%,#204B87 60%,#4386C5 100%);
+  /* derived */
+  --bg:#f3f6fa; --card:var(--background-color); --ink:#1c2533; --muted:var(--text-color); --line:var(--border-color);
+  --brand:var(--button-color); --brand-ink:#fff; --brand-soft:#e6eef8; --warn:#b45309; --warn-soft:#fdf1e0;
+  --ai:var(--primary-color); --ai-soft:#e8f1fa; --ok:#17803d; --radius:10px;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]){
-  --bg:#0f1319; --card:#171c24; --ink:#eef1f5; --muted:#9aa5b5; --line:#262d38;
-  --brand:#3cb89f; --brand-ink:#04211b; --brand-soft:#16312c; --warn:#f0a95a; --warn-soft:#33270f;
-  --ai:#a994ff; --ai-soft:#25203f; --ok:#4cc38a;}}
+  --bg:#0c1522; --card:#13202f; --ink:#eef2f7; --muted:#a3b0c2; --line:#2a3a50;
+  --brand:#4386C5; --brand-ink:#04121f; --brand-soft:#17304c; --warn:#f0a95a; --warn-soft:#33270f;
+  --ai:#8fbdea; --ai-soft:#183049; --ok:#4cc38a;}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--font)}
 button{font:inherit;color:inherit;cursor:pointer}
@@ -92,6 +96,14 @@ th{color:var(--muted);font-weight:600}
 [dir=rtl] .back-arrow{display:inline-block;transform:scaleX(-1)}
 .lang{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 14px;font-weight:600}
 .hd{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+header.hero{background:var(--hero);color:#fff;border-radius:var(--radius);padding:18px 20px}
+header.hero h1{color:#fff;font-size:20px}
+header.hero .chip{background:rgba(255,255,255,.18);color:#fff}
+header.hero .lang{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.4)}
+header.hero .toggle{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.4)}
+header.hero .toggle button{color:#dbe7f5}
+header.hero .toggle button[aria-pressed=true]{background:#fff;color:var(--primary-color)}
+.step.on b{color:var(--primary-color)}
 footer{color:var(--muted);font-size:12px;text-align:center;padding:6px}
 </style>
 </head>
@@ -232,7 +244,7 @@ function render(){
   document.documentElement.lang=S.lang;document.documentElement.dir=S.lang==="ar"?"rtl":"ltr";document.title=u("title")+" – "+u("proto");
   const app=$('#app');
   app.innerHTML=`
-  <header>
+  <header class="hero">
     <h1>🏁 ${u("title")} <span class="chip ai">${u("proto")}</span></h1>
     <div class="hd"><button class="lang" id="lang">${u("lang")}</button>
     <div class="toggle" role="group">
