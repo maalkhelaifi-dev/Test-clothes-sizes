@@ -169,6 +169,19 @@ nav.menu a.on,nav.menu a:hover{color:var(--accent-color);border-color:var(--acce
 .dots{display:flex;gap:4px;margin-top:6px}.dots i{flex:1;height:6px;border-radius:3px;background:var(--line)}.dots i.f{background:var(--accent-color)}.dots i.w{background:#c0392b}
 .tabs{display:flex;gap:8px;flex-wrap:wrap}
 .tl span:last-child{white-space:nowrap}
+.dev{margin-top:14px;border:1px solid var(--line);border-inline-start:4px solid var(--accent-color);border-radius:10px;background:var(--card);padding:10px 14px;direction:ltr;text-align:left;font-size:14px}
+.dev summary{cursor:pointer;font-weight:700;color:var(--primary-color)}
+.dev h4{margin:14px 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.dev p{margin:0}.dev ul,.dev ol{margin:0;padding-inline-start:20px}.dev li{margin:3px 0}
+.dev pre,.devpage pre{background:#0a2547;color:#dbe7f5;padding:12px;border-radius:8px;overflow:auto;font-size:12.5px;line-height:1.5;direction:ltr;text-align:left;margin:0}
+.dchips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.dg{display:grid;grid-template-columns:1fr 1fr;gap:14px}.dg3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:800px){.dg,.dg3{grid-template-columns:1fr}}
+.devpage{direction:ltr;text-align:left}
+.arch{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.ab{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--bg)}.ab b{display:block}.ab small{color:var(--muted)}
+.ab.hl{border-color:var(--accent-color);background:var(--brand-soft)}
+.dl li{margin:4px 0}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:800px){.grid2{grid-template-columns:1fr}}
 select{padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
 </style>
@@ -271,7 +284,7 @@ const KW={cafe:["café","cafe","coffee","bakery","قهوة","مقهى","كافي
 const XKW={c4:["outdoor","terrace","pavement","خارجي","شرفة"],c5:["delivery","deliver","online orders","توصيل"],c6:["music","موسيقى"],c7:["catering","events","تموين","فعاليات"],l4:["warehouse","مستودع"],l5:["courier","last mile","parcel","طرود"],l6:["customs","جمرك"],l7:["cold","chilled","frozen","مبرد"],s3:["import","استيراد"],s4:["from home","home-based","منزل","بيتي"]};
 
 // ---------- State & helpers ----------
-const S={lang:"en",mode:"new",view:"home",step:0,biz:null,sel:new Set(),ok:new Set(),expl:new Set(),zone:"",zoneMsg:"",docs:{},chat:[],done:false,ref:0,mapBiz:"cafe",mapZone:null,apps:[],day:0,adv:null,intent:null,fixId:null};
+const S={lang:"en",mode:"new",view:"home",step:0,biz:null,sel:new Set(),ok:new Set(),expl:new Set(),zone:"",zoneMsg:"",docs:{},chat:[],done:false,ref:0,mapBiz:"cafe",mapZone:null,apps:[],day:0,adv:null,intent:null,fixId:null,dev:false,devFocus:null};
 const $=s=>document.querySelector(s);
 const _=(en,ar)=>S.lang==="ar"?ar:en;
 const x=v=>v[S.lang==="ar"?1:0];
@@ -369,22 +382,180 @@ function st(a){const p=Math.min(1,S.day/a.dur);
 const STG=[["Submitted","تم الإرسال"],["In review","قيد المراجعة"],["Inspection","الفحص"],["Approved","تمت الموافقة"]];
 const actionCount=()=>S.apps.filter(a=>st(a).s==="action").length;
 
+
+// ---------- Developer view content (English only) ----------
+const DEV={
+q:{name:"Intent search",type:"LLM · structured output",phase:"MVP",effort:"S (1–2 sprints)",
+ proto:"parseIntent(): keyword lists for package, zone and add-ons. No model call.",
+ prod:"One LLM call that extracts a structured intent from free Arabic or English text. Output is constrained to enums built from the live catalogue, then validated server-side.",
+ steps:["User text arrives (ar/en, any dialect, any length up to ~300 chars).","Server builds the enum lists: package_id, zone_id, optional activity ids from the package catalogue and GIS zone list.","LLM returns JSON that must match the schema (structured output / tool use).","Server validates every id against the catalogue. Unknown ids are dropped, never shown.","UI shows the “I understood” chips. The user can edit any chip before continuing.","Confidence below threshold → show one clarifying question instead of guessing."],
+ code:`POST /ai/intent
+{ "text": "افتح مقهى في السد مع جلسات خارجية", "locale": "ar" }
+
+200 OK
+{ "package_id": "cafe",
+  "zone_id": "sadd",
+  "optional_activity_ids": ["c4"],
+  "confidence": 0.93,
+  "clarifying_question": null }`,
+ data:["Package catalogue (ids, names ar/en, synonyms)","Zone list from GIS","Labelled set of real investor phrases for evaluation"],
+ guard:["Output constrained to catalogue enums: the model cannot invent a package.","Nothing is saved until the user confirms the chips.","User text is treated as data, never as instructions (prompt-injection safe).","Do not log free text together with national ID or contact details."],
+ metrics:["Intent→package accuracy on a labelled Arabic + English set","% of users who edit a chip","Fallback rate to Setup Advisor","p95 latency (target under 2 s)"],
+ risks:["Ambiguous words such as “delivery” (café vs courier company).","Businesses outside the catalogue → route to Setup Advisor or a human."]},
+a:{name:"Setup Advisor",type:"Rules engine + LLM for wording",phase:"MVP",effort:"S–M",
+ proto:"Static yes/no question per optional activity (Q table). The bundle is the sum of the answers.",
+ prod:"The bundle is computed deterministically from the package definition. The LLM only rephrases questions, answers “why are you asking?” and handles free-text answers by mapping them to allowed answers.",
+ steps:["Load the package: required activities plus optional ones, each with a question_key and an implies list.","Ask the questions in order. Each yes/no adds or removes activities and rules deterministically.","Optional adaptive follow-ups come from an allow-list of questions (for example staff count → extra labour rules).","LLM explains “why we ask” using the rule ids that the question triggers.","Return the bundle and the price/time estimate from the same engine used everywhere else."],
+ code:`POST /packages/cafe/advisor
+{ "answers": { "outdoor_seating": true, "online_orders": false,
+               "music": true, "catering": false } }
+
+200 OK
+{ "activities": ["c1","c2","c3","c4","c6"],
+  "rules": ["r1","r2","r3","r4","r5","r6","r7","r8"],
+  "fees": 750, "est_days_parallel": 7 }`,
+ data:["Package definitions with question_key and implies","Rules registry (to compute implied rules)"],
+ guard:["The LLM cannot add or remove activities. Only the engine can.","Every “why we ask” answer cites rule ids.","The user can always edit the bundle manually afterwards."],
+ metrics:["Advisor completion rate","% of bundles edited after the advisor","Applications rejected for a missing activity (should trend to zero)"],
+ risks:["Question fatigue: keep to 5 or fewer questions per package.","Package definitions must be owned and versioned by a named team."]},
+m:{name:"Location Advisor",type:"Geo data + rules engine + LLM for wording",phase:"Phase 3",effort:"L (depends on data access)",
+ proto:"Six hard-coded zones with allowed/conditional/not-allowed, competition counts and a traffic score.",
+ prod:"The verdict comes from the rules engine over zoning data. Competition counts come from the commercial registry. A deterministic score ranks zones. The LLM only turns the structured result into two plain sentences.",
+ steps:["Input: activity set plus a zone (or radius around a point).","Rules engine looks up the rules for each (activity, zone) → ok / conditional / no, with citations.","Registry query counts similar active businesses in the zone (aggregates only).","Score = configurable weights over traffic proxy and competition, among allowed zones only.","LLM receives the JSON facts and writes the explanation. It may not add facts.","UI shows the map, the verdict and “last updated” for the zoning layer."],
+ code:`GET /locations/evaluate?package=cafe&zone=pearl
+
+200 OK
+{ "zone": "pearl",
+  "verdict": "ok",
+  "citations": ["ZON-2024-117"],
+  "similar_businesses": 11,
+  "competition_level": "high",
+  "traffic_index": 5,
+  "score": 9,
+  "explanation_en": "...", "explanation_ar": "..." }`,
+ data:["Official zoning / land-use layer (GIS)","Commercial registry (aggregated counts per zone)","Optional licensed foot-traffic data","Rules registry with zone conditions"],
+ guard:["Verdict is never produced by the LLM.","Explanation is grounded in the JSON it is given.","Show the data date and a disclaimer; “conditional” links to the approval path.","Only aggregated registry data is exposed: no individual business is identified."],
+ metrics:["% of recommendations accepted","Zoning-related rejections after submission (target near zero)","Data freshness (days since last GIS update)"],
+ risks:["Zoning data may be hard to obtain or out of date.","Ranking can steer investors toward crowded areas. Show the reasoning, and let users sort by their own priority."]},
+d:{name:"Document scan",type:"OCR / vision LLM + validators",phase:"Phase 2",effort:"M–L",
+ proto:"Upload button that shows a canned “AI read” result. The lease always triggers the 8-month warning.",
+ prod:"Classify the file, extract fields into a per-document schema with a vision-capable model or an OCR + LLM pipeline, then run deterministic validators. The validators, not the model, decide pass or fail.",
+ steps:["Upload → malware scan → encrypted storage.","Classify the document type (lease, ID, floor plan, certificate…).","Extract fields to the schema for that type, with a confidence score per field (Arabic + English, stamps, mixed scripts).","Validators: expiry ≥ required months, name matches the ID in the wallet, plate formats, required fields present.","Show extracted values for the user to confirm. Low-confidence fields become manual inputs.","Confirmed values pre-fill the application forms."],
+ code:`POST /documents/extract  (doc_type auto-detected)
+
+200 OK
+{ "doc_type": "lease",
+  "fields": {
+    "landlord":  { "value": "Al Noor Real Estate", "conf": 0.97 },
+    "annual_rent": { "value": 96000, "conf": 0.95 },
+    "end_date":  { "value": "2027-07-01", "conf": 0.91 } },
+  "validations": [
+    { "rule": "lease_min_remaining_12m", "result": "fail",
+      "message_key": "lease_too_short" } ] }`,
+ data:["Document-type schemas and validator rules","Digital wallet / e-gov document exchange for issuer-verified copies","Retention and deletion policy"],
+ guard:["Users confirm extracted values before they are used.","Pass/fail comes from deterministic validators.","AI is not fraud detection. Verify against the issuing authority where an API exists.","Encrypt at rest, apply retention limits, keep data in the required residency region."],
+ metrics:["Field-level extraction accuracy per document type","% of documents passing first time","Minutes saved per application"],
+ risks:["Poor scans, handwriting and stamps lower accuracy.","Forged documents need issuer verification, not OCR."]},
+p:{name:"Pre-flight check",type:"Rules engine + LLM for explanation",phase:"Phase 2",effort:"M",
+ proto:"checks(): five hard-coded checks and a simple score formula (ok = 1, warn = 0.5, error = 0).",
+ prod:"A deterministic readiness engine runs every check (completeness, consistency, cross-document, regulator-specific). The LLM summarises and prioritises in plain language. Checks grow from analysis of past rejection reasons.",
+ steps:["Collect application state: bundle, rule confirmations, zone, documents with validations.","Run the checks. Each returns severity (ok/warn/error), a message key and a fix target.","Compute the score and group issues by what blocks submission.","LLM writes a short prioritised summary from the issue list only.","Errors block submission. Warnings can be overridden with a logged reason."],
+ code:`POST /applications/{id}/preflight
+
+200 OK
+{ "score": 80,
+  "can_submit": true,
+  "issues": [
+    { "severity": "warn", "code": "RULES_UNCONFIRMED", "count": 3, "fix": "rules" },
+    { "severity": "warn", "code": "LEASE_SHORT", "fix": "documents" } ],
+  "summary_en": "...", "summary_ar": "..." }`,
+ data:["Check library (versioned)","Historical rejection reasons by regulator","Document validations from the scan service"],
+ guard:["Severity comes from the rules, never from the model.","The score is guidance, not an approval. Label it clearly.","Never auto-submit. Log every override with a reason and the user."],
+ metrics:["First-pass approval rate (with vs without pre-flight)","Score calibration: does an 80 % score really mean fewer rejections?","Top rejection reasons trend"],
+ risks:["A high score that still gets rejected destroys trust, so calibrate against real outcomes."]},
+t:{name:"Smart tracker",type:"Integrations + workflow + ETA model + LLM",phase:"Phase 2–3",effort:"L (regulator integrations)",
+ proto:"S.day counter simulates progress. One application is set to “action needed”. Renewal reminders are static text.",
+ prod:"Regulator status events feed a state machine per application. A simple statistical model estimates the completion date. The LLM turns a regulator's Arabic rejection text into a plain-language action and extracts the document needed.",
+ steps:["Regulators push webhooks, or are polled. A manual status fallback covers those without APIs.","Events go to an event bus. A state machine updates each application (submitted → review → inspection → approved / action needed).","ETA = historical duration quantiles per regulator and activity, adjusted by current backlog. Start with the median before anything fancier.","On “action needed”, the LLM reads the regulator message and returns { summary, required_document, deadline }. Show the original message next to it.","Notifications by push, SMS and email. Fix now opens the upload flow and re-runs document validation before resubmitting.","A scheduler computes renewal dates from approvals and drafts the paperwork 30 days ahead."],
+ code:`// webhook from a regulator
+POST /integrations/food-safety/events
+{ "application_ref": "FS-88121", "status": "ACTION_REQUIRED",
+  "message_ar": "..." }
+
+// after LLM interpretation
+{ "application_id": "app_42", "state": "action_needed",
+  "summary_en": "Floor plan is unreadable. Upload a clearer copy.",
+  "required_document": "plan", "due": "2026-11-12",
+  "eta": "2026-11-19" }`,
+ data:["Regulator APIs or webhooks (or a manual fallback)","Historical durations per regulator and activity","Notification service and templates (ar/en)"],
+ guard:["Always show the regulator's original text next to the AI summary.","Resubmission only after document validation passes.","Escalation path to a human service centre.","Audit log of every status change and notification."],
+ metrics:["Time to resolve an action item","ETA error in days (mean absolute error)","Notification open and action rates"],
+ risks:["Regulator integration is the long pole.","Statuses may be inconsistent across regulators, so normalise them in an adapter layer."]},
+c:{name:"AI assistant (chat)",type:"RAG over the rules registry",phase:"MVP",effort:"S–M",
+ proto:"Scripted replies chosen by keywords (aiReply()).",
+ prod:"Retrieval over the versioned rules registry and package catalogue. The model answers only from retrieved passages and the user's application state, with citations.",
+ steps:["Embed and index rules, package descriptions and FAQs in Arabic and English.","On each question, retrieve the top passages and add the application state (bundle, zone, documents).","LLM answers from those passages only, with rule-id citations.","If nothing relevant is retrieved, say so and offer a human."],
+ code:`POST /ai/chat
+{ "application_id": "app_42", "message": "Do I need a hygiene inspection?" }
+
+200 OK
+{ "answer_en": "Yes. ...", "citations": ["r1"], "handoff": false }`,
+ data:["Rules registry with source text and effective dates","Package catalogue","Application state (read-only)"],
+ guard:["Answers must cite rule ids, and unknown means “I don't know”.","Read-only access to application state. Actions go through the normal UI.","Rate limiting and abuse filtering."],
+ metrics:["Answer groundedness (citations present and correct)","Deflection rate vs service-centre calls","Thumbs up/down"],
+ risks:["Outdated rules text. Re-index when a rule version changes."]}
+};
+const DEVORDER=["q","a","m","d","p","t","c"];
+function devBody(k){const d=DEV[k];
+ return `<div class="dchips"><span class="chip ai">${d.type}</span><span class="chip">${d.phase}</span><span class="chip warn">Effort: ${d.effort}</span></div>
+ <div class="dg"><div><h4>This prototype</h4><p>${d.proto}</p></div><div><h4>Production design</h4><p>${d.prod}</p></div></div>
+ <h4>Pipeline</h4><ol>${d.steps.map(s=>`<li>${s}</li>`).join("")}</ol>
+ <h4>API sketch</h4><pre>${d.code}</pre>
+ <div class="dg3"><div><h4>Data &amp; integrations</h4><ul>${d.data.map(s=>`<li>${s}</li>`).join("")}</ul></div><div><h4>Guardrails</h4><ul>${d.guard.map(s=>`<li>${s}</li>`).join("")}</ul></div><div><h4>Metrics</h4><ul>${d.metrics.map(s=>`<li>${s}</li>`).join("")}</ul></div></div>
+ <h4>Risks</h4><ul>${d.risks.map(s=>`<li>${s}</li>`).join("")}</ul>`;}
+const devBox=(k,open)=>(!S.dev&&!open)?"":`<details class="dev" id="dev-${k}" ${open?"open":""}><summary>🛠 Developer view · ${DEV[k].name}</summary>${devBody(k)}</details>`;
+
+function vDev(){
+  const arch=[["Client","Single-window web app (ar/en, RTL)"],["API gateway / BFF","Auth, rate limits, locale"],["Package & rules engine","Deterministic: bundles, fees, rules, verdicts"],["AI service","Intent, explain, extract, summarise (LLM)"],["Knowledge","Package catalogue · Rules registry · Zoning GIS · Registry aggregates"],["Document service","Upload, scan, store, validate"],["Workflow & events","State machine, ETA, notifications"],["Regulator adapters","APIs / webhooks / manual fallback"],["Audit log","Every AI output, override and status change"]];
+  $("#view").innerHTML=`<div class="wrap pg devpage"><div class="card"><h2>🛠 Developer view</h2><p class="sub">How each AI feature would be built. English only. Toggle “Developer view” in the top bar to see these panels next to each feature in the flow.</p>
+  <div class="tabs">${DEVORDER.map(k=>`<a class="btn sm" href="#dev-${k}">${DEV[k].name}</a>`).join("")}<a class="btn sm" href="#dev-data">Data model</a><a class="btn sm" href="#dev-roll">Rollout</a></div></div>
+  <div class="card" style="margin-top:14px"><h3 style="margin:0 0 6px">Design principle</h3><div class="expl" style="margin:0"><b>The LLM proposes. The rules engine decides.</b> Compliance verdicts, fees, required documents and submission status always come from deterministic, versioned code and data. The model reads, extracts, explains and prioritises, with citations. A person confirms before anything is sent to a regulator.</div></div>
+  <div class="card" style="margin-top:14px"><h3 style="margin:0 0 10px">Architecture</h3><div class="arch">${arch.map((a,i)=>`<div class="ab ${i===2||i===3?"hl":""}"><b>${a[0]}</b><small>${a[1]}</small></div>`).join("")}</div></div>
+  ${DEVORDER.map(k=>`<div style="margin-top:14px">${devBox(k,true)}</div>`).join("")}
+  <div class="card" id="dev-data" style="margin-top:14px"><h3 style="margin:0 0 6px">Core data model</h3><pre>Package   { id, name_ar, name_en, activities[{id, required, question_key, implies[]}], docs[] }
+Activity  { id, code, fee, est_days, regulator_ids[] }
+Rule      { id, regulator_id, applies_to[], text_ar, text_en, verifiable: auto|manual,
+            version, effective_from, source_url }
+Zone      { id, name_ar, name_en, geometry, land_use }
+ZoneRule  { zone_id, activity_id, verdict: ok|conditional|no, rule_id }
+Application { id, package_id, activity_ids[], zone_id, rule_confirmations[], documents[], state }
+AiEvent   { id, feature, input_ref, output, model, version, user_decision, ts }   // audit</pre></div>
+  <div class="card" id="dev-roll" style="margin-top:14px"><h3 style="margin:0 0 6px">Suggested rollout</h3>
+  <table><tr><th>Phase</th><th>Ship</th><th>Why first</th></tr>
+  <tr><td>1 · MVP</td><td>Package catalogue + rules engine, Intent search, Setup Advisor, Assistant (RAG), plain-language explanations</td><td>Value without regulator integrations; low risk</td></tr>
+  <tr><td>2</td><td>Document scan, Pre-flight check, Tracker with first regulator integrations</td><td>Cuts rework and rejection; needs document and regulator access</td></tr>
+  <tr><td>3</td><td>Location Advisor, renewals, proactive reminders</td><td>Depends on GIS and registry data access</td></tr></table>
+  <h3 style="margin:16px 0 6px">Cross-cutting</h3><ul class="dl"><li><b>Evaluation:</b> golden sets in Arabic and English per feature; regression-test every prompt or model change.</li><li><b>Privacy:</b> comply with the applicable personal-data law, minimise what is sent to the model, set retention limits, and keep data in the required region.</li><li><b>Observability:</b> log every AI input, output, model version and user decision (AiEvent) for audit.</li><li><b>Fallback:</b> every AI feature degrades to the manual path if the model is down or unsure.</li></ul>
+  <h3 style="margin:16px 0 6px">Open decisions for the team</h3><ul class="dl"><li>Who owns and versions the package and rules content?</li><li>Which regulators can offer APIs or webhooks, and in what order?</li><li>Where can models and document storage be hosted (data residency)?</li><li>Build or buy OCR and document verification?</li></ul></div></div>`;
+  if(S.devFocus){const e=document.getElementById("dev-"+S.devFocus);S.devFocus=null;if(e)setTimeout(()=>e.scrollIntoView(),0);}
+}
+
 // ---------- Modal ----------
 function openModal(h){const o=$("#ov");o.innerHTML=`<div class="modal">${h}</div>`;o.classList.add("on");o.onclick=e=>{if(e.target===o)closeModal();};const c=o.querySelector(".x");if(c)c.onclick=closeModal;}
 function closeModal(){$("#ov").classList.remove("on");}
 function openAdvisor(){S.adv={step:0,biz:null,ans:[]};advRender();}
 function advRender(){
   const A=S.adv;
-  if(A.step===0){openModal(`<div class="mh"><h3>✨ ${_("Setup Advisor","مستشار التأسيس")}</h3><button class="x">✕</button></div><p class="sub">${_("What do you want to open?","ماذا تريد أن تفتح؟")}</p>${Object.entries(BIZ).filter(([k,v])=>!v.soon).map(([k,v])=>`<button class="opt" data-k="${k}">${v.ic} ${x(v.name)}</button>`).join("")}`);
+  if(A.step===0){openModal(`<div class="mh"><h3>✨ ${_("Setup Advisor","مستشار التأسيس")}</h3><button class="x">✕</button></div><p class="sub">${_("What do you want to open?","ماذا تريد أن تفتح؟")}</p>${Object.entries(BIZ).filter(([k,v])=>!v.soon).map(([k,v])=>`<button class="opt" data-k="${k}">${v.ic} ${x(v.name)}</button>`).join("")}${devBox("a")}`);
     document.querySelectorAll(".opt").forEach(e=>e.onclick=()=>{A.biz=e.dataset.k;A.step=1;advRender();});return;}
   const opt=BIZ[A.biz].acts.filter(a=>!a.req);
   if(A.step<=opt.length){const a=opt[A.step-1];
-    openModal(`<div class="mh"><h3>✨ ${_("Setup Advisor","مستشار التأسيس")}</h3><button class="x">✕</button></div><div class="pbar"><i style="width:${A.step/(opt.length+1)*100}%"></i></div><p style="font-size:17px;font-weight:600">${x(Q[a.id])}</p><button class="opt" data-y="1">${_("Yes","نعم")}</button><button class="opt" data-y="0">${_("No","لا")}</button>`);
+    openModal(`<div class="mh"><h3>✨ ${_("Setup Advisor","مستشار التأسيس")}</h3><button class="x">✕</button></div><div class="pbar"><i style="width:${A.step/(opt.length+1)*100}%"></i></div><p style="font-size:17px;font-weight:600">${x(Q[a.id])}</p><button class="opt" data-y="1">${_("Yes","نعم")}</button><button class="opt" data-y="0">${_("No","لا")}</button>${devBox("a")}`);
     document.querySelectorAll(".opt").forEach(e=>e.onclick=()=>{if(e.dataset.y==="1")A.ans.push(a.id);A.step++;advRender();});return;}
   const bz=BIZ[A.biz],all=bz.acts.filter(a=>a.req||A.ans.includes(a.id));
   openModal(`<div class="mh"><h3>✨ ${_("Your tailored bundle","حزمتك المخصصة")}</h3><button class="x">✕</button></div><p class="sub">${bz.ic} ${x(bz.name)} · ${all.length} ${_("activities","أنشطة")} · ${all.reduce((s,a)=>s+a.fee,0)} ${_("in government fees","رسومًا حكومية")}</p>
   ${all.map(a=>`<div class="row"><div class="grow"><div class="t">${x(a.n)}</div></div><div class="price">${a.days} ${_("days","أيام")}</div></div>`).join("")}
-  <div class="actions"><button class="btn" id="mclose">${_("Close","إغلاق")}</button><button class="btn primary" id="muse">${_("Use this bundle","استخدم هذه الحزمة")} ${fwd()}</button></div>`);
+  <div class="actions"><button class="btn" id="mclose">${_("Close","إغلاق")}</button><button class="btn primary" id="muse">${_("Use this bundle","استخدم هذه الحزمة")} ${fwd()}</button></div>${devBox("a")}`);
   $("#mclose").onclick=closeModal;$("#muse").onclick=()=>{closeModal();pick(A.biz,A.ans,"");};
 }
 function openInbox(){
@@ -405,11 +576,11 @@ function openFix(i){
 function render(){
   document.documentElement.lang=S.lang;document.documentElement.dir=S.lang==="ar"?"rtl":"ltr";document.title=_("Open Your Business – Prototype","افتح عملك – نموذج أولي");
   const n=S.apps.length,ac=actionCount();
-  const nv=[["home",_("Home","الرئيسية")],["start",_("Business Journeys","رحلات الأعمال")],["map",_("Business Map","خريطة الأعمال")],["dash",_("My Business","أعمالي")]];
+  const nv=[["home",_("Home","الرئيسية")],["start",_("Business Journeys","رحلات الأعمال")],["map",_("Business Map","خريطة الأعمال")],["dash",_("My Business","أعمالي")],["dev","🛠 Developer"]];
   $("#root").innerHTML=`
   <div class="ribbon">${_("Concept prototype for internal review: sample content, not live services","نموذج مفاهيمي للمراجعة الداخلية: محتوى تجريبي وليس خدمات فعلية")}</div>
   <div class="top"><div class="wrap"><div class="l"><a data-n="home">${_("Home","الرئيسية")}</a><a data-t="1">${_("Accessibility","إمكانية الوصول")}</a><a data-t="1">${_("Contact Us","اتصل بنا")}</a></div>
-   <div class="r"><div class="toggle"><button aria-pressed="${S.mode==="today"}" data-m="today">${_("Today: service catalogue","اليوم: كتالوج الخدمات")}</button><button aria-pressed="${S.mode==="new"}" data-m="new">${_("Proposed: business packages","المقترح: حزم الأعمال")}</button></div><button class="lang" id="lang">${_("العربية","English")}</button></div></div></div>
+   <div class="r"><div class="toggle"><button aria-pressed="${S.mode==="today"}" data-m="today">${_("Today: service catalogue","اليوم: كتالوج الخدمات")}</button><button aria-pressed="${S.mode==="new"}" data-m="new">${_("Proposed: business packages","المقترح: حزم الأعمال")}</button></div><button class="lang" id="dvt" aria-pressed="${S.dev}" style="${S.dev?"background:#fff;color:var(--primary-color)":""}">🛠 ${_("Developer view","عرض المطورين")}: ${S.dev?_("On","مفعّل"):_("Off","متوقف")}</button><button class="lang" id="lang">${_("العربية","English")}</button></div></div></div>
   <header class="main"><div class="wrap"><div class="logo" data-n="home"><span class="mark">🏁</span>${_("Open Your Business","افتح عملك")} <span class="chip ai">${_("Prototype","نموذج")}</span></div>
    <nav class="menu">${nv.map(([k,t])=>`<a data-n="${k}" class="${S.mode==="new"&&S.view===k?"on":""}">${t}${k==="dash"&&n?`<span class="bn">${n}</span>`:""}</a>`).join("")}</nav>
    <button class="bell" id="bell" title="${_("Notifications","الإشعارات")}">🔔${ac?`<span class="bn">${ac}</span>`:""}</button></div></header>
@@ -419,9 +590,9 @@ function render(){
   document.querySelectorAll("[data-t]").forEach(e=>e.onclick=()=>toast(_("Not part of this prototype","ليس جزءًا من هذا النموذج")));
   document.querySelectorAll("[data-m]").forEach(e=>e.onclick=()=>{S.mode=e.dataset.m;render();});
   $("#lang").onclick=()=>{S.lang=S.lang==="ar"?"en":"ar";S.chat=[];if(S.biz)zoneApply();S.intent=null;render();};
-  $("#bell").onclick=openInbox;
+  $("#bell").onclick=openInbox;$("#dvt").onclick=()=>{S.dev=!S.dev;render();};
   if(S.mode==="today")return renderToday();
-  ({home:vHome,start:vStart,map:vMap,dash:vDash})[S.view]();
+  ({home:vHome,start:vStart,map:vMap,dash:vDash,dev:vDev})[S.view]();
 }
 
 // ---------- Views ----------
@@ -440,11 +611,12 @@ function vHome(){
    <p>${_("Pick a ready-made business package. We bring together every activity, rule and document, and AI does the heavy lifting.","اختر حزمة أعمال جاهزة. نجمع لك كل نشاط وقاعدة ومستند، ويتولى الذكاء الاصطناعي العمل الشاق.")}</p>
    <div class="ask"><input id="q" placeholder="${_("I want to open a café in Al Sadd…","أريد أن أفتح مقهى في السد…")}"><button class="btn primary" id="qgo">✨ ${_("Ask AI","اسأل الذكاء الاصطناعي")}</button></div>
    <div class="ex">${ex.map((t,i)=>`<button data-x="${i}">${t}</button>`).join("")}</div><div id="intent" class="intent" style="display:none"></div></div></section>
-  <div class="wrap"><section class="sec"><h2>${_("Open your…","افتح…")}</h2><p class="sub">${_("Pick a business package, not a list of services.","اختر حزمة أعمال لا قائمة خدمات.")}</p>${tilesHtml()}</section>
+  <div class="wrap">${devBox("q")}<section class="sec"><h2>${_("Open your…","افتح…")}</h2><p class="sub">${_("Pick a business package, not a list of services.","اختر حزمة أعمال لا قائمة خدمات.")}</p>${tilesHtml()}</section>
   <section class="sec"><div class="stage"><button class="on">🏪 ${_("Start a business","ابدأ عملًا")}</button>${[[_("Operate","إدارة العمل")],[_("Modify","تعديل العمل")],[_("Expand","توسيع العمل")],[_("Close","إغلاق العمل")]].map(t=>`<button data-t="1">${t[0]}</button>`).join("")}</div></section>
   <section class="sec"><h2>✨ ${_("AI that works with the package","ذكاء اصطناعي يعمل مع الحزمة")}</h2><p class="sub">${_("Six features. Each one is clickable in this prototype.","ست ميزات، وكل واحدة قابلة للتجربة في هذا النموذج.")}</p>
-   <div class="feat">${F.map(f=>`<div class="fc"><div style="font-size:26px">${f[0]}</div><h3>${f[1]}</h3><p>${f[2]}</p><div class="meta"><span class="chip ai">${f[3]}</span></div><div><button class="btn sm" data-f="${f[4]}">${_("Try it","جرّبها")} ${fwd()}</button></div></div>`).join("")}</div></section></div>`;
+   <div class="feat">${F.map(f=>`<div class="fc"><div style="font-size:26px">${f[0]}</div><h3>${f[1]}</h3><p>${f[2]}</p><div class="meta"><span class="chip ai">${f[3]}</span></div><div><button class="btn sm" data-f="${f[4]}">${_("Try it","جرّبها")} ${fwd()}</button> ${S.dev?`<button class="btn sm ai" data-dv="${f[4]}">🛠 Dev</button>`:""}</div></div>`).join("")}</div></section></div>`;
   wireTiles($("#view"));
+  $("#view").querySelectorAll("[data-dv]").forEach(e=>e.onclick=()=>{S.devFocus={q:"q",a:"a",m:"m",d:"d",p:"p",t:"t"}[e.dataset.dv];nav("dev");});
   $("#view").querySelectorAll("[data-t]").forEach(e=>e.onclick=()=>toast(_("Not part of this prototype","ليس جزءًا من هذا النموذج")));
   const q=$("#q");$("#qgo").onclick=()=>{$("#intent").style.display="block";runIntent(q.value);};q.onkeydown=e=>{if(e.key==="Enter")$("#qgo").click();};
   $("#view").querySelectorAll("[data-x]").forEach(e=>e.onclick=()=>{q.value=ex[+e.dataset.x];$("#qgo").click();});
@@ -505,7 +677,7 @@ function renderMain(){
       const right=d.src==="w"?`<span class="chip">${_("From your wallet","من محفظتك")}</span>`:d.src==="auto"?`<span class="chip ai">${_("Auto-issued from your activities","يُصدر تلقائيًا من أنشطتك")}</span>`:s===0?`<button class="btn sm primary" data-u="${i}">⬆ ${_("Upload","رفع")}</button>`:s===1?`<button class="btn sm" data-u="${i}">⬆ ${_("Upload renewed copy","ارفع نسخة مجددة")}</button>`:`<span class="chip">${_("Verified","تم التحقق")}</span>`;
       const note=s>0&&d.src==="up"?`<div class="expl" style="margin-top:6px"><b>${_("✨ AI read:","✨ قرأ الذكاء الاصطناعي:")}</b> ${i==="lease"?(s===1?x(d.ex)+"<br>⚠️ "+x(d.warn):x(d.fixed)):x(d.ex)}</div>`:"";
       return `<div class="doc"><div class="grow"><div class="t">${s>=2?"✅":s===1?"⚠️":"📎"} ${x(d.n)}</div>${note}</div>${right}</div>`;}).join("")}
-    <div class="actions"><button class="btn" id="back">${back()} ${_("Rules","القواعد")}</button><button class="btn primary" id="next">${_("Review & launch","مراجعة وإطلاق")} ${fwd()}</button></div>`;
+    ${devBox("d")}<div class="actions"><button class="btn" id="back">${back()} ${_("Rules","القواعد")}</button><button class="btn primary" id="next">${_("Review & launch","مراجعة وإطلاق")} ${fwd()}</button></div>`;
     m.querySelectorAll("[data-u]").forEach(e=>e.onclick=()=>{const i=e.dataset.u;S.docs[i]=(S.docs[i]||0)===0&&DOCS[i].warn?1:2;renderMain();renderSide();});
     $("#back").onclick=()=>go(2);$("#next").onclick=()=>go(4);return;}
   if(S.step===4){
@@ -516,7 +688,7 @@ function renderMain(){
       ${c.map(k=>`<div class="pf"><span>${k.l==="ok"?"✅":k.l==="warn"?"⚠️":"❌"}</span><div class="grow">${k.t}</div>${k.f?`<button class="btn sm" data-fx="${k.f}">${_("Fix","إصلاح")}</button>`:""}</div>`).join("")}</div>
      <div><div class="group" style="margin-top:0">${_("Time: bundled vs one-by-one","الوقت: الحزمة مقابل واحدًا تلو الآخر")}</div><div class="timeline"><div class="tl"><span style="width:90px">${_("Bundled","الحزمة")}</span><div class="bar" style="width:${parDays()/mx*100}%"></div><span>${parDays()} ${_("d","يوم")}</span></div><div class="tl"><span style="width:90px">${_("Traditional","التقليدي")}</span><div class="bar seq" style="width:100%"></div><span>${mx} ${_("d","يوم")}</span></div></div>
       <div class="group">${_("What gets submitted","ما سيتم إرساله")}</div><table>${acts().map(a=>`<tr><td>${x(a.n)}</td><td style="text-align:end">${a.fee}</td></tr>`).join("")}</table></div></div>
-    <div class="actions"><button class="btn" id="back">${back()} ${_("Documents","المستندات")}</button><button class="btn primary" id="go" ${err?"disabled style='opacity:.5'":""}>${err?_("Fix errors to submit","أصلح الأخطاء للإرسال"):_("Submit one application","أرسل طلبًا واحدًا")}</button></div>`;
+    ${devBox("p")}<div class="actions"><button class="btn" id="back">${back()} ${_("Documents","المستندات")}</button><button class="btn primary" id="go" ${err?"disabled style='opacity:.5'":""}>${err?_("Fix errors to submit","أصلح الأخطاء للإرسال"):_("Submit one application","أرسل طلبًا واحدًا")}</button></div>`;
     m.querySelectorAll("[data-fx]").forEach(e=>e.onclick=()=>go(+e.dataset.fx));
     $("#back").onclick=()=>go(3);$("#go").onclick=()=>{if(err)return;submitApp();renderMain();render();};}
 }
@@ -526,7 +698,7 @@ function renderSide(){
     sum=`<div class="card sum"><h3 style="margin:0 0 8px">${b().ic} ${_("Your launch pack","حزمة إطلاقك")}</h3><div><span>${_("Activities","الأنشطة")}</span><b>${acts().length}</b></div><div><span>${_("Rules to meet","القواعد المطلوبة")}</span><b>${rules().length}</b></div><div><span>${_("Est. time (bundled)","الوقت المقدّر (حزمة)")}</span><b>${pd} ${_("days","أيام")}</b></div><div class="big"><span>${_("Gov. fees","الرسوم الحكومية")}</span><b>${fees()}</b></div><div class="save">${_(`⏱ Saves ~${Math.max(0,sd-pd)} days vs one-by-one`,`⏱ يوفّر ~${Math.max(0,sd-pd)} يومًا مقارنة بالتقديم المنفصل`)}</div></div>`;}
   const sugg=S.biz?b().ai:[[_("Which business should I start with a small budget?","أي مشروع أبدأ به بميزانية صغيرة؟")],[_("What do I need to open a café?","ماذا أحتاج لفتح مقهى؟")]];
   s.innerHTML=sum+`<div class="card ai-panel"><h3>${_("✨ AI assistant","✨ المساعد الذكي")}</h3><div class="sugg">${sugg.map((t,i)=>`<button data-i="${i}">${Array.isArray(t)?(t.length>1?x(t):t[0]):t}</button>`).join("")}</div><div class="chat">${S.chat.map(c=>`<div class="msg ${c.u?"u":"a"}">${c.t}</div>`).join("")}</div>
-  <div class="field" style="margin:0"><input type="text" id="ci" placeholder="${_("Ask anything…","اسأل أي شيء…")}"><button class="btn primary sm" id="cs">${_("Send","إرسال")}</button></div></div>`;
+  <div class="field" style="margin:0"><input type="text" id="ci" placeholder="${_("Ask anything…","اسأل أي شيء…")}"><button class="btn primary sm" id="cs">${_("Send","إرسال")}</button></div></div>${devBox("c")}`;
   s.querySelectorAll("[data-i]").forEach(e=>e.onclick=()=>ask(e.textContent,S.biz?+e.dataset.i:-1));
   $("#cs").onclick=()=>ask($("#ci").value,-1);$("#ci").onkeydown=e=>{if(e.key==="Enter")ask(e.target.value,-1);};
 }
@@ -539,7 +711,7 @@ function vMap(){
   <div class="tabs" style="margin:0 0 12px">${Object.entries(BIZ).filter(([k,v])=>!v.soon).map(([k,v])=>`<button data-b="${k}" class="btn sm ${biz===k?"primary":""}">${v.ic} ${x(v.name)}</button>`).join("")}</div>
   <div class="mapw"><svg class="map" viewBox="0 0 520 250">${ZONES.map(z=>{const c=col[ZR[biz][z.id]];return `<g data-z="${z.id}"><rect x="${z.x}" y="${z.y}" width="${z.w}" height="${z.h}" rx="12" fill="${c[0]}" stroke="${c[1]}" stroke-width="${zid===z.id?4:1.2}"/><text x="${z.x+z.w/2}" y="${z.y+z.h/2-2}" text-anchor="middle" font-size="14" font-weight="700" fill="#14213D">${x(z.n)}</text><text x="${z.x+z.w/2}" y="${z.y+z.h/2+18}" text-anchor="middle" font-size="12" fill="#14213D">${COMP[biz][z.id]} ${_("similar","مشابهة")}</text>${best.id===z.id?`<text x="${z.x+10}" y="${z.y+22}" font-size="16">⭐</text>`:""}</g>`;}).join("")}</svg>
   <div class="zinfo" id="zi"></div></div>
-  <div class="tabs" style="margin-top:10px;color:var(--muted);align-items:center"><span class="st ok">${x(STN.ok)}</span><span class="st cond">${x(STN.cond)}</span><span class="st no">${x(STN.no)}</span><span>⭐ ${_("AI recommended","موصى به من الذكاء الاصطناعي")}</span></div></div></div>`;
+  <div class="tabs" style="margin-top:10px;color:var(--muted);align-items:center"><span class="st ok">${x(STN.ok)}</span><span class="st cond">${x(STN.cond)}</span><span class="st no">${x(STN.no)}</span><span>⭐ ${_("AI recommended","موصى به من الذكاء الاصطناعي")}</span></div>${devBox("m")}</div></div>`;
   document.querySelectorAll("[data-b]").forEach(e=>e.onclick=()=>{S.mapBiz=e.dataset.b;S.mapZone=null;vMap();});
   document.querySelectorAll("[data-z]").forEach(e=>e.onclick=()=>{S.mapZone=e.dataset.z;vMap();});
   const zi=$("#zi");
@@ -563,7 +735,7 @@ function vDash(){
    <div class="expl" style="margin-top:12px"><b>${_("✨ Next best action:","✨ أفضل خطوة تالية:")}</b> ${nxt}</div>
    <div class="actions"><button class="btn" id="rs">${_("Reset demo","إعادة تعيين")}</button><button class="btn primary" id="sim">⏩ ${_("Simulate +3 days","محاكاة +3 أيام")}</button></div></div>
   <div class="card"><h3 style="margin:0 0 8px">🔔 ${_("Renewal reminders (AI)","تنبيهات التجديد (ذكاء اصطناعي)")}</h3>${bz.renew.map(r=>`<div class="row"><div class="grow"><div class="t">${x(r[0])}</div><div class="d">${_(`Renews ${r[1]} months after approval. We'll remind you 30 days before and prepare the paperwork.`,`يُجدَّد بعد ${r[1]} شهرًا من الموافقة. سنذكّرك قبل 30 يومًا ونجهّز الأوراق.`)}</div></div></div>`).join("")}</div></div>
-  <div class="card" style="margin-top:14px"><h3 style="margin:0 0 8px">${_("Applications by regulator","الطلبات حسب الجهة")}</h3>${L.map(({a,s},i)=>`<div class="row"><div class="grow"><div class="t">${x(a.reg)}</div><div class="d">${s.s==="action"?"⚠️ "+_("Action needed","مطلوب إجراء"):x(STG[s.i])}</div><div class="dots">${[0,1,2,3].map(j=>`<i class="${s.s==="action"&&j===1?"w":j<=s.i&&s.s!=="sub"||j===0?"f":""}"></i>`).join("")}</div></div>${s.s==="action"?`<button class="btn primary sm" data-f="${i}">${_("Fix now","أصلح الآن")}</button>`:""}</div>`).join("")}</div></div>`;
+  <div class="card" style="margin-top:14px"><h3 style="margin:0 0 8px">${_("Applications by regulator","الطلبات حسب الجهة")}</h3>${L.map(({a,s},i)=>`<div class="row"><div class="grow"><div class="t">${x(a.reg)}</div><div class="d">${s.s==="action"?"⚠️ "+_("Action needed","مطلوب إجراء"):x(STG[s.i])}</div><div class="dots">${[0,1,2,3].map(j=>`<i class="${s.s==="action"&&j===1?"w":j<=s.i&&s.s!=="sub"||j===0?"f":""}"></i>`).join("")}</div></div>${s.s==="action"?`<button class="btn primary sm" data-f="${i}">${_("Fix now","أصلح الآن")}</button>`:""}</div>`).join("")}</div>${devBox("t")}</div>`;
   $("#sim").onclick=()=>{S.day+=3;const n=actionCount();render();if(n)toast(_("⚠️ A regulator needs something from you","⚠️ هناك جهة تحتاج منك إجراءً"));};
   $("#rs").onclick=()=>{S.apps=[];S.done=false;S.day=0;render();};
   document.querySelectorAll("[data-f]").forEach(e=>e.onclick=()=>openFix(+e.dataset.f));
