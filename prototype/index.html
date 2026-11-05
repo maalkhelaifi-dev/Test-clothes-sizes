@@ -1,11 +1,14 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Open Your Business – Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
+  /* ===== THEME TOKENS – replace with the Single Window brand values ===== */
+  --font:'IBM Plex Sans Arabic','Noto Sans Arabic',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
   --bg:#f5f6f8; --card:#fff; --ink:#14181f; --muted:#5d6675; --line:#e2e6ec;
   --brand:#0f6b5c; --brand-ink:#fff; --brand-soft:#e3f3ef; --warn:#b45309; --warn-soft:#fdf1e0;
   --ai:#5b3fd1; --ai-soft:#efeafc; --ok:#17803d; --radius:14px;
@@ -15,7 +18,7 @@
   --brand:#3cb89f; --brand-ink:#04211b; --brand-soft:#16312c; --warn:#f0a95a; --warn-soft:#33270f;
   --ai:#a994ff; --ai-soft:#25203f; --ok:#4cc38a;}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--font)}
 button{font:inherit;color:inherit;cursor:pointer}
 .app{max-width:1180px;margin:0 auto;padding:16px;display:flex;flex-direction:column;gap:14px;min-height:100vh}
 header{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
@@ -24,7 +27,7 @@ h1{font-size:18px;margin:0}
 .toggle button{border:0;background:none;padding:6px 14px;border-radius:999px;color:var(--muted)}
 .toggle button[aria-pressed=true]{background:var(--brand);color:var(--brand-ink)}
 .stepper{display:flex;gap:6px;flex-wrap:wrap}
-.step{flex:1;min-width:110px;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--muted);font-size:13px;text-align:left}
+.step{flex:1;min-width:110px;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--muted);font-size:13px;text-align:start}
 .step b{display:block;color:var(--ink);font-size:13px}
 .step.on{border-color:var(--brand);background:var(--brand-soft)}
 .step.on b{color:var(--brand)}
@@ -35,7 +38,7 @@ h1{font-size:18px;margin:0}
 h2{margin:0 0 4px;font-size:20px}
 .sub{color:var(--muted);margin:0 0 16px}
 .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
-.tile{text-align:left;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;gap:6px;transition:.15s}
+.tile{text-align:start;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;gap:6px;transition:.15s}
 .tile:hover{border-color:var(--brand);transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.08)}
 .tile .ic{font-size:30px}
 .tile h3{margin:0;font-size:16px}
@@ -50,7 +53,7 @@ h2{margin:0 0 4px;font-size:20px}
 .row .grow{flex:1}
 .row .t{font-weight:600}
 .row .d{color:var(--muted);font-size:13px}
-.price{white-space:nowrap;text-align:right;font-size:13px;color:var(--muted)}
+.price{white-space:nowrap;text-align:end;font-size:13px;color:var(--muted)}
 .price b{display:block;color:var(--ink);font-size:14px}
 .group{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:16px 0 2px}
 .btn{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:8px 14px}
@@ -59,8 +62,9 @@ h2{margin:0 0 4px;font-size:20px}
 .btn.sm{padding:4px 10px;font-size:13px}
 .actions{display:flex;justify-content:space-between;gap:10px;margin-top:18px;flex-wrap:wrap}
 .expl{margin:8px 0 0;padding:10px 12px;border-radius:10px;background:var(--ai-soft);font-size:13px}
-.expl::before{content:"✨ AI in plain words: ";font-weight:600;color:var(--ai)}
+.expl b{color:var(--ai)}
 .field{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap}
+input[type=text],button{font-family:inherit}
 input[type=text]{flex:1;min-width:180px;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
 .side{display:flex;flex-direction:column;gap:14px;position:sticky;top:12px}
 @media(max-width:900px){.side{position:static}}
@@ -69,14 +73,14 @@ input[type=text]{flex:1;min-width:180px;padding:9px 12px;border-radius:10px;bord
 .save{color:var(--ok);font-size:13px;margin-top:6px}
 .ai-panel h3{margin:0 0 8px;font-size:15px;color:var(--ai)}
 .sugg{display:flex;flex-direction:column;gap:6px}
-.sugg button{text-align:left;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:7px 10px;font-size:13px}
+.sugg button{text-align:start;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:7px 10px;font-size:13px}
 .sugg button:hover{border-color:var(--ai)}
 .chat{max-height:220px;overflow:auto;display:flex;flex-direction:column;gap:6px;margin:10px 0}
 .msg{padding:7px 10px;border-radius:10px;font-size:13px;max-width:92%}
 .msg.u{align-self:flex-end;background:var(--brand-soft)}
 .msg.a{background:var(--ai-soft)}
 table{width:100%;border-collapse:collapse;font-size:13px}
-td,th{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left}
+td,th{padding:7px 8px;border-bottom:1px solid var(--line);text-align:start}
 th{color:var(--muted);font-weight:600}
 .banner{background:var(--warn-soft);color:var(--warn);padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:14px}
 .timeline{display:flex;flex-direction:column;gap:8px;margin:12px 0}
@@ -85,190 +89,239 @@ th{color:var(--muted);font-weight:600}
 .bar.seq{background:var(--warn)}
 .done{text-align:center;padding:30px 10px}
 .done .ic{font-size:54px}
+[dir=rtl] .back-arrow{display:inline-block;transform:scaleX(-1)}
+.lang{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 14px;font-weight:600}
+.hd{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 footer{color:var(--muted);font-size:12px;text-align:center;padding:6px}
 </style>
 </head>
 <body>
 <div class="app" id="app"></div>
 <script>
-// ---------- Sample data (illustrative only – NOT real fees or regulations) ----------
+// ---------- Sample data (illustrative only – NOT real fees or regulations). Each text is [English, Arabic] ----------
 const BIZ = {
-  cafe:{ic:"☕",name:"Open your café",tag:"Coffee shop, bakery items, seating area",
+  cafe:{ic:"☕",name:["Open your café","افتح مقهاك"],tag:["Coffee shop, bakery items, seating area","مقهى، مخبوزات، منطقة جلوس"],
     acts:[
-      {id:"c1",n:"Food & beverage retail (café)",d:"Core commercial activity",req:1,fee:300,days:3},
-      {id:"c2",n:"Fresh-food handling & preparation",d:"Required to prepare food on site",req:1,fee:180,days:4},
-      {id:"c3",n:"Commercial premises lease registration",d:"Registers the shop location",req:1,fee:120,days:2},
-      {id:"c4",n:"Outdoor seating permit",d:"Tables on pavement / terrace",fee:90,days:5},
-      {id:"c5",n:"Online ordering & delivery",d:"Sell through apps or your own site",fee:70,days:2},
-      {id:"c6",n:"Live music / background music licence",d:"Public performance rights",fee:60,days:3},
-      {id:"c7",n:"Catering for events",d:"Off-site food service",fee:140,days:4}],
+      {id:"c1",n:["Food & beverage retail (café)","بيع الأغذية والمشروبات (مقهى)"],d:["Core commercial activity","النشاط التجاري الأساسي"],req:1,fee:300,days:3},
+      {id:"c2",n:["Fresh-food handling & preparation","تداول وتجهيز الأغذية الطازجة"],d:["Required to prepare food on site","مطلوب لتحضير الطعام في الموقع"],req:1,fee:180,days:4},
+      {id:"c3",n:["Commercial premises lease registration","تسجيل عقد إيجار المحل التجاري"],d:["Registers the shop location","يسجّل موقع المحل"],req:1,fee:120,days:2},
+      {id:"c4",n:["Outdoor seating permit","تصريح الجلوس الخارجي"],d:["Tables on pavement / terrace","طاولات على الرصيف أو الشرفة"],fee:90,days:5},
+      {id:"c5",n:["Online ordering & delivery","الطلب والتوصيل عبر الإنترنت"],d:["Sell through apps or your own site","البيع عبر التطبيقات أو موقعك"],fee:70,days:2},
+      {id:"c6",n:["Live music / background music licence","ترخيص الموسيقى الحية والخلفية"],d:["Public performance rights","حقوق الأداء العلني"],fee:60,days:3},
+      {id:"c7",n:["Catering for events","تقديم الطعام للفعاليات"],d:["Off-site food service","خدمة الطعام خارج المقهى"],fee:140,days:4}],
     rules:[
-      {a:"c2",reg:"Municipal Food Safety Authority",t:"Hygiene inspection before opening",p:"An inspector visits your shop and checks it is clean and safe for food before you can serve customers.",ai:1},
-      {a:"c2",reg:"Municipal Food Safety Authority",t:"Written food-safety plan (HACCP-style)",p:"A short document listing what could go wrong with food and how you prevent it.",ai:1},
-      {a:"c2",reg:"Health Department",t:"Food-handler certificates for all kitchen staff",p:"Everyone touching food needs a basic course certificate. Valid for 3 years.",ai:0},
-      {a:"c1",reg:"Civil Defence",t:"Fire safety: extinguishers, exits, kitchen hood",p:"Fire equipment and clear exits must be in place and inspected.",ai:0},
-      {a:"c3",reg:"Planning & Zoning",t:"Premises must be zoned for food service",p:"Not every address allows a café. We check the address against the zoning map.",ai:1,zone:1},
-      {a:"c1",reg:"Consumer Protection",t:"Price list & allergen information displayed",p:"Prices and allergen warnings must be visible to customers.",ai:1},
-      {a:"c4",reg:"Municipality",t:"Pavement width ≥ 1.5 m after tables placed",p:"People must still be able to walk past your outdoor tables.",ai:1},
-      {a:"c6",reg:"Copyright Society",t:"Annual music royalty fee",p:"Playing music publicly requires a yearly licence fee.",ai:0},
-      {a:"c5",reg:"Data Protection",t:"Customer data consent & privacy notice",p:"If you collect customer details online you need a privacy notice.",ai:1}],
-    ai:["Suggest 3 trade names and check availability","Pre-fill all forms from my ID and company profile","Draft my food-safety plan from my menu"]},
-  logistics:{ic:"🚚",name:"Open your logistics company",tag:"Freight, last-mile delivery, warehousing",
+      {a:"c2",id:"r1",reg:["Municipal Food Safety Authority","هيئة سلامة الغذاء البلدية"],t:["Hygiene inspection before opening","فحص النظافة قبل الافتتاح"],p:["An inspector visits your shop and checks it is clean and safe for food before you can serve customers.","يزور مفتش محلك ويتأكد من نظافته وسلامته للأغذية قبل أن تبدأ باستقبال الزبائن."],ai:1},
+      {a:"c2",id:"r2",reg:["Municipal Food Safety Authority","هيئة سلامة الغذاء البلدية"],t:["Written food-safety plan (HACCP-style)","خطة مكتوبة لسلامة الغذاء (HACCP)"],p:["A short document listing what could go wrong with food and how you prevent it.","وثيقة قصيرة تحدد المخاطر المحتملة على الغذاء وكيف تمنعها."],ai:1},
+      {a:"c2",id:"r3",reg:["Health Department","إدارة الصحة"],t:["Food-handler certificates for all kitchen staff","شهادات مناولي الأغذية لجميع العاملين في المطبخ"],p:["Everyone touching food needs a basic course certificate. Valid for 3 years.","كل من يلمس الطعام يحتاج إلى شهادة دورة أساسية، صالحة لمدة 3 سنوات."],ai:0},
+      {a:"c1",id:"r4",reg:["Civil Defence","الدفاع المدني"],t:["Fire safety: extinguishers, exits, kitchen hood","السلامة من الحريق: طفايات ومخارج وشفاط المطبخ"],p:["Fire equipment and clear exits must be in place and inspected.","يجب توفير معدات الحريق ومخارج واضحة وإجراء الفحص عليها."],ai:0},
+      {a:"c3",id:"r5",reg:["Planning & Zoning","التخطيط والتقسيم"],t:["Premises must be zoned for food service","يجب أن يكون الموقع مخصصًا لخدمات الطعام"],p:["Not every address allows a café. We check the address against the zoning map.","ليس كل عنوان يسمح بمقهى. نتحقق من العنوان على خريطة التقسيم."],ai:1,zone:1},
+      {a:"c1",id:"r6",reg:["Consumer Protection","حماية المستهلك"],t:["Price list & allergen information displayed","عرض قائمة الأسعار ومعلومات مسببات الحساسية"],p:["Prices and allergen warnings must be visible to customers.","يجب أن تكون الأسعار وتحذيرات الحساسية ظاهرة للزبائن."],ai:1},
+      {a:"c4",id:"r7",reg:["Municipality","البلدية"],t:["Pavement width ≥ 1.5 m after tables placed","عرض الرصيف ≥ 1.5 م بعد وضع الطاولات"],p:["People must still be able to walk past your outdoor tables.","يجب أن يبقى بإمكان المارة تجاوز طاولاتك الخارجية."],ai:1},
+      {a:"c6",id:"r8",reg:["Copyright Society","جمعية حقوق المؤلف"],t:["Annual music royalty fee","رسوم سنوية لحقوق الموسيقى"],p:["Playing music publicly requires a yearly licence fee.","تشغيل الموسيقى علنًا يتطلب رسم ترخيص سنوي."],ai:0},
+      {a:"c5",id:"r9",reg:["Data Protection","حماية البيانات"],t:["Customer data consent & privacy notice","موافقة بيانات العملاء وإشعار الخصوصية"],p:["If you collect customer details online you need a privacy notice.","إذا جمعت بيانات العملاء عبر الإنترنت فأنت بحاجة إلى إشعار خصوصية."],ai:1}],
+    ai:[["Suggest 3 trade names and check availability","اقترح 3 أسماء تجارية وتحقق من توفرها"],["Pre-fill all forms from my ID and company profile","املأ النماذج تلقائيًا من هويتي وملف شركتي"],["Draft my food-safety plan from my menu","اكتب خطة سلامة الغذاء من قائمتي"]]},
+  logistics:{ic:"🚚",name:["Open your logistics company","افتح شركتك اللوجستية"],tag:["Freight, last-mile delivery, warehousing","شحن، توصيل الميل الأخير، تخزين"],
     acts:[
-      {id:"l1",n:"Road freight transport",d:"Goods transport by truck/van",req:1,fee:420,days:5},
-      {id:"l2",n:"Fleet vehicle registration",d:"Commercial plates for each vehicle",req:1,fee:260,days:4},
-      {id:"l3",n:"Goods-in-transit insurance",d:"Mandatory cargo cover",req:1,fee:350,days:2},
-      {id:"l4",n:"Warehousing & storage",d:"Storage facility operations",fee:300,days:6},
-      {id:"l5",n:"Last-mile courier service",d:"Parcel delivery to homes",fee:180,days:3},
-      {id:"l6",n:"Customs clearance agent",d:"Import / export paperwork",fee:520,days:9},
-      {id:"l7",n:"Cold-chain transport",d:"Refrigerated goods",fee:380,days:7}],
+      {id:"l1",n:["Road freight transport","نقل البضائع بالطرق البرية"],d:["Goods transport by truck/van","نقل البضائع بالشاحنات"],req:1,fee:420,days:5},
+      {id:"l2",n:["Fleet vehicle registration","تسجيل مركبات الأسطول"],d:["Commercial plates for each vehicle","لوحات تجارية لكل مركبة"],req:1,fee:260,days:4},
+      {id:"l3",n:["Goods-in-transit insurance","التأمين على البضائع أثناء النقل"],d:["Mandatory cargo cover","تغطية إلزامية للشحنات"],req:1,fee:350,days:2},
+      {id:"l4",n:["Warehousing & storage","التخزين والمستودعات"],d:["Storage facility operations","تشغيل منشأة التخزين"],fee:300,days:6},
+      {id:"l5",n:["Last-mile courier service","خدمة توصيل الميل الأخير"],d:["Parcel delivery to homes","توصيل الطرود إلى المنازل"],fee:180,days:3},
+      {id:"l6",n:["Customs clearance agent","مخلّص جمركي"],d:["Import / export paperwork","معاملات الاستيراد والتصدير"],fee:520,days:9},
+      {id:"l7",n:["Cold-chain transport","نقل مبرّد"],d:["Refrigerated goods","البضائع المبردة"],fee:380,days:7}],
     rules:[
-      {a:"l1",reg:"Transport Authority",t:"Operator licence with a named transport manager",p:"One responsible person must hold a recognised transport-manager qualification.",ai:0},
-      {a:"l2",reg:"Traffic Department",t:"Annual vehicle roadworthiness test",p:"Every vehicle must pass an inspection each year.",ai:1},
-      {a:"l1",reg:"Transport Authority",t:"Driver hours & rest-time logging",p:"Drivers can only drive so many hours a day. A tachograph or app must log it.",ai:1},
-      {a:"l3",reg:"Insurance Regulator",t:"Minimum cargo cover per vehicle",p:"Your insurance must meet a minimum value for each truck.",ai:1},
-      {a:"l4",reg:"Planning & Zoning",t:"Warehouse in an industrial-zoned plot",p:"We check your address against the zoning map.",ai:1,zone:1},
-      {a:"l4",reg:"Civil Defence",t:"Fire-safety & hazardous goods segregation",p:"Flammable items must be stored apart from others.",ai:0},
-      {a:"l6",reg:"Customs Authority",t:"Agent registration & bonded guarantee",p:"You deposit a guarantee that covers duties customers might not pay.",ai:0},
-      {a:"l7",reg:"Food Safety Authority",t:"Temperature records for chilled loads",p:"You must keep temperature logs for every refrigerated trip.",ai:1},
-      {a:"l5",reg:"Data Protection",t:"Recipient data handling policy",p:"Names and addresses of recipients must be protected and deleted on time.",ai:1}],
-    ai:["Check which vehicles qualify for the licence","Auto-build a driver-hours compliance log","Compare cargo insurance quotes"]},
-  shop:{ic:"🛍️",name:"Open your online shop",tag:"E-commerce store with payments & shipping",
+      {a:"l1",id:"q1",reg:["Transport Authority","هيئة النقل"],t:["Operator licence with a named transport manager","رخصة مشغّل مع مدير نقل معتمد"],p:["One responsible person must hold a recognised transport-manager qualification.","يجب أن يحمل شخص مسؤول واحد مؤهل مدير نقل معترفًا به."],ai:0},
+      {a:"l2",id:"q2",reg:["Traffic Department","إدارة المرور"],t:["Annual vehicle roadworthiness test","فحص سنوي لصلاحية المركبة"],p:["Every vehicle must pass an inspection each year.","يجب أن تجتاز كل مركبة فحصًا كل عام."],ai:1},
+      {a:"l1",id:"q3",reg:["Transport Authority","هيئة النقل"],t:["Driver hours & rest-time logging","تسجيل ساعات القيادة وأوقات الراحة"],p:["Drivers can only drive so many hours a day. A tachograph or app must log it.","لا يجوز للسائقين القيادة أكثر من عدد معين من الساعات يوميًا، ويجب تسجيلها بجهاز أو تطبيق."],ai:1},
+      {a:"l3",id:"q4",reg:["Insurance Regulator","جهة تنظيم التأمين"],t:["Minimum cargo cover per vehicle","حد أدنى لتغطية الشحنات لكل مركبة"],p:["Your insurance must meet a minimum value for each truck.","يجب أن يستوفي تأمينك قيمة دنيا لكل شاحنة."],ai:1},
+      {a:"l4",id:"q5",reg:["Planning & Zoning","التخطيط والتقسيم"],t:["Warehouse in an industrial-zoned plot","المستودع في أرض مخصصة للصناعة"],p:["We check your address against the zoning map.","نتحقق من عنوانك على خريطة التقسيم."],ai:1,zone:1},
+      {a:"l4",id:"q6",reg:["Civil Defence","الدفاع المدني"],t:["Fire-safety & hazardous goods segregation","السلامة من الحريق وفصل المواد الخطرة"],p:["Flammable items must be stored apart from others.","يجب تخزين المواد القابلة للاشتعال بمعزل عن غيرها."],ai:0},
+      {a:"l6",id:"q7",reg:["Customs Authority","الجمارك"],t:["Agent registration & bonded guarantee","تسجيل المخلّص وضمان جمركي"],p:["You deposit a guarantee that covers duties customers might not pay.","تودع ضمانًا يغطي الرسوم التي قد لا يسددها العملاء."],ai:0},
+      {a:"l7",id:"q8",reg:["Food Safety Authority","هيئة سلامة الغذاء"],t:["Temperature records for chilled loads","سجلات درجات الحرارة للشحنات المبردة"],p:["You must keep temperature logs for every refrigerated trip.","يجب الاحتفاظ بسجل حرارة لكل رحلة مبردة."],ai:1},
+      {a:"l5",id:"q9",reg:["Data Protection","حماية البيانات"],t:["Recipient data handling policy","سياسة التعامل مع بيانات المستلمين"],p:["Names and addresses of recipients must be protected and deleted on time.","يجب حماية أسماء وعناوين المستلمين وحذفها في الوقت المناسب."],ai:1}],
+    ai:[["Check which vehicles qualify for the licence","تحقق من المركبات المؤهلة للترخيص"],["Auto-build a driver-hours compliance log","أنشئ سجل التزام ساعات القيادة تلقائيًا"],["Compare cargo insurance quotes","قارن عروض تأمين الشحنات"]]},
+  shop:{ic:"🛍️",name:["Open your online shop","افتح متجرك الإلكتروني"],tag:["E-commerce store with payments & shipping","متجر إلكتروني مع الدفع والشحن"],
     acts:[
-      {id:"s1",n:"E-commerce retail",d:"Selling goods online",req:1,fee:200,days:2},
-      {id:"s2",n:"Payment processing registration",d:"Accept cards & wallets",req:1,fee:90,days:3},
-      {id:"s3",n:"Import of consumer goods",d:"Bring stock from abroad",fee:260,days:6},
-      {id:"s4",n:"Home-based business permit",d:"Operate from residence",fee:80,days:3}],
+      {id:"s1",n:["E-commerce retail","التجارة الإلكترونية"],d:["Selling goods online","بيع السلع عبر الإنترنت"],req:1,fee:200,days:2},
+      {id:"s2",n:["Payment processing registration","تسجيل خدمات الدفع"],d:["Accept cards & wallets","قبول البطاقات والمحافظ"],req:1,fee:90,days:3},
+      {id:"s3",n:["Import of consumer goods","استيراد السلع الاستهلاكية"],d:["Bring stock from abroad","جلب البضائع من الخارج"],fee:260,days:6},
+      {id:"s4",n:["Home-based business permit","تصريح عمل من المنزل"],d:["Operate from residence","العمل من مقر السكن"],fee:80,days:3}],
     rules:[
-      {a:"s1",reg:"Consumer Protection",t:"Returns policy & seller details on site",p:"Customers must see who you are and how to return items.",ai:1},
-      {a:"s2",reg:"Central Bank",t:"Anti-money-laundering onboarding",p:"The payment provider verifies you and your business owners.",ai:1},
-      {a:"s3",reg:"Customs Authority",t:"Product conformity marks",p:"Imported items must carry required safety marks.",ai:0},
-      {a:"s4",reg:"Planning & Zoning",t:"Residential address allows business use",p:"We check your address against the zoning map.",ai:1,zone:1}],
-    ai:["Generate privacy policy & returns policy","Write product descriptions in 2 languages"]},
-  clinic:{ic:"🩺",name:"Open your clinic",tag:"Outpatient clinic, small medical centre",soon:1}
+      {a:"s1",id:"p1",reg:["Consumer Protection","حماية المستهلك"],t:["Returns policy & seller details on site","سياسة الإرجاع وبيانات البائع على الموقع"],p:["Customers must see who you are and how to return items.","يجب أن يعرف العملاء من أنت وكيف يعيدون المشتريات."],ai:1},
+      {a:"s2",id:"p2",reg:["Central Bank","البنك المركزي"],t:["Anti-money-laundering onboarding","إجراءات مكافحة غسل الأموال"],p:["The payment provider verifies you and your business owners.","يتحقق مزود الدفع من هويتك وهوية ملاك النشاط."],ai:1},
+      {a:"s3",id:"p3",reg:["Customs Authority","الجمارك"],t:["Product conformity marks","علامات مطابقة المنتجات"],p:["Imported items must carry required safety marks.","يجب أن تحمل السلع المستوردة علامات السلامة المطلوبة."],ai:0},
+      {a:"s4",id:"p4",reg:["Planning & Zoning","التخطيط والتقسيم"],t:["Residential address allows business use","العنوان السكني يسمح بالاستخدام التجاري"],p:["We check your address against the zoning map.","نتحقق من عنوانك على خريطة التقسيم."],ai:1,zone:1}],
+    ai:[["Generate privacy policy & returns policy","أنشئ سياسة الخصوصية وسياسة الإرجاع"],["Write product descriptions in 2 languages","اكتب أوصاف المنتجات بلغتين"]]},
+  clinic:{ic:"🩺",name:["Open your clinic","افتح عيادتك"],tag:["Outpatient clinic, small medical centre","عيادة خارجية، مركز طبي صغير"],soon:1}
 };
-const TODAY_LIST = ["Activity 4711 – Food retail","Activity 4722 – Beverage retail","Activity 5610 – Restaurants","Activity 5621 – Event catering","Activity 4941 – Freight by road","Activity 5210 – Warehousing","Activity 5320 – Courier","Activity 5229 – Customs agent","Activity 4791 – Online retail","Activity 6419 – Payment services","Activity 8610 – Hospitals","Activity 8620 – Clinics","Activity 6820 – Real-estate leasing","Activity 7490 – Misc. professional services"];
-const STEPS=["Choose","Bundle","Rules","Launch"];
+const TODAY_LIST = [["Activity 4711 – Food retail","نشاط 4711 – بيع الأغذية بالتجزئة"],["Activity 4722 – Beverage retail","نشاط 4722 – بيع المشروبات بالتجزئة"],["Activity 5610 – Restaurants","نشاط 5610 – مطاعم"],["Activity 5621 – Event catering","نشاط 5621 – تموين الفعاليات"],["Activity 4941 – Freight by road","نشاط 4941 – نقل البضائع بالطرق"],["Activity 5210 – Warehousing","نشاط 5210 – التخزين"],["Activity 5320 – Courier","نشاط 5320 – خدمات البريد السريع"],["Activity 5229 – Customs agent","نشاط 5229 – مخلّص جمركي"],["Activity 4791 – Online retail","نشاط 4791 – التجزئة الإلكترونية"],["Activity 6419 – Payment services","نشاط 6419 – خدمات الدفع"],["Activity 8610 – Hospitals","نشاط 8610 – المستشفيات"],["Activity 8620 – Clinics","نشاط 8620 – العيادات"],["Activity 6820 – Real-estate leasing","نشاط 6820 – تأجير العقارات"],["Activity 7490 – Misc. professional services","نشاط 7490 – خدمات مهنية متنوعة"]];
 
-const S={mode:"new",step:0,biz:null,sel:new Set(),ok:new Set(),expl:new Set(),addr:"",zoneRes:null,chat:[],done:false};
+// ---------- UI strings ----------
+const UI={
+ title:["Open Your Business","افتح عملك"],proto:["Prototype","نموذج أولي"],
+ today:["Today: service catalogue","اليوم: كتالوج الخدمات"],prop:["Proposed: business products","المقترح: منتجات الأعمال"],
+ steps:[["Choose","اختر"],["Bundle","الحزمة"],["Rules","القواعد"],["Launch","الإطلاق"]],
+ stepsSub:[["What do you want to open?","ماذا تريد أن تفتح؟"],["Activities pulled for you","أنشطة جاهزة لك"],["Compliance, simplified","الامتثال بشكل مبسّط"],["Review & submit","مراجعة وإرسال"]],
+ foot:["Prototype for discussion. All fees, durations, regulators and rules are made-up sample data, and the AI replies are scripted.","نموذج للنقاش. جميع الرسوم والمدد والجهات والقواعد بيانات تجريبية مختلقة، وردود الذكاء الاصطناعي مكتوبة مسبقًا."],
+ lang:["العربية","English"],
+ tBanner:["Today's journey: the investor must already know <b>which activities</b> their business needs.","الرحلة الحالية: على المستثمر أن يعرف مسبقًا <b>الأنشطة</b> التي يحتاجها مشروعه."],
+ tH:["Establish a company","تأسيس شركة"],tSub:["Search the activity list and add services one by one.","ابحث في قائمة الأنشطة وأضف الخدمات واحدة تلو الأخرى."],
+ tSearch:["Search activities, e.g. “food”…","ابحث عن الأنشطة، مثل «أغذية»…"],tAct:["Activity","النشاط"],add:["Add","إضافة"],
+ tProb:["Problems: ① Jargon and codes ② Easy to miss a required activity ③ Rules are discovered only after applying ④ No guidance, no cost or time view.","المشاكل: ① مصطلحات ورموز ② سهولة تفويت نشاط مطلوب ③ القواعد تُكتشف بعد التقديم فقط ④ لا إرشاد ولا رؤية للتكلفة أو الوقت."],
+ tSel:["Your selection","اختيارك"],tNone:["Nothing selected. No estimate of cost, time or required rules is available.","لا شيء محدد. لا تتوفر تقديرات للتكلفة أو الوقت أو القواعد المطلوبة."],
+ chH:["What do you want to open?","ماذا تريد أن تفتح؟"],chSub:["Pick a business. We assemble everything it needs: activities, licences and rules.","اختر مشروعًا. نجمع لك كل ما يحتاجه: الأنشطة والتراخيص والقواعد."],
+ soon:["Coming soon","قريبًا"],bundled:["activities bundled","أنشطة في الحزمة"],aiAs:["AI-assisted","بمساعدة الذكاء الاصطناعي"],
+ bSub:["We pre-selected what every business of this type needs. Add optional extras to fit your plan.","اخترنا مسبقًا ما يحتاجه كل مشروع من هذا النوع. أضف الإضافات الاختيارية بما يناسب خطتك."],
+ incl:["Included automatically","مضمّن تلقائيًا"],optn:["Optional add-ons","إضافات اختيارية"],reqd:["Required","مطلوب"],days:["days","أيام"],
+ chg:["Change business","تغيير المشروع"],toRules:["Continue to rules","المتابعة إلى القواعد"],
+ rH:["Rules that apply to you","القواعد التي تنطبق عليك"],rSub:["Only the rules for your chosen activities, grouped by regulator and explained in plain language.","فقط القواعد الخاصة بأنشطتك المختارة، مجمّعة حسب الجهة ومشروحة ببساطة."],
+ addr:["Enter your planned premises address","أدخل عنوان الموقع المخطط"],zone:["✨ Check zoning","✨ تحقق من التخطيط"],
+ conf:["confirmed","تم تأكيده"],auto:["✨ Auto-check what AI can verify","✨ تحقق تلقائي مما يمكن للذكاء الاصطناعي التأكد منه"],
+ aiv:["AI can verify","يمكن للذكاء الاصطناعي التحقق"],needs:["Needs you","يتطلب منك"],expl:["Explain simply","اشرح ببساطة"],hide:["Hide","إخفاء"],aiw:["✨ AI in plain words:","✨ الذكاء الاصطناعي بكلمات بسيطة:"],
+ bk1:["Bundle","الحزمة"],bk2:["Rules","القواعد"],toLaunch:["Review & launch","مراجعة وإطلاق"],
+ zOk:["Checked “{a}” against the sample zoning map: ✅ zoned for your activities (demo result).","تم فحص «{a}» على خريطة التقسيم التجريبية: ✅ مخصص لأنشطتك (نتيجة تجريبية)."],zNo:["Enter an address first.","أدخل العنوان أولًا."],
+ dH:["Application submitted","تم إرسال الطلب"],dSub:["Reference DEMO-{n}. Applications are tracked per regulator on one status page.","الرقم المرجعي DEMO-{n}. تتم متابعة الطلبات لكل جهة في صفحة حالة واحدة."],again:["Start another","ابدأ مشروعًا آخر"],
+ lH:["Review & launch","مراجعة وإطلاق"],lSub:["{b} · {a} activities · {r} rules","{b} · {a} أنشطة · {r} قواعد"],
+ lWarn:["{n} rule(s) not confirmed yet. You can still submit; they stay on your to-do list.","{n} قاعدة لم تُؤكَّد بعد. يمكنك الإرسال وستبقى في قائمة مهامك."],
+ lTime:["Time: bundled vs one-by-one","الوقت: الحزمة مقابل واحدًا تلو الآخر"],lB:["Bundled","الحزمة"],lT:["Traditional","التقليدي"],d:["d","يوم"],
+ lWhat:["What gets submitted","ما سيتم إرساله"],submit:["Submit one application","أرسل طلبًا واحدًا"],
+ pack:["Your launch pack","حزمة إطلاقك"],sA:["Activities","الأنشطة"],sR:["Rules to meet","القواعد المطلوبة"],sT:["Est. time (bundled)","الوقت المقدّر (حزمة)"],sF:["Gov. fees","الرسوم الحكومية"],
+ save:["⏱ Saves ~{n} days vs one-by-one","⏱ يوفّر ~{n} يومًا مقارنة بالتقديم المنفصل"],
+ aiH:["✨ AI assistant","✨ المساعد الذكي"],ask:["Ask anything…","اسأل أي شيء…"],send:["Send","إرسال"],
+ gs:[["Which business should I start with a small budget?","أي مشروع أبدأ به بميزانية صغيرة؟"],["What do I need to open a café?","ماذا أحتاج لفتح مقهى؟"]],
+ r0:["Pick a business first – then I can tailor everything to it.","اختر مشروعًا أولًا، وبعدها أخصص لك كل شيء."],
+ rName:["Suggestions: “Bean & Bloom”, “Corner Roast”, “Daily Grind”. All three look free in the sample registry (demo result).","اقتراحات: «بين آند بلوم»، «كورنر روست»، «ديلي جرايند». الثلاثة متاحة في السجل التجريبي (نتيجة تجريبية)."],
+ rFill:["Done (demo): 14 form fields filled from your profile – owner name, ID, address, contact. 2 fields need you: lease number and expected staff count.","تم (تجريبي): ملء 14 حقلًا من ملفك: اسم المالك والهوية والعنوان والتواصل. حقلان يحتاجان منك: رقم عقد الإيجار وعدد الموظفين المتوقع."],
+ rCost:["Government fees for your selection: {f} (sample currency). Biggest item: {n}.","الرسوم الحكومية لاختيارك: {f} (عملة تجريبية). أكبر بند: {n}."],
+ rTime:["Bundled in parallel: about {p} days. Done one by one the traditional way: about {s} days.","بالتوازي ضمن الحزمة: حوالي {p} يومًا. بالطريقة التقليدية واحدًا تلو الآخر: حوالي {s} يومًا."],
+ rDraft:["Draft ready (demo). I built it from your activities and menu/product list – review the 3 highlighted sections before signing.","المسودة جاهزة (تجريبي). أعددتها من أنشطتك وقائمة المنتجات، راجع الأقسام الثلاثة المظللة قبل التوقيع."],
+ rLeft:["You still have {o} rule(s) to confirm. I can auto-verify {v} of them for you – use “Auto-check” on the Rules step.","لا تزال لديك {o} قاعدة بحاجة إلى تأكيد. يمكنني التحقق تلقائيًا من {v} منها، استخدم «تحقق تلقائي» في خطوة القواعد."]
+};
+
+const S={lang:"en",mode:"new",step:0,biz:null,sel:new Set(),ok:new Set(),expl:new Set(),addr:"",zoneRes:null,chat:[],done:false,ref:0};
 const $=s=>document.querySelector(s);
+const L=()=>S.lang==="ar"?1:0;
+const x=v=>v[L()];                       // pick language from [en, ar]
+const u=(k,o={})=>{let s=UI[k][L()];for(const p in o)s=s.replace("{"+p+"}",o[p]);return s;};
 const b=()=>BIZ[S.biz];
 const acts=()=>b().acts.filter(a=>S.sel.has(a.id));
 const rules=()=>b().rules.filter(r=>S.sel.has(r.a));
 const fees=()=>acts().reduce((s,a)=>s+a.fee,0);
 const seqDays=()=>acts().reduce((s,a)=>s+a.days,0);
 const parDays=()=>Math.max(0,...acts().map(a=>a.days))+2;
+const arrow=()=>`<span class="back-arrow">←</span>`;   // flipped automatically in RTL via CSS
+const fwd=()=>S.lang==="ar"?"←":"→";
 
 function pick(k){ if(BIZ[k].soon)return; S.biz=k;S.sel=new Set(BIZ[k].acts.filter(a=>a.req).map(a=>a.id));S.ok=new Set();S.expl=new Set();S.zoneRes=null;S.chat=[];S.done=false;S.step=1;render();}
 function go(n){S.step=n;render();}
 function reset(){S.biz=null;S.step=0;S.done=false;render();}
 
-function aiReply(q){
-  q=q.toLowerCase();
-  if(!S.biz) return "Pick a business type first – then I can tailor everything to it.";
-  if(q.includes("name")) return "Suggestions: “Bean & Bloom”, “Corner Roast”, “Daily Grind”. All three look free in the sample registry (demo result).";
-  if(q.includes("fill")||q.includes("form")) return "Done (demo): 14 form fields filled from your profile – owner name, ID, address, contact. 2 fields need you: lease number and expected staff count.";
-  if(q.includes("cost")||q.includes("fee")) return `Government fees for your selection: ${fees()} (sample currency). Biggest item: ${acts().sort((a,b)=>b.fee-a.fee)[0].n}.`;
-  if(q.includes("long")||q.includes("time")||q.includes("day")) return `Bundled in parallel: about ${parDays()} days. Done one by one the traditional way: about ${seqDays()} days.`;
-  if(q.includes("plan")||q.includes("policy")||q.includes("draft")||q.includes("generate")) return "Draft ready (demo). I built it from your activities and menu/product list – review the 3 highlighted sections before signing.";
-  const open=rules().filter(r=>!S.ok.has(r.t)).length;
-  return `You still have ${open} rule(s) to confirm. I can auto-verify ${rules().filter(r=>r.ai&&!S.ok.has(r.t)).length} of them for you – use “Auto-check” on the Rules step.`;
+function aiReply(q,key){
+  const l=q.toLowerCase();
+  if(!S.biz) return u("r0");
+  if(key===0||/name|اسم|أسماء/.test(l)) return u("rName");
+  if(key===1||/fill|form|املأ|نماذج/.test(l)) return u("rFill");
+  if(/cost|fee|تكلف|رسوم/.test(l)) return u("rCost",{f:fees(),n:x([...acts()].sort((a,c)=>c.fee-a.fee)[0].n)});
+  if(/long|time|day|وقت|يوم|مدة/.test(l)) return u("rTime",{p:parDays(),s:seqDays()});
+  if(key===2||/plan|policy|draft|generate|خطة|سياسة|مسودة|اكتب|أنشئ/.test(l)) return u("rDraft");
+  return u("rLeft",{o:rules().filter(r=>!S.ok.has(r.id)).length,v:rules().filter(r=>r.ai&&!S.ok.has(r.id)).length});
 }
-function ask(q){ if(!q.trim())return; S.chat.push({u:1,t:q}); S.chat.push({t:aiReply(q)}); renderSide(); const c=$('.chat'); if(c)c.scrollTop=1e9;}
+function ask(q,key){ if(!q.trim())return; S.chat.push({u:1,t:q}); S.chat.push({t:aiReply(q,key)}); renderSide(); const c=$('.chat'); if(c)c.scrollTop=1e9;}
 
 function render(){
+  document.documentElement.lang=S.lang;document.documentElement.dir=S.lang==="ar"?"rtl":"ltr";document.title=u("title")+" – "+u("proto");
   const app=$('#app');
   app.innerHTML=`
   <header>
-    <h1>🏁 Open Your Business <span class="chip ai">Prototype</span></h1>
-    <div class="toggle" role="group" aria-label="Compare models">
-      <button aria-pressed="${S.mode==='today'}" data-m="today">Today: service catalogue</button>
-      <button aria-pressed="${S.mode==='new'}" data-m="new">Proposed: business products</button>
-    </div>
+    <h1>🏁 ${u("title")} <span class="chip ai">${u("proto")}</span></h1>
+    <div class="hd"><button class="lang" id="lang">${u("lang")}</button>
+    <div class="toggle" role="group">
+      <button aria-pressed="${S.mode==='today'}" data-m="today">${u("today")}</button>
+      <button aria-pressed="${S.mode==='new'}" data-m="new">${u("prop")}</button>
+    </div></div>
   </header>
-  ${S.mode==='new'?`<nav class="stepper">${STEPS.map((s,i)=>`<button class="step ${S.step===i?'on':''}" data-s="${i}" ${(i>0&&!S.biz)?'disabled':''}><b>${i+1}. ${s}</b>${['What do you want to open?','Activities pulled for you','Compliance, simplified','Review & submit'][i]}</button>`).join('')}</nav>`:''}
+  ${S.mode==='new'?`<nav class="stepper">${UI.steps.map((s,i)=>`<button class="step ${S.step===i?'on':''}" data-s="${i}" ${(i>0&&!S.biz)?'disabled':''}><b>${i+1}. ${x(s)}</b>${x(UI.stepsSub[i])}</button>`).join('')}</nav>`:''}
   <div class="layout"><main class="card" id="main"></main><aside class="side" id="side"></aside></div>
-  <footer>Prototype for discussion. All fees, durations, regulators and rules are made-up sample data, and the AI replies are scripted.</footer>`;
-  app.querySelectorAll('[data-m]').forEach(x=>x.onclick=()=>{S.mode=x.dataset.m;render();});
-  app.querySelectorAll('[data-s]').forEach(x=>x.onclick=()=>go(+x.dataset.s));
+  <footer>${u("foot")}</footer>`;
+  $('#lang').onclick=()=>{S.lang=S.lang==="ar"?"en":"ar";S.zoneRes=null;S.chat=[];render();};
+  app.querySelectorAll('[data-m]').forEach(e=>e.onclick=()=>{S.mode=e.dataset.m;render();});
+  app.querySelectorAll('[data-s]').forEach(e=>e.onclick=()=>go(+e.dataset.s));
   S.mode==='today'?renderToday():renderMain();
   renderSide();
 }
 
 function renderToday(){
-  $('#main').innerHTML=`<div class="banner">Today's journey: the investor must already know <b>which activities</b> their business needs.</div>
-  <h2>Establish a company</h2><p class="sub">Search the activity list and add services one by one.</p>
-  <div class="field"><input type="text" id="q" placeholder="Search activities, e.g. “food”…"></div>
-  <div id="list"></div>
-  <p class="sub" style="margin-top:14px">Problems: ① Jargon and codes ② Easy to miss a required activity ③ Rules are discovered only after applying ④ No guidance, no cost or time view.</p>`;
-  const draw=v=>$('#list').innerHTML=`<table><tr><th>Activity</th><th></th></tr>`+TODAY_LIST.filter(x=>x.toLowerCase().includes(v.toLowerCase())).map(x=>`<tr><td>${x}</td><td><button class="btn sm">Add</button></td></tr>`).join('')+`</table>`;
+  $('#main').innerHTML=`<div class="banner">${u("tBanner")}</div>
+  <h2>${u("tH")}</h2><p class="sub">${u("tSub")}</p>
+  <div class="field"><input type="text" id="q" placeholder="${u("tSearch")}"></div>
+  <div id="list"></div><p class="sub" style="margin-top:14px">${u("tProb")}</p>`;
+  const draw=v=>$('#list').innerHTML=`<table><tr><th>${u("tAct")}</th><th></th></tr>`+TODAY_LIST.filter(t=>x(t).toLowerCase().includes(v.toLowerCase())).map(t=>`<tr><td>${x(t)}</td><td><button class="btn sm">${u("add")}</button></td></tr>`).join('')+`</table>`;
   draw('');$('#q').oninput=e=>draw(e.target.value);
 }
 
 function renderMain(){
   const m=$('#main');
   if(S.step===0){
-    m.innerHTML=`<h2>What do you want to open?</h2><p class="sub">Pick a business. We assemble everything it needs: activities, licences and rules.</p>
-    <div class="tiles">${Object.entries(BIZ).map(([k,v])=>`<button class="tile" data-k="${k}" ${v.soon?'style="opacity:.55"':''}><span class="ic">${v.ic}</span><h3>${v.name}</h3><p>${v.tag}</p><div class="meta">${v.soon?'<span class="chip warn">Coming soon</span>':`<span class="chip">${v.acts.length} activities bundled</span><span class="chip ai">AI-assisted</span>`}</div></button>`).join('')}</div>`;
-    m.querySelectorAll('[data-k]').forEach(x=>x.onclick=()=>pick(x.dataset.k));
+    m.innerHTML=`<h2>${u("chH")}</h2><p class="sub">${u("chSub")}</p>
+    <div class="tiles">${Object.entries(BIZ).map(([k,v])=>`<button class="tile" data-k="${k}" ${v.soon?'style="opacity:.55"':''}><span class="ic">${v.ic}</span><h3>${x(v.name)}</h3><p>${x(v.tag)}</p><div class="meta">${v.soon?`<span class="chip warn">${u("soon")}</span>`:`<span class="chip">${v.acts.length} ${u("bundled")}</span><span class="chip ai">${u("aiAs")}</span>`}</div></button>`).join('')}</div>`;
+    m.querySelectorAll('[data-k]').forEach(e=>e.onclick=()=>pick(e.dataset.k));
   }
   if(S.step===1){
     const req=b().acts.filter(a=>a.req),opt=b().acts.filter(a=>!a.req);
-    const row=a=>`<label class="row"><input type="checkbox" data-a="${a.id}" ${S.sel.has(a.id)?'checked':''} ${a.req?'disabled':''}><div class="grow"><div class="t">${a.n} ${a.req?'<span class="chip">Required</span>':''}</div><div class="d">${a.d}</div></div><div class="price"><b>${a.fee}</b>${a.days} days</div></label>`;
-    m.innerHTML=`<h2>${b().ic} ${b().name}</h2><p class="sub">We pre-selected what every ${b().name.replace('Open your ','')} needs. Add optional extras to fit your plan.</p>
-    <div class="group">Included automatically</div>${req.map(row).join('')}<div class="group">Optional add-ons</div>${opt.map(row).join('')}
-    <div class="actions"><button class="btn" id="back">← Change business</button><button class="btn primary" id="next">Continue to rules →</button></div>`;
-    m.querySelectorAll('[data-a]').forEach(x=>x.onchange=()=>{x.checked?S.sel.add(x.dataset.a):S.sel.delete(x.dataset.a);renderSide();});
+    const row=a=>`<label class="row"><input type="checkbox" data-a="${a.id}" ${S.sel.has(a.id)?'checked':''} ${a.req?'disabled':''}><div class="grow"><div class="t">${x(a.n)} ${a.req?`<span class="chip">${u("reqd")}</span>`:''}</div><div class="d">${x(a.d)}</div></div><div class="price"><b>${a.fee}</b>${a.days} ${u("days")}</div></label>`;
+    m.innerHTML=`<h2>${b().ic} ${x(b().name)}</h2><p class="sub">${u("bSub")}</p>
+    <div class="group">${u("incl")}</div>${req.map(row).join('')}<div class="group">${u("optn")}</div>${opt.map(row).join('')}
+    <div class="actions"><button class="btn" id="back">${arrow()} ${u("chg")}</button><button class="btn primary" id="next">${u("toRules")} ${fwd()}</button></div>`;
+    m.querySelectorAll('[data-a]').forEach(e=>e.onchange=()=>{e.checked?S.sel.add(e.dataset.a):S.sel.delete(e.dataset.a);renderSide();});
     $('#back').onclick=reset;$('#next').onclick=()=>go(2);
   }
   if(S.step===2){
     const rs=rules();const zr=rs.some(r=>r.zone);
-    m.innerHTML=`<h2>Rules that apply to you</h2><p class="sub">Only the rules for your chosen activities, grouped by regulator and explained in plain language.</p>
-    ${zr?`<div class="field"><input type="text" id="addr" placeholder="Enter your planned premises address" value="${S.addr}"><button class="btn ai" id="zone">✨ Check zoning</button></div>${S.zoneRes?`<div class="expl" style="margin:0 0 8px">${S.zoneRes}</div>`:''}`:''}
-    <div class="actions" style="margin:0 0 6px"><span class="d" style="color:var(--muted)">${rs.filter(r=>S.ok.has(r.t)).length}/${rs.length} confirmed</span><button class="btn ai sm" id="auto">✨ Auto-check what AI can verify</button></div>
-    ${rs.map(r=>`<div class="row"><input type="checkbox" data-r="${r.t}" ${S.ok.has(r.t)?'checked':''}><div class="grow"><div class="t">${r.t}</div><div class="d">${r.reg} ${r.ai?'<span class="chip ai">AI can verify</span>':'<span class="chip warn">Needs you</span>'}</div>
-    <button class="btn sm" data-e="${r.t}" style="margin-top:6px">${S.expl.has(r.t)?'Hide':'Explain simply'}</button>${S.expl.has(r.t)?`<div class="expl">${r.p}</div>`:''}</div></div>`).join('')}
-    <div class="actions"><button class="btn" id="back">← Bundle</button><button class="btn primary" id="next">Review & launch →</button></div>`;
-    m.querySelectorAll('[data-r]').forEach(x=>x.onchange=()=>{x.checked?S.ok.add(x.dataset.r):S.ok.delete(x.dataset.r);renderMain();});
-    m.querySelectorAll('[data-e]').forEach(x=>x.onclick=()=>{const k=x.dataset.e;S.expl.has(k)?S.expl.delete(k):S.expl.add(k);renderMain();});
-    $('#auto').onclick=()=>{rs.filter(r=>r.ai).forEach(r=>S.ok.add(r.t));renderMain();renderSide();};
-    if(zr){$('#zone').onclick=()=>{S.addr=$('#addr').value.trim();S.zoneRes=S.addr?`Checked “${S.addr}” against the sample zoning map: ✅ zoned for your activities (demo result).`:'Enter an address first.';if(S.addr)rs.filter(r=>r.zone).forEach(r=>S.ok.add(r.t));renderMain();};}
+    m.innerHTML=`<h2>${u("rH")}</h2><p class="sub">${u("rSub")}</p>
+    ${zr?`<div class="field"><input type="text" id="addr" placeholder="${u("addr")}" value="${S.addr}"><button class="btn ai" id="zone">${u("zone")}</button></div>${S.zoneRes?`<div class="expl" style="margin:0 0 8px">${S.zoneRes}</div>`:''}`:''}
+    <div class="actions" style="margin:0 0 6px"><span style="color:var(--muted)">${rs.filter(r=>S.ok.has(r.id)).length}/${rs.length} ${u("conf")}</span><button class="btn ai sm" id="auto">${u("auto")}</button></div>
+    ${rs.map(r=>`<div class="row"><input type="checkbox" data-r="${r.id}" ${S.ok.has(r.id)?'checked':''}><div class="grow"><div class="t">${x(r.t)}</div><div class="d">${x(r.reg)} ${r.ai?`<span class="chip ai">${u("aiv")}</span>`:`<span class="chip warn">${u("needs")}</span>`}</div>
+    <button class="btn sm" data-e="${r.id}" style="margin-top:6px">${S.expl.has(r.id)?u("hide"):u("expl")}</button>${S.expl.has(r.id)?`<div class="expl"><b>${u("aiw")}</b> ${x(r.p)}</div>`:''}</div></div>`).join('')}
+    <div class="actions"><button class="btn" id="back">${arrow()} ${u("bk1")}</button><button class="btn primary" id="next">${u("toLaunch")} ${fwd()}</button></div>`;
+    m.querySelectorAll('[data-r]').forEach(e=>e.onchange=()=>{e.checked?S.ok.add(e.dataset.r):S.ok.delete(e.dataset.r);renderMain();renderSide();});
+    m.querySelectorAll('[data-e]').forEach(e=>e.onclick=()=>{const k=e.dataset.e;S.expl.has(k)?S.expl.delete(k):S.expl.add(k);renderMain();});
+    $('#auto').onclick=()=>{rs.filter(r=>r.ai).forEach(r=>S.ok.add(r.id));renderMain();renderSide();};
+    if(zr){$('#zone').onclick=()=>{S.addr=$('#addr').value.trim();S.zoneRes=S.addr?u("zOk",{a:S.addr}):u("zNo");if(S.addr)rs.filter(r=>r.zone).forEach(r=>S.ok.add(r.id));renderMain();};}
     $('#back').onclick=()=>go(1);$('#next').onclick=()=>go(3);
   }
   if(S.step===3){
-    if(S.done){m.innerHTML=`<div class="done"><div class="ic">🎉</div><h2>Application submitted</h2><p class="sub">Reference DEMO-${Math.floor(Math.random()*9000+1000)}. Applications are tracked per regulator on one status page.</p><button class="btn primary" id="again">Start another</button></div>`;$('#again').onclick=reset;return;}
-    const rs=rules(),left=rs.filter(r=>!S.ok.has(r.t));
-    const mx=seqDays();
-    m.innerHTML=`<h2>Review & launch</h2><p class="sub">${b().name} · ${acts().length} activities · ${rs.length} rules</p>
-    ${left.length?`<div class="banner">${left.length} rule(s) not confirmed yet. You can still submit; they stay on your to-do list.</div>`:''}
-    <div class="group">Time: bundled vs one-by-one</div>
-    <div class="timeline"><div class="tl"><span style="width:90px">Bundled</span><div class="bar" style="width:${parDays()/mx*100}%"></div><span>${parDays()} d</span></div>
-    <div class="tl"><span style="width:90px">Traditional</span><div class="bar seq" style="width:100%"></div><span>${mx} d</span></div></div>
-    <div class="group">What gets submitted</div>
-    <table>${acts().map(a=>`<tr><td>${a.n}</td><td style="text-align:right">${a.fee}</td></tr>`).join('')}</table>
-    <div class="actions"><button class="btn" id="back">← Rules</button><button class="btn primary" id="go">Submit one application</button></div>`;
-    $('#back').onclick=()=>go(2);$('#go').onclick=()=>{S.done=true;renderMain();};
+    if(S.done){m.innerHTML=`<div class="done"><div class="ic">🎉</div><h2>${u("dH")}</h2><p class="sub">${u("dSub",{n:S.ref})}</p><button class="btn primary" id="again">${u("again")}</button></div>`;$('#again').onclick=reset;return;}
+    const rs=rules(),left=rs.filter(r=>!S.ok.has(r.id));const mx=seqDays();
+    m.innerHTML=`<h2>${u("lH")}</h2><p class="sub">${u("lSub",{b:x(b().name),a:acts().length,r:rs.length})}</p>
+    ${left.length?`<div class="banner">${u("lWarn",{n:left.length})}</div>`:''}
+    <div class="group">${u("lTime")}</div>
+    <div class="timeline"><div class="tl"><span style="width:90px">${u("lB")}</span><div class="bar" style="width:${parDays()/mx*100}%"></div><span>${parDays()} ${u("d")}</span></div>
+    <div class="tl"><span style="width:90px">${u("lT")}</span><div class="bar seq" style="width:100%"></div><span>${mx} ${u("d")}</span></div></div>
+    <div class="group">${u("lWhat")}</div>
+    <table>${acts().map(a=>`<tr><td>${x(a.n)}</td><td style="text-align:end">${a.fee}</td></tr>`).join('')}</table>
+    <div class="actions"><button class="btn" id="back">${arrow()} ${u("bk2")}</button><button class="btn primary" id="go">${u("submit")}</button></div>`;
+    $('#back').onclick=()=>go(2);$('#go').onclick=()=>{S.done=true;S.ref=Math.floor(Math.random()*9000+1000);renderMain();};
   }
 }
 
 function renderSide(){
   const s=$('#side');
-  if(S.mode==='today'){s.innerHTML=`<div class="card"><h3 style="margin:0 0 6px">Your selection</h3><p class="sub">Nothing selected. No estimate of cost, time or required rules is available.</p></div>`;return;}
+  if(S.mode==='today'){s.innerHTML=`<div class="card"><h3 style="margin:0 0 6px">${u("tSel")}</h3><p class="sub">${u("tNone")}</p></div>`;return;}
   let sum='';
   if(S.biz&&S.step>0){
     const sd=seqDays(),pd=parDays();
-    sum=`<div class="card sum"><h3 style="margin:0 0 8px">${b().ic} Your launch pack</h3>
-    <div><span>Activities</span><b>${acts().length}</b></div><div><span>Rules to meet</span><b>${rules().length}</b></div>
-    <div><span>Est. time (bundled)</span><b>${pd} days</b></div><div class="big"><span>Gov. fees</span><b>${fees()}</b></div>
-    <div class="save">⏱ Saves ~${Math.max(0,sd-pd)} days vs one-by-one</div></div>`;
+    sum=`<div class="card sum"><h3 style="margin:0 0 8px">${b().ic} ${u("pack")}</h3>
+    <div><span>${u("sA")}</span><b>${acts().length}</b></div><div><span>${u("sR")}</span><b>${rules().length}</b></div>
+    <div><span>${u("sT")}</span><b>${pd} ${u("days")}</b></div><div class="big"><span>${u("sF")}</span><b>${fees()}</b></div>
+    <div class="save">${u("save",{n:Math.max(0,sd-pd)})}</div></div>`;
   }
-  const sugg=S.biz?b().ai:["Which business should I start with a small budget?","What do I need to open a café?"];
-  s.innerHTML=sum+`<div class="card ai-panel"><h3>✨ AI assistant</h3><div class="sugg">${sugg.map(x=>`<button data-q="${x}">${x}</button>`).join('')}</div>
+  const sugg=S.biz?b().ai:UI.gs;
+  s.innerHTML=sum+`<div class="card ai-panel"><h3>${u("aiH")}</h3><div class="sugg">${sugg.map((t,i)=>`<button data-i="${i}">${x(t)}</button>`).join('')}</div>
   <div class="chat">${S.chat.map(c=>`<div class="msg ${c.u?'u':'a'}">${c.t}</div>`).join('')}</div>
-  <div class="field" style="margin:0"><input type="text" id="ci" placeholder="Ask anything…"><button class="btn primary sm" id="cs">Send</button></div></div>`;
-  s.querySelectorAll('[data-q]').forEach(x=>x.onclick=()=>ask(x.dataset.q));
-  $('#cs').onclick=()=>{const i=$('#ci');ask(i.value);};
-  $('#ci').onkeydown=e=>{if(e.key==='Enter')ask(e.target.value);};
+  <div class="field" style="margin:0"><input type="text" id="ci" placeholder="${u("ask")}"><button class="btn primary sm" id="cs">${u("send")}</button></div></div>`;
+  s.querySelectorAll('[data-i]').forEach(e=>e.onclick=()=>ask(x(sugg[+e.dataset.i]),S.biz?+e.dataset.i:-1));
+  $('#cs').onclick=()=>ask($('#ci').value,-1);
+  $('#ci').onkeydown=e=>{if(e.key==='Enter')ask(e.target.value,-1);};
 }
 render();
 </script>
