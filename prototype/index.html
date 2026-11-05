@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open Your Business – Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* ===== THEME TOKENS – Single Window brand ===== */
+  --font:'Inter','Tajawal','Noto Sans Arabic',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --primary-color:#07366F; --secondary-color:#204B87; --accent-color:#4386C5; --button-color:#204781;
+  --background-color:#FFFFFF; --border-color:#D2D2D2; --text-color:#666666;
+  --hero:linear-gradient(90deg,#07366F 0%,#204B87 60%,#4386C5 100%);
+  /* derived */
+  --bg:#f3f6fa; --card:var(--background-color); --ink:#1c2533; --muted:var(--text-color); --line:var(--border-color);
+  --brand:var(--button-color); --brand-ink:#fff; --brand-soft:#e6eef8; --warn:#b45309; --warn-soft:#fdf1e0;
+  --ai:var(--primary-color); --ai-soft:#e8f1fa; --ok:#17803d; --radius:10px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){
+  --bg:#0c1522; --card:#13202f; --ink:#eef2f7; --muted:#a3b0c2; --line:#2a3a50;
+  --brand:#4386C5; --brand-ink:#04121f; --brand-soft:#17304c; --warn:#f0a95a; --warn-soft:#33270f;
+  --ai:#8fbdea; --ai-soft:#183049; --ok:#4cc38a;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--font)}
+button{font:inherit;color:inherit;cursor:pointer}
+.app{max-width:1180px;margin:0 auto;padding:16px;display:flex;flex-direction:column;gap:14px;min-height:100vh}
+header{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+h1{font-size:18px;margin:0}
+.toggle{display:inline-flex;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px}
+.toggle button{border:0;background:none;padding:6px 14px;border-radius:999px;color:var(--muted)}
+.toggle button[aria-pressed=true]{background:var(--brand);color:var(--brand-ink)}
+.stepper{display:flex;gap:6px;flex-wrap:wrap}
+.step{flex:1;min-width:110px;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--muted);font-size:13px;text-align:start}
+.step b{display:block;color:var(--ink);font-size:13px}
+.step.on{border-color:var(--brand);background:var(--brand-soft)}
+.step.on b{color:var(--brand)}
+.step:disabled{opacity:.5;cursor:default}
+.layout{display:grid;grid-template-columns:1fr 330px;gap:14px;align-items:start;flex:1}
+@media(max-width:900px){.layout{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+h2{margin:0 0 4px;font-size:20px}
+.sub{color:var(--muted);margin:0 0 16px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.tile{text-align:start;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;gap:6px;transition:.15s}
+.tile:hover{border-color:var(--brand);transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.08)}
+.tile .ic{font-size:30px}
+.tile h3{margin:0;font-size:16px}
+.tile p{margin:0;color:var(--muted);font-size:13px}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.chip{font-size:12px;padding:2px 9px;border-radius:999px;background:var(--brand-soft);color:var(--brand)}
+.chip.warn{background:var(--warn-soft);color:var(--warn)}
+.chip.ai{background:var(--ai-soft);color:var(--ai)}
+.row{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line)}
+.row:first-of-type{border-top:0}
+.row input[type=checkbox]{width:18px;height:18px;margin-top:3px;accent-color:var(--brand)}
+.row .grow{flex:1}
+.row .t{font-weight:600}
+.row .d{color:var(--muted);font-size:13px}
+.price{white-space:nowrap;text-align:end;font-size:13px;color:var(--muted)}
+.price b{display:block;color:var(--ink);font-size:14px}
+.group{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:16px 0 2px}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:8px 14px}
+.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+.btn.ai{background:var(--ai-soft);color:var(--ai);border-color:transparent}
+.btn.sm{padding:4px 10px;font-size:13px}
+.actions{display:flex;justify-content:space-between;gap:10px;margin-top:18px;flex-wrap:wrap}
+.expl{margin:8px 0 0;padding:10px 12px;border-radius:10px;background:var(--ai-soft);font-size:13px}
+.expl b{color:var(--ai)}
+.field{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap}
+input[type=text],button{font-family:inherit}
+input[type=text]{flex:1;min-width:180px;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
+.side{display:flex;flex-direction:column;gap:14px;position:sticky;top:12px}
+@media(max-width:900px){.side{position:static}}
+.sum div{display:flex;justify-content:space-between;padding:4px 0;font-size:14px}
+.sum .big{font-size:18px;font-weight:700;border-top:1px solid var(--line);margin-top:6px;padding-top:8px}
+.save{color:var(--ok);font-size:13px;margin-top:6px}
+.ai-panel h3{margin:0 0 8px;font-size:15px;color:var(--ai)}
+.sugg{display:flex;flex-direction:column;gap:6px}
+.sugg button{text-align:start;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:7px 10px;font-size:13px}
+.sugg button:hover{border-color:var(--ai)}
+.chat{max-height:220px;overflow:auto;display:flex;flex-direction:column;gap:6px;margin:10px 0}
+.msg{padding:7px 10px;border-radius:10px;font-size:13px;max-width:92%}
+.msg.u{align-self:flex-end;background:var(--brand-soft)}
+.msg.a{background:var(--ai-soft)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+td,th{padding:7px 8px;border-bottom:1px solid var(--line);text-align:start}
+th{color:var(--muted);font-weight:600}
+.banner{background:var(--warn-soft);color:var(--warn);padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:14px}
+.timeline{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.tl{display:flex;gap:10px;align-items:center}
+.bar{height:10px;border-radius:5px;background:var(--brand);}
+.bar.seq{background:var(--warn)}
+.done{text-align:center;padding:30px 10px}
+.done .ic{font-size:54px}
+[dir=rtl] .back-arrow{display:inline-block;transform:scaleX(-1)}
+.lang{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 14px;font-weight:600}
+.hd{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+header.hero{background:var(--hero);color:#fff;border-radius:var(--radius);padding:18px 20px}
+header.hero h1{color:#fff;font-size:20px}
+header.hero .chip{background:rgba(255,255,255,.18);color:#fff}
+header.hero .lang{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.4)}
+header.hero .toggle{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.4)}
+header.hero .toggle button{color:#dbe7f5}
+header.hero .toggle button[aria-pressed=true]{background:#fff;color:var(--primary-color)}
+.step.on b{color:var(--ai)}
+footer{color:var(--muted);font-size:12px;text-align:center;padding:6px}
+
+/* ===== portal shell ===== */
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+.ribbon{background:var(--primary-color);color:#fff;font-size:12.5px;text-align:center;padding:5px 12px}
+.top{background:#0a2547;color:#cdd9ea;font-size:13px}
+.top .wrap{display:flex;justify-content:space-between;align-items:center;min-height:38px;flex-wrap:wrap;gap:8px}
+.top .l,.top .r{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.top a{cursor:pointer}.top a:hover{color:#fff}
+.top .toggle{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.3)}
+.top .toggle button{color:#cdd9ea;padding:3px 10px;font-size:12px}
+.top .toggle button[aria-pressed=true]{background:#fff;color:var(--primary-color)}
+.top .lang{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.3);padding:3px 12px;font-size:12px}
+header.main{display:block;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+header.main .wrap{display:flex;align-items:center;gap:24px;min-height:68px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--ai);cursor:pointer}
+.logo .mark{width:34px;height:34px;border-radius:9px;background:var(--hero);display:grid;place-items:center;color:#fff}
+nav.menu{display:flex;gap:22px;margin-inline-start:auto;font-weight:600;font-size:14.5px;flex-wrap:wrap}
+nav.menu a{padding:22px 0;border-bottom:3px solid transparent;cursor:pointer;color:var(--ink)}
+nav.menu a.on,nav.menu a:hover{color:var(--accent-color);border-color:var(--accent-color)}
+.bn{display:inline-grid;place-items:center;min-width:18px;height:18px;border-radius:9px;background:#c0392b;color:#fff;font-size:11px;padding:0 5px;margin-inline-start:4px}
+.bell{background:none;border:0;font-size:20px;position:relative}
+.hero{background:var(--hero);color:#fff;padding:44px 0 56px}
+.hero h1{font-size:36px;line-height:1.2;margin:0 0 10px;color:#fff}
+.hero p{font-size:17px;color:#dbe7f5;margin:0 0 22px;max-width:680px}
+.ask{display:flex;gap:8px;background:var(--card);border-radius:12px;padding:8px;max-width:760px}
+.ask input{border:0;background:none;flex:1;font:inherit;font-size:16px;padding:8px 10px;color:var(--ink);outline:0;min-width:0}
+.ex{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.ex button{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:999px;padding:4px 12px;font-size:13px}
+.intent{background:var(--card);color:var(--ink);border-radius:12px;padding:14px 16px;margin-top:14px;max-width:760px}
+.sec{padding:28px 0 4px}.sec h2{font-size:22px;margin:0 0 4px}
+.stage{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:12px 0}
+.stage button{display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:var(--radius);border:1px solid var(--line);background:var(--card);text-align:start}
+.stage button.on{border-color:var(--accent-color);background:var(--brand-soft)}
+.stage button:not(.on){opacity:.6}
+.feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.fc{border:1px solid var(--line);border-radius:var(--radius);background:var(--card);padding:16px;display:flex;flex-direction:column;gap:6px}
+.fc h3{margin:0;font-size:16px}.fc p{margin:0;color:var(--muted);font-size:13.5px;flex:1}
+.pg{padding-block:20px 30px}
+.ov{position:fixed;inset:0;background:rgba(7,22,45,.55);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+.ov.on{display:flex}
+.modal{background:var(--card);border-radius:14px;max-width:560px;width:100%;max-height:88vh;overflow:auto;padding:20px}
+.modal .mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.modal h3{margin:0}
+.x{border:0;background:none;font-size:20px}
+.opt{display:block;width:100%;text-align:start;margin:6px 0;padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+.opt:hover{border-color:var(--accent-color)}
+.pbar{height:6px;border-radius:3px;background:var(--line);margin:8px 0 14px;overflow:hidden}.pbar i{display:block;height:100%;background:var(--hero)}
+.toast{position:fixed;bottom:18px;inset-inline:0;margin:auto;width:max-content;max-width:90vw;background:#0a2547;color:#fff;padding:9px 16px;border-radius:10px;opacity:0;transition:.25s;pointer-events:none;z-index:60}
+.toast.on{opacity:1}
+.mapw{display:grid;grid-template-columns:1fr 320px;gap:14px}
+@media(max-width:900px){.mapw{grid-template-columns:1fr}}
+.map{direction:ltr;width:100%;background:#dcebf5;border-radius:12px}
+.map g{cursor:pointer}
+.zinfo b{font-size:17px}
+.st{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12.5px;font-weight:600}
+.st.ok{background:#e4f4ec;color:#17803d}.st.cond{background:var(--warn-soft);color:var(--warn)}.st.no{background:#fbe6e6;color:#b42318}
+.doc{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line);flex-wrap:wrap}
+.doc:first-of-type{border-top:0}.doc .grow{flex:1;min-width:180px}
+.pf{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--line)}
+.pf:first-of-type{border-top:0}.pf .grow{flex:1}
+.score{font-size:34px;font-weight:700;color:var(--ai)}
+.dots{display:flex;gap:4px;margin-top:6px}.dots i{flex:1;height:6px;border-radius:3px;background:var(--line)}.dots i.f{background:var(--accent-color)}.dots i.w{background:#c0392b}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tl span:last-child{white-space:nowrap}
+.dev{margin-top:14px;border:1px solid var(--line);border-inline-start:4px solid var(--accent-color);border-radius:10px;background:var(--card);padding:10px 14px;direction:ltr;text-align:left;font-size:14px}
+.dev summary{cursor:pointer;font-weight:700;color:var(--ai)}
+.dev h4{margin:14px 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.dev p{margin:0}.dev ul,.dev ol{margin:0;padding-inline-start:20px}.dev li{margin:3px 0}
+.dev pre,.devpage pre{background:#0a2547;color:#dbe7f5;padding:12px;border-radius:8px;overflow:auto;font-size:12.5px;line-height:1.5;direction:ltr;text-align:left;margin:0}
+.dchips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.dg{display:grid;grid-template-columns:1fr 1fr;gap:14px}.dg3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:800px){.dg,.dg3{grid-template-columns:1fr}}
+.devpage{direction:ltr;text-align:left}
+.arch{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.ab{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--bg)}.ab b{display:block}.ab small{color:var(--muted)}
+.ab.hl{border-color:var(--accent-color);background:var(--brand-soft)}
+.dl li{margin:4px 0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:800px){.grid2{grid-template-columns:1fr}}
+select{padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
+@media(max-width:700px){header.main{position:static}header.main .wrap{gap:8px;min-height:0;padding-block:10px}nav.menu{gap:14px;margin-inline-start:0;width:100%}nav.menu a{padding:8px 0}.hero{padding:28px 0 36px}.hero h1{font-size:28px}}
+</style>
+</head>
+<body>
+<div id="root"></div><div class="ov" id="ov"></div><div class="toast" id="toast"></div>
+<script>
+// ---------- Sample data (illustrative only – NOT real fees or regulations). Each text is [English, Arabic] ----------
+const BIZ = {
+  cafe:{ic:"☕",name:["Open your café","افتح مقهاك"],tag:["Coffee shop, bakery items, seating area","مقهى، مخبوزات، منطقة جلوس"],
+    acts:[
+      {id:"c1",n:["Food & beverage retail (café)","بيع الأغذية والمشروبات (مقهى)"],d:["Core commercial activity","النشاط التجاري الأساسي"],req:1,fee:300,days:3},
+      {id:"c2",n:["Fresh-food handling & preparation","تداول وتجهيز الأغذية الطازجة"],d:["Required to prepare food on site","مطلوب لتحضير الطعام في الموقع"],req:1,fee:180,days:4},
+      {id:"c3",n:["Commercial premises lease registration","تسجيل عقد إيجار المحل التجاري"],d:["Registers the shop location","يسجّل موقع المحل"],req:1,fee:120,days:2},
+      {id:"c4",n:["Outdoor seating permit","تصريح الجلوس الخارجي"],d:["Tables on pavement / terrace","طاولات على الرصيف أو الشرفة"],fee:90,days:5},
+      {id:"c5",n:["Online ordering & delivery","الطلب والتوصيل عبر الإنترنت"],d:["Sell through apps or your own site","البيع عبر التطبيقات أو موقعك"],fee:70,days:2},
+      {id:"c6",n:["Live music / background music licence","ترخيص الموسيقى الحية والخلفية"],d:["Public performance rights","حقوق الأداء العلني"],fee:60,days:3},
+      {id:"c7",n:["Catering for events","تقديم الطعام للفعاليات"],d:["Off-site food service","خدمة الطعام خارج المقهى"],fee:140,days:4}],
+    rules:[
+      {a:"c2",id:"r1",reg:["Municipal Food Safety Authority","هيئة سلامة الغذاء البلدية"],t:["Hygiene inspection before opening","فحص النظافة قبل الافتتاح"],p:["An inspector visits your shop and checks it is clean and safe for food before you can serve customers.","يزور مفتش محلك ويتأكد من نظافته وسلامته للأغذية قبل أن تبدأ باستقبال الزبائن."],ai:1},
+      {a:"c2",id:"r2",reg:["Municipal Food Safety Authority","هيئة سلامة الغذاء البلدية"],t:["Written food-safety plan (HACCP-style)","خطة مكتوبة لسلامة الغذاء (HACCP)"],p:["A short document listing what could go wrong with food and how you prevent it.","وثيقة قصيرة تحدد المخاطر المحتملة على الغذاء وكيف تمنعها."],ai:1},
+      {a:"c2",id:"r3",reg:["Health Department","إدارة الصحة"],t:["Food-handler certificates for all kitchen staff","شهادات مناولي الأغذية لجميع العاملين في المطبخ"],p:["Everyone touching food needs a basic course certificate. Valid for 3 years.","كل من يلمس الطعام يحتاج إلى شهادة دورة أساسية، صالحة لمدة 3 سنوات."],ai:0},
+      {a:"c1",id:"r4",reg:["Civil Defence","الدفاع المدني"],t:["Fire safety: extinguishers, exits, kitchen hood","السلامة من الحريق: طفايات ومخارج وشفاط المطبخ"],p:["Fire equipment and clear exits must be in place and inspected.","يجب توفير معدات الحريق ومخارج واضحة وإجراء الفحص عليها."],ai:0},
+      {a:"c3",id:"r5",reg:["Planning & Zoning","التخطيط والتقسيم"],t:["Premises must be zoned for food service","يجب أن يكون الموقع مخصصًا لخدمات الطعام"],p:["Not every address allows a café. We check the address against the zoning map.","ليس كل عنوان يسمح بمقهى. نتحقق من العنوان على خريطة التقسيم."],ai:1,zone:1},
+      {a:"c1",id:"r6",reg:["Consumer Protection","حماية المستهلك"],t:["Price list & allergen information displayed","عرض قائمة الأسعار ومعلومات مسببات الحساسية"],p:["Prices and allergen warnings must be visible to customers.","يجب أن تكون الأسعار وتحذيرات الحساسية ظاهرة للزبائن."],ai:1},
+      {a:"c4",id:"r7",reg:["Municipality","البلدية"],t:["Pavement width ≥ 1.5 m after tables placed","عرض الرصيف ≥ 1.5 م بعد وضع الطاولات"],p:["People must still be able to walk past your outdoor tables.","يجب أن يبقى بإمكان المارة تجاوز طاولاتك الخارجية."],ai:1},
+      {a:"c6",id:"r8",reg:["Copyright Society","جمعية حقوق المؤلف"],t:["Annual music royalty fee","رسوم سنوية لحقوق الموسيقى"],p:["Playing music publicly requires a yearly licence fee.","تشغيل الموسيقى علنًا يتطلب رسم ترخيص سنوي."],ai:0},
+      {a:"c5",id:"r9",reg:["Data Protection","حماية البيانات"],t:["Customer data consent & privacy notice","موافقة بيانات العملاء وإشعار الخصوصية"],p:["If you collect customer details online you need a privacy notice.","إذا جمعت بيانات العملاء عبر الإنترنت فأنت بحاجة إلى إشعار خصوصية."],ai:1}],
+    ai:[["Suggest 3 trade names and check availability","اقترح 3 أسماء تجارية وتحقق من توفرها"],["Pre-fill all forms from my ID and company profile","املأ النماذج تلقائيًا من هويتي وملف شركتي"],["Draft my food-safety plan from my menu","اكتب خطة سلامة الغذاء من قائمتي"]]},
+  logistics:{ic:"🚚",name:["Open your logistics company","افتح شركتك اللوجستية"],tag:["Freight, last-mile delivery, warehousing","شحن، توصيل الميل الأخير، تخزين"],
+    acts:[
+      {id:"l1",n:["Road freight transport","نقل البضائع بالطرق البرية"],d:["Goods transport by truck/van","نقل البضائع بالشاحنات"],req:1,fee:420,days:5},
+      {id:"l2",n:["Fleet vehicle registration","تسجيل مركبات الأسطول"],d:["Commercial plates for each vehicle","لوحات تجارية لكل مركبة"],req:1,fee:260,days:4},
+      {id:"l3",n:["Goods-in-transit insurance","التأمين على البضائع أثناء النقل"],d:["Mandatory cargo cover","تغطية إلزامية للشحنات"],req:1,fee:350,days:2},
+      {id:"l4",n:["Warehousing & storage","التخزين والمستودعات"],d:["Storage facility operations","تشغيل منشأة التخزين"],fee:300,days:6},
+      {id:"l5",n:["Last-mile courier service","خدمة توصيل الميل الأخير"],d:["Parcel delivery to homes","توصيل الطرود إلى المنازل"],fee:180,days:3},
+      {id:"l6",n:["Customs clearance agent","مخلّص جمركي"],d:["Import / export paperwork","معاملات الاستيراد والتصدير"],fee:520,days:9},
+      {id:"l7",n:["Cold-chain transport","نقل مبرّد"],d:["Refrigerated goods","البضائع المبردة"],fee:380,days:7}],
+    rules:[
+      {a:"l1",id:"q1",reg:["Transport Authority","هيئة النقل"],t:["Operator licence with a named transport manager","رخصة مشغّل مع مدير نقل معتمد"],p:["One responsible person must hold a recognised transport-manager qualification.","يجب أن يحمل شخص مسؤول واحد مؤهل مدير نقل معترفًا به."],ai:0},
+      {a:"l2",id:"q2",reg:["Traffic Department","إدارة المرور"],t:["Annual vehicle roadworthiness test","فحص سنوي لصلاحية المركبة"],p:["Every vehicle must pass an inspection each year.","يجب أن تجتاز كل مركبة فحصًا كل عام."],ai:1},
+      {a:"l1",id:"q3",reg:["Transport Authority","هيئة النقل"],t:["Driver hours & rest-time logging","تسجيل ساعات القيادة وأوقات الراحة"],p:["Drivers can only drive so many hours a day. A tachograph or app must log it.","لا يجوز للسائقين القيادة أكثر من عدد معين من الساعات يوميًا، ويجب تسجيلها بجهاز أو تطبيق."],ai:1},
+      {a:"l3",id:"q4",reg:["Insurance Regulator","جهة تنظيم التأمين"],t:["Minimum cargo cover per vehicle","حد أدنى لتغطية الشحنات لكل مركبة"],p:["Your insurance must meet a minimum value for each truck.","يجب أن يستوفي تأمينك قيمة دنيا لكل شاحنة."],ai:1},
+      {a:"l4",id:"q5",reg:["Planning & Zoning","التخطيط والتقسيم"],t:["Warehouse in an industrial-zoned plot","المستودع في أرض مخصصة للصناعة"],p:["We check your address against the zoning map.","نتحقق من عنوانك على خريطة التقسيم."],ai:1,zone:1},
+      {a:"l4",id:"q6",reg:["Civil Defence","الدفاع المدني"],t:["Fire-safety & hazardous goods segregation","السلامة من الحريق وفصل المواد الخطرة"],p:["Flammable items must be stored apart from others.","يجب تخزين المواد القابلة للاشتعال بمعزل عن غيرها."],ai:0},
+      {a:"l6",id:"q7",reg:["Customs Authority","الجمارك"],t:["Agent registration & bonded guarantee","تسجيل المخلّص وضمان جمركي"],p:["You deposit a guarantee that covers duties customers might not pay.","تودع ضمانًا يغطي الرسوم التي قد لا يسددها العملاء."],ai:0},
+      {a:"l7",id:"q8",reg:["Food Safety Authority","هيئة سلامة الغذاء"],t:["Temperature records for chilled loads","سجلات درجات الحرارة للشحنات المبردة"],p:["You must keep temperature logs for every refrigerated trip.","يجب الاحتفاظ بسجل حرارة لكل رحلة مبردة."],ai:1},
+      {a:"l5",id:"q9",reg:["Data Protection","حماية البيانات"],t:["Recipient data handling policy","سياسة التعامل مع بيانات المستلمين"],p:["Names and addresses of recipients must be protected and deleted on time.","يجب حماية أسماء وعناوين المستلمين وحذفها في الوقت المناسب."],ai:1}],
+    ai:[["Check which vehicles qualify for the licence","تحقق من المركبات المؤهلة للترخيص"],["Auto-build a driver-hours compliance log","أنشئ سجل التزام ساعات القيادة تلقائيًا"],["Compare cargo insurance quotes","قارن عروض تأمين الشحنات"]]},
+  shop:{ic:"🛍️",name:["Open your online shop","افتح متجرك الإلكتروني"],tag:["E-commerce store with payments & shipping","متجر إلكتروني مع الدفع والشحن"],
+    acts:[
+      {id:"s1",n:["E-commerce retail","التجارة الإلكترونية"],d:["Selling goods online","بيع السلع عبر الإنترنت"],req:1,fee:200,days:2},
+      {id:"s2",n:["Payment processing registration","تسجيل خدمات الدفع"],d:["Accept cards & wallets","قبول البطاقات والمحافظ"],req:1,fee:90,days:3},
+      {id:"s3",n:["Import of consumer goods","استيراد السلع الاستهلاكية"],d:["Bring stock from abroad","جلب البضائع من الخارج"],fee:260,days:6},
+      {id:"s4",n:["Home-based business permit","تصريح عمل من المنزل"],d:["Operate from residence","العمل من مقر السكن"],fee:80,days:3}],
+    rules:[
+      {a:"s1",id:"p1",reg:["Consumer Protection","حماية المستهلك"],t:["Returns policy & seller details on site","سياسة الإرجاع وبيانات البائع على الموقع"],p:["Customers must see who you are and how to return items.","يجب أن يعرف العملاء من أنت وكيف يعيدون المشتريات."],ai:1},
+      {a:"s2",id:"p2",reg:["Central Bank","البنك المركزي"],t:["Anti-money-laundering onboarding","إجراءات مكافحة غسل الأموال"],p:["The payment provider verifies you and your business owners.","يتحقق مزود الدفع من هويتك وهوية ملاك النشاط."],ai:1},
+      {a:"s3",id:"p3",reg:["Customs Authority","الجمارك"],t:["Product conformity marks","علامات مطابقة المنتجات"],p:["Imported items must carry required safety marks.","يجب أن تحمل السلع المستوردة علامات السلامة المطلوبة."],ai:0},
+      {a:"s4",id:"p4",reg:["Planning & Zoning","التخطيط والتقسيم"],t:["Residential address allows business use","العنوان السكني يسمح بالاستخدام التجاري"],p:["We check your address against the zoning map.","نتحقق من عنوانك على خريطة التقسيم."],ai:1,zone:1}],
+    ai:[["Generate privacy policy & returns policy","أنشئ سياسة الخصوصية وسياسة الإرجاع"],["Write product descriptions in 2 languages","اكتب أوصاف المنتجات بلغتين"]]},
+  clinic:{ic:"🩺",name:["Open your clinic","افتح عيادتك"],tag:["Outpatient clinic, small medical centre","عيادة خارجية، مركز طبي صغير"],soon:1}
+};
+const TODAY_LIST = [["Activity 4711 – Food retail","نشاط 4711 – بيع الأغذية بالتجزئة"],["Activity 4722 – Beverage retail","نشاط 4722 – بيع المشروبات بالتجزئة"],["Activity 5610 – Restaurants","نشاط 5610 – مطاعم"],["Activity 5621 – Event catering","نشاط 5621 – تموين الفعاليات"],["Activity 4941 – Freight by road","نشاط 4941 – نقل البضائع بالطرق"],["Activity 5210 – Warehousing","نشاط 5210 – التخزين"],["Activity 5320 – Courier","نشاط 5320 – خدمات البريد السريع"],["Activity 5229 – Customs agent","نشاط 5229 – مخلّص جمركي"],["Activity 4791 – Online retail","نشاط 4791 – التجزئة الإلكترونية"],["Activity 6419 – Payment services","نشاط 6419 – خدمات الدفع"],["Activity 8610 – Hospitals","نشاط 8610 – المستشفيات"],["Activity 8620 – Clinics","نشاط 8620 – العيادات"],["Activity 6820 – Real-estate leasing","نشاط 6820 – تأجير العقارات"],["Activity 7490 – Misc. professional services","نشاط 7490 – خدمات مهنية متنوعة"]];
+
+
+// ---------- Extra data: zones, docs, questions, renewals ----------
+const ZONES=[
+ {id:"sadd",n:["Al Sadd","السد"],x:12,y:14,w:152,h:100,tr:5},
+ {id:"westbay",n:["West Bay","الخليج الغربي"],x:184,y:14,w:152,h:100,tr:4},
+ {id:"lusail",n:["Lusail","لوسيل"],x:356,y:14,w:152,h:100,tr:4},
+ {id:"pearl",n:["The Pearl","اللؤلؤة"],x:12,y:134,w:152,h:100,tr:5},
+ {id:"wakra",n:["Al Wakra","الوكرة"],x:184,y:134,w:152,h:100,tr:2},
+ {id:"ind",n:["Industrial Area","المنطقة الصناعية"],x:356,y:134,w:152,h:100,tr:1}];
+const ZR={cafe:{sadd:"ok",westbay:"ok",lusail:"ok",pearl:"ok",wakra:"cond",ind:"no"},
+ logistics:{sadd:"no",westbay:"no",lusail:"cond",pearl:"no",wakra:"cond",ind:"ok"},
+ shop:{sadd:"ok",westbay:"ok",lusail:"ok",pearl:"ok",wakra:"ok",ind:"ok"}};
+const COMP={cafe:{sadd:14,westbay:9,lusail:6,pearl:11,wakra:3,ind:0},logistics:{sadd:1,westbay:0,lusail:3,pearl:0,wakra:4,ind:12},shop:{sadd:8,westbay:5,lusail:4,pearl:3,wakra:9,ind:2}};
+const ZALIAS={sadd:["al sadd","sadd","السد"],westbay:["west bay","westbay","الخليج"],lusail:["lusail","لوسيل"],pearl:["pearl","اللؤلؤة"],wakra:["wakra","الوكرة"],ind:["industrial","الصناعية"]};
+const STN={ok:["Allowed","مسموح"],cond:["Needs approval","يتطلب موافقة"],no:["Not allowed","غير مسموح"]};
+const LVN=[["low","منخفضة"],["medium","متوسطة"],["high","مرتفعة"]];
+const DOCS={
+ id:{n:["Owner ID / residence permit","هوية المالك / الإقامة"],src:"w"},
+ photo:{n:["Owner photo","صورة المالك"],src:"w"},
+ cr:{n:["Commercial registration","السجل التجاري"],src:"auto"},
+ lease:{n:["Premises lease contract","عقد إيجار الموقع"],src:"up",ex:["Landlord: Al Noor Real Estate · Annual rent: 96,000 · Ends in 8 months","المؤجر: النور العقارية · الإيجار السنوي: 96,000 · ينتهي بعد 8 أشهر"],warn:["Lease ends in 8 months, and most licences need at least 12 months remaining. Ask the landlord for an extension.","ينتهي العقد بعد 8 أشهر، ومعظم التراخيص تتطلب 12 شهرًا على الأقل. اطلب من المؤجر التمديد."],fixed:["Renewed lease read: ends in 24 months ✅","تمت قراءة العقد المجدد: ينتهي بعد 24 شهرًا ✅"]},
+ plan:{n:["Floor plan with kitchen layout","مخطط الموقع مع تخطيط المطبخ"],src:"up",ex:["Kitchen, seating and exits detected. Hood position is not marked.","تم رصد المطبخ والجلوس والمخارج. موقع الشفاط غير محدد."]},
+ food:{n:["Food-handler certificates","شهادات مناولي الأغذية"],src:"up",ex:["4 certificates read. All valid for 2+ years.","تمت قراءة 4 شهادات. جميعها صالحة لأكثر من سنتين."]},
+ fleet:{n:["Vehicle ownership documents","وثائق ملكية المركبات"],src:"up",ex:["5 vehicles read. All plates match the owner.","تمت قراءة 5 مركبات. جميع اللوحات مطابقة للمالك."]},
+ ins:{n:["Cargo insurance certificate","شهادة تأمين الشحنات"],src:"up",ex:["Cover per vehicle read and above the minimum ✅","التغطية لكل مركبة أعلى من الحد الأدنى ✅"]},
+ tm:{n:["Transport manager qualification","مؤهل مدير النقل"],src:"up",ex:["Qualification valid. Name matches the application.","المؤهل ساري والاسم مطابق للطلب."]}};
+BIZ.cafe.docs=["id","photo","cr","lease","plan","food"];BIZ.logistics.docs=["id","photo","cr","lease","fleet","ins","tm"];BIZ.shop.docs=["id","photo","cr"];
+BIZ.cafe.renew=[[["Food-handler certificates","شهادات مناولي الأغذية"],36],[["Music royalty fee","رسوم حقوق الموسيقى"],12]];
+BIZ.logistics.renew=[[["Vehicle roadworthiness test","فحص صلاحية المركبات"],12],[["Cargo insurance","تأمين الشحنات"],12]];
+BIZ.shop.renew=[[["Payment provider re-verification","إعادة التحقق من مزود الدفع"],24]];
+const Q={c4:["Will customers sit outdoors (terrace or pavement)?","هل سيجلس الزبائن في الخارج (شرفة أو رصيف)؟"],c5:["Will you sell online or deliver orders?","هل ستبيع عبر الإنترنت أو توصّل الطلبات؟"],c6:["Will you play music in the café?","هل ستشغّل الموسيقى في المقهى؟"],c7:["Will you cater for off-site events?","هل ستقدم خدمات تموين خارج المقهى؟"],
+ l4:["Do you need your own warehouse?","هل تحتاج إلى مستودع خاص؟"],l5:["Will you deliver parcels to homes (last mile)?","هل ستوصّل الطرود إلى المنازل؟"],l6:["Will you clear goods through customs for clients?","هل ستخلّص البضائع جمركيًا للعملاء؟"],l7:["Will you carry chilled or frozen goods?","هل ستنقل بضائع مبردة أو مجمدة؟"],
+ s3:["Will you import stock from abroad?","هل ستستورد بضائع من الخارج؟"],s4:["Will you run the shop from your home?","هل ستدير المتجر من منزلك؟"]};
+const KW={cafe:["café","cafe","coffee","bakery","قهوة","مقهى","كافيه"],logistics:["logistic","truck","freight","courier","shipping","warehouse","delivery company","لوجست","شاحن","شحن","نقل","مستودع"],shop:["online shop","online","shop","store","sell","perfume","متجر","بيع","إلكتروني","عطور"]};
+const XKW={c4:["outdoor","terrace","pavement","خارجي","شرفة"],c5:["delivery","deliver","online orders","توصيل"],c6:["music","موسيقى"],c7:["catering","events","تموين","فعاليات"],l4:["warehouse","مستودع"],l5:["courier","last mile","parcel","طرود"],l6:["customs","جمرك"],l7:["cold","chilled","frozen","مبرد"],s3:["import","استيراد"],s4:["from home","home-based","منزل","بيتي"]};
+
+// ---------- State & helpers ----------
+const S={lang:"en",mode:"new",view:"home",step:0,biz:null,sel:new Set(),ok:new Set(),expl:new Set(),zone:"",zoneMsg:"",docs:{},chat:[],done:false,ref:0,mapBiz:"cafe",mapZone:null,apps:[],day:0,adv:null,intent:null,fixId:null,dev:false,devFocus:null};
+const $=s=>document.querySelector(s);
+const _=(en,ar)=>S.lang==="ar"?ar:en;
+const x=v=>v[S.lang==="ar"?1:0];
+const b=()=>BIZ[S.biz];
+const acts=()=>b().acts.filter(a=>S.sel.has(a.id));
+const rules=()=>b().rules.filter(r=>S.sel.has(r.a));
+const fees=()=>acts().reduce((s,a)=>s+a.fee,0);
+const seqDays=()=>acts().reduce((s,a)=>s+a.days,0);
+const parDays=()=>Math.max(0,...acts().map(a=>a.days))+2;
+const fwd=()=>S.lang==="ar"?"←":"→";
+const back=()=>`<span class="back-arrow">←</span>`;
+const fmt=d=>d.toLocaleDateString(S.lang==="ar"?"ar-u-nu-latn":"en-GB",{day:"numeric",month:"short",year:"numeric"});
+const mb=()=>S.mapBiz;
+const Z=id=>ZONES.find(z=>z.id===id);
+const lvl=n=>n<=3?0:n<=9?1:2;
+function bestZone(biz){return ZONES.filter(z=>ZR[biz][z.id]==="ok").sort((a,c)=>(c.tr*4-COMP[biz][c.id])-(a.tr*4-COMP[biz][a.id]))[0];}
+function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("on"),2200);}
+function nav(v){S.view=v;S.mode="new";if(v==="start"&&!S.biz)S.step=0;render();window.scrollTo(0,0);}
+function pick(k,extras=[],zone=""){ if(BIZ[k].soon)return; S.biz=k;S.sel=new Set(BIZ[k].acts.filter(a=>a.req||extras.includes(a.id)).map(a=>a.id));S.ok=new Set();S.expl=new Set();S.zone=zone;S.zoneMsg="";S.docs={};S.chat=[];S.done=false;S.view="start";S.step=1;if(zone)zoneApply();render();window.scrollTo(0,0);}
+function zoneApply(){ // apply zone result to the zoning rule
+  const st=ZR[S.biz][S.zone];const z=Z(S.zone);
+  if(!z){S.zoneMsg="";return;}
+  const best=bestZone(S.biz);
+  S.zoneMsg=st==="ok"?_(`✅ ${x(z.n)} is zoned for your activities (demo result).`,`✅ ${x(z.n)} مخصصة لأنشطتك (نتيجة تجريبية).`)
+   :st==="cond"?_(`⚠️ ${x(z.n)} needs special approval for your activities. Best alternative: ${x(best.n)}.`,`⚠️ ${x(z.n)} تتطلب موافقة خاصة لأنشطتك. أفضل بديل: ${x(best.n)}.`)
+   :_(`❌ ${x(z.n)} is not zoned for your activities. Best alternative: ${x(best.n)}.`,`❌ ${x(z.n)} غير مخصصة لأنشطتك. أفضل بديل: ${x(best.n)}.`);
+  rules().filter(r=>r.zone).forEach(r=>st==="ok"?S.ok.add(r.id):S.ok.delete(r.id));
+}
+
+// ---------- AI: intent parsing (scripted stand-in for an LLM call) ----------
+function parseIntent(q){
+  const l=q.toLowerCase();let best=null,bs=0;
+  for(const k in KW){const n=KW[k].filter(w=>l.includes(w)).length;if(n>bs){bs=n;best=k;}}
+  if(!best)return null;
+  const zone=(Object.keys(ZALIAS).find(z=>ZALIAS[z].some(a=>l.includes(a)))||"");
+  const extras=BIZ[best].acts.filter(a=>!a.req&&(XKW[a.id]||[]).some(w=>l.includes(w))).map(a=>a.id);
+  return {biz:best,zone,extras};
+}
+function runIntent(q){
+  if(!q.trim())return;
+  const r=parseIntent(q);S.intent=r||{none:1};renderIntent();
+}
+function renderIntent(){
+  const e=$("#intent");if(!e)return;const r=S.intent;
+  if(!r){e.innerHTML="";return;}
+  if(r.none){e.innerHTML=`<b>✨</b> ${_("I couldn't match that to a package yet. Pick one below, or open the Setup Advisor.","لم أتمكن من مطابقة طلبك مع حزمة بعد. اختر حزمة أدناه أو افتح مستشار التأسيس.")}`;return;}
+  const bz=BIZ[r.biz];
+  e.innerHTML=`<div style="font-weight:600;margin-bottom:6px">✨ ${_("I understood:","فهمت طلبك:")}</div>
+  <div class="meta"><span class="chip">${bz.ic} ${x(bz.name)}</span>${r.zone?`<span class="chip">📍 ${x(Z(r.zone).n)}</span>`:`<span class="chip warn">${_("No location yet","لم يُحدد الموقع")}</span>`}${r.extras.map(id=>`<span class="chip ai">+ ${x(bz.acts.find(a=>a.id===id).n)}</span>`).join("")}</div>
+  <div style="margin-top:10px"><button class="btn primary" id="igo">${_("Start with this package","ابدأ بهذه الحزمة")} ${fwd()}</button></div>`;
+  $("#igo").onclick=()=>pick(r.biz,r.extras,r.zone);
+}
+
+// ---------- AI assistant replies (scripted) ----------
+function aiReply(q,key){
+  const l=q.toLowerCase();
+  if(!S.biz)return _("Pick a business first, then I can tailor everything to it.","اختر مشروعًا أولًا، وبعدها أخصص لك كل شيء.");
+  if(key===0||/name|اسم|أسماء/.test(l))return _("Suggestions: “Bean & Bloom”, “Corner Roast”, “Daily Grind”. All three look free in the sample registry (demo result).","اقتراحات: «بين آند بلوم»، «كورنر روست»، «ديلي جرايند». الثلاثة متاحة في السجل التجريبي (نتيجة تجريبية).");
+  if(key===1||/fill|form|املأ|نماذج/.test(l))return _("Done (demo): 14 form fields filled from your profile and wallet. 2 fields need you: lease number and expected staff count.","تم (تجريبي): ملء 14 حقلًا من ملفك ومحفظتك. حقلان يحتاجان منك: رقم عقد الإيجار وعدد الموظفين المتوقع.");
+  if(/cost|fee|تكلف|رسوم/.test(l))return _(`Government fees for your selection: ${fees()} (sample currency). Biggest item: ${x([...acts()].sort((a,c)=>c.fee-a.fee)[0].n)}.`,`الرسوم الحكومية لاختيارك: ${fees()} (عملة تجريبية). أكبر بند: ${x([...acts()].sort((a,c)=>c.fee-a.fee)[0].n)}.`);
+  if(/long|time|day|وقت|يوم|مدة/.test(l))return _(`Bundled in parallel: about ${parDays()} days. One by one: about ${seqDays()} days.`,`بالتوازي ضمن الحزمة: حوالي ${parDays()} يومًا. واحدًا تلو الآخر: حوالي ${seqDays()} يومًا.`);
+  if(/where|location|zone|map|أين|موقع|منطقة/.test(l)){const z=bestZone(S.biz);return _(`Best zone for you right now: ${x(z.n)} (allowed, ${COMP[S.biz][z.id]} similar businesses, traffic ${z.tr}/5). Open the Business Map to compare.`,`أفضل منطقة لك الآن: ${x(z.n)} (مسموحة، ${COMP[S.biz][z.id]} أعمال مشابهة، حركة ${z.tr}/5). افتح خريطة الأعمال للمقارنة.`);}
+  if(key===2||/plan|policy|draft|generate|خطة|سياسة|مسودة|اكتب|أنشئ/.test(l))return _("Draft ready (demo). I built it from your activities and product list. Review the 3 highlighted sections before signing.","المسودة جاهزة (تجريبي). أعددتها من أنشطتك وقائمة المنتجات، راجع الأقسام الثلاثة المظللة قبل التوقيع.");
+  const open=rules().filter(r=>!S.ok.has(r.id)).length,v=rules().filter(r=>r.ai&&!S.ok.has(r.id)).length;
+  return _(`You still have ${open} rule(s) to confirm. I can auto-verify ${v} of them. Use “Auto-check” on the Rules step.`,`لا تزال لديك ${open} قاعدة بحاجة إلى تأكيد. يمكنني التحقق تلقائيًا من ${v} منها، استخدم «تحقق تلقائي» في خطوة القواعد.`);
+}
+function ask(q,key){if(!q.trim())return;S.chat.push({u:1,t:q});S.chat.push({t:aiReply(q,key)});renderSide();const c=$(".chat");if(c)c.scrollTop=1e9;}
+
+// ---------- Pre-flight check (AI) ----------
+function docState(id){const d=DOCS[id];if(d.src==="w"||d.src==="auto")return 2;return S.docs[id]||0;}
+function checks(){
+  const c=[],rs=rules(),left=rs.filter(r=>!S.ok.has(r.id)).length;
+  c.push(left?{l:"warn",t:_(`${left} rule(s) not confirmed yet`,`${left} قاعدة لم تُؤكَّد بعد`),f:2}:{l:"ok",t:_("All rules confirmed","تم تأكيد جميع القواعد")});
+  if(rs.some(r=>r.zone)){const st=S.zone?ZR[S.biz][S.zone]:"";
+    c.push(!S.zone?{l:"warn",t:_("Location not chosen. Zoning not verified","لم يُحدد الموقع. لم يتم التحقق من التخطيط"),f:2}:st==="ok"?{l:"ok",t:_(`Location ${x(Z(S.zone).n)} is allowed`,`الموقع ${x(Z(S.zone).n)} مسموح`)}:st==="cond"?{l:"warn",t:_(`Location ${x(Z(S.zone).n)} needs special approval`,`الموقع ${x(Z(S.zone).n)} يتطلب موافقة خاصة`),f:2}:{l:"err",t:_(`Location ${x(Z(S.zone).n)} is not allowed for these activities`,`الموقع ${x(Z(S.zone).n)} غير مسموح لهذه الأنشطة`),f:2});}
+  const miss=b().docs.filter(i=>docState(i)===0);
+  c.push(miss.length?{l:"err",t:_(`${miss.length} required document(s) missing`,`${miss.length} مستند مطلوب ناقص`),f:3}:{l:"ok",t:_("All required documents attached","جميع المستندات المطلوبة مرفقة")});
+  if(b().docs.includes("lease")&&docState("lease")===1)c.push({l:"warn",t:x(DOCS.lease.warn),f:3});
+  c.push({l:"ok",t:_("No conflicting activities in your bundle","لا توجد أنشطة متعارضة في حزمتك")});
+  return c;
+}
+const readiness=c=>Math.round(100*c.reduce((s,k)=>s+(k.l==="ok"?1:k.l==="warn"?.5:0),0)/c.length);
+
+// ---------- Applications / tracker ----------
+function submitApp(){
+  const regs={};
+  rules().forEach(r=>{const k=r.reg[0];const a=b().acts.find(a=>a.id===r.a);regs[k]=regs[k]||{reg:r.reg,dur:0};regs[k].dur=Math.max(regs[k].dur,a.days+3);});
+  const upl=b().docs.filter(i=>DOCS[i].src==="up");
+  S.apps=Object.values(regs).map((r,i)=>({...r,biz:S.biz,act:i===0,fixed:false,doc:upl.find(i=>i!=="lease")||upl[0]||"id"}));
+  S.day=0;S.done=true;S.ref=Math.floor(Math.random()*9000+1000);
+}
+function st(a){const p=Math.min(1,S.day/a.dur);
+  if(a.act&&!a.fixed&&S.day>=2)return {s:"action",p:Math.min(p,.25),i:1};
+  return p>=1?{s:"approved",p,i:3}:p>=.6?{s:"inspect",p,i:2}:p>=.2?{s:"review",p,i:1}:{s:"sub",p,i:0};}
+const STG=[["Submitted","تم الإرسال"],["In review","قيد المراجعة"],["Inspection","الفحص"],["Approved","تمت الموافقة"]];
+const actionCount=()=>S.apps.filter(a=>st(a).s==="action").length;
+
+
+// ---------- Developer view content (English only) ----------
+const DEV={
+q:{name:"Intent search",type:"LLM · structured output",phase:"MVP",effort:"S (1–2 sprints)",
+ proto:"parseIntent(): keyword lists for package, zone and add-ons. No model call.",
+ prod:"One LLM call that extracts a structured intent from free Arabic or English text. Output is constrained to enums built from the live catalogue, then validated server-side.",
+ steps:["User text arrives (ar/en, any dialect, any length up to ~300 chars).","Server builds the enum lists: package_id, zone_id, optional activity ids from the package catalogue and GIS zone list.","LLM returns JSON that must match the schema (structured output / tool use).","Server validates every id against the catalogue. Unknown ids are dropped, never shown.","UI shows the “I understood” chips. The user can edit any chip before continuing.","Confidence below threshold → show one clarifying question instead of guessing."],
+ code:`POST /ai/intent
+{ "text": "افتح مقهى في السد مع جلسات خارجية", "locale": "ar" }
+
+200 OK
+{ "package_id": "cafe",
+  "zone_id": "sadd",
+  "optional_activity_ids": ["c4"],
+  "confidence": 0.93,
+  "clarifying_question": null }`,
+ data:["Package catalogue (ids, names ar/en, synonyms)","Zone list from GIS","Labelled set of real investor phrases for evaluation"],
+ guard:["Output constrained to catalogue enums: the model cannot invent a package.","Nothing is saved until the user confirms the chips.","User text is treated as data, never as instructions (prompt-injection safe).","Do not log free text together with national ID or contact details."],
+ metrics:["Intent→package accuracy on a labelled Arabic + English set","% of users who edit a chip","Fallback rate to Setup Advisor","p95 latency (target under 2 s)"],
+ risks:["Ambiguous words such as “delivery” (café vs courier company).","Businesses outside the catalogue → route to Setup Advisor or a human."]},
+a:{name:"Setup Advisor",type:"Rules engine + LLM for wording",phase:"MVP",effort:"S–M",
+ proto:"Static yes/no question per optional activity (Q table). The bundle is the sum of the answers.",
+ prod:"The bundle is computed deterministically from the package definition. The LLM only rephrases questions, answers “why are you asking?” and handles free-text answers by mapping them to allowed answers.",
+ steps:["Load the package: required activities plus optional ones, each with a question_key and an implies list.","Ask the questions in order. Each yes/no adds or removes activities and rules deterministically.","Optional adaptive follow-ups come from an allow-list of questions (for example staff count → extra labour rules).","LLM explains “why we ask” using the rule ids that the question triggers.","Return the bundle and the price/time estimate from the same engine used everywhere else."],
+ code:`POST /packages/cafe/advisor
+{ "answers": { "outdoor_seating": true, "online_orders": false,
+               "music": true, "catering": false } }
+
+200 OK
+{ "activities": ["c1","c2","c3","c4","c6"],
+  "rules": ["r1","r2","r3","r4","r5","r6","r7","r8"],
+  "fees": 750, "est_days_parallel": 7 }`,
+ data:["Package definitions with question_key and implies","Rules registry (to compute implied rules)"],
+ guard:["The LLM cannot add or remove activities. Only the engine can.","Every “why we ask” answer cites rule ids.","The user can always edit the bundle manually afterwards."],
+ metrics:["Advisor completion rate","% of bundles edited after the advisor","Applications rejected for a missing activity (should trend to zero)"],
+ risks:["Question fatigue: keep to 5 or fewer questions per package.","Package definitions must be owned and versioned by a named team."]},
+m:{name:"Location Advisor",type:"Geo data + rules engine + LLM for wording",phase:"Phase 3",effort:"L (depends on data access)",
+ proto:"Six hard-coded zones with allowed/conditional/not-allowed, competition counts and a traffic score.",
+ prod:"The verdict comes from the rules engine over zoning data. Competition counts come from the commercial registry. A deterministic score ranks zones. The LLM only turns the structured result into two plain sentences.",
+ steps:["Input: activity set plus a zone (or radius around a point).","Rules engine looks up the rules for each (activity, zone) → ok / conditional / no, with citations.","Registry query counts similar active businesses in the zone (aggregates only).","Score = configurable weights over traffic proxy and competition, among allowed zones only.","LLM receives the JSON facts and writes the explanation. It may not add facts.","UI shows the map, the verdict and “last updated” for the zoning layer."],
+ code:`GET /locations/evaluate?package=cafe&zone=pearl
+
+200 OK
+{ "zone": "pearl",
+  "verdict": "ok",
+  "citations": ["ZON-2024-117"],
+  "similar_businesses": 11,
+  "competition_level": "high",
+  "traffic_index": 5,
+  "score": 9,
+  "explanation_en": "...", "explanation_ar": "..." }`,
+ data:["Official zoning / land-use layer (GIS)","Commercial registry (aggregated counts per zone)","Optional licensed foot-traffic data","Rules registry with zone conditions"],
+ guard:["Verdict is never produced by the LLM.","Explanation is grounded in the JSON it is given.","Show the data date and a disclaimer; “conditional” links to the approval path.","Only aggregated registry data is exposed: no individual business is identified."],
+ metrics:["% of recommendations accepted","Zoning-related rejections after submission (target near zero)","Data freshness (days since last GIS update)"],
+ risks:["Zoning data may be hard to obtain or out of date.","Ranking can steer investors toward crowded areas. Show the reasoning, and let users sort by their own priority."]},
+d:{name:"Document scan",type:"OCR / vision LLM + validators",phase:"Phase 2",effort:"M–L",
+ proto:"Upload button that shows a canned “AI read” result. The lease always triggers the 8-month warning.",
+ prod:"Classify the file, extract fields into a per-document schema with a vision-capable model or an OCR + LLM pipeline, then run deterministic validators. The validators, not the model, decide pass or fail.",
+ steps:["Upload → malware scan → encrypted storage.","Classify the document type (lease, ID, floor plan, certificate…).","Extract fields to the schema for that type, with a confidence score per field (Arabic + English, stamps, mixed scripts).","Validators: expiry ≥ required months, name matches the ID in the wallet, plate formats, required fields present.","Show extracted values for the user to confirm. Low-confidence fields become manual inputs.","Confirmed values pre-fill the application forms."],
+ code:`POST /documents/extract  (doc_type auto-detected)
+
+200 OK
+{ "doc_type": "lease",
+  "fields": {
+    "landlord":  { "value": "Al Noor Real Estate", "conf": 0.97 },
+    "annual_rent": { "value": 96000, "conf": 0.95 },
+    "end_date":  { "value": "2027-07-01", "conf": 0.91 } },
+  "validations": [
+    { "rule": "lease_min_remaining_12m", "result": "fail",
+      "message_key": "lease_too_short" } ] }`,
+ data:["Document-type schemas and validator rules","Digital wallet / e-gov document exchange for issuer-verified copies","Retention and deletion policy"],
+ guard:["Users confirm extracted values before they are used.","Pass/fail comes from deterministic validators.","AI is not fraud detection. Verify against the issuing authority where an API exists.","Encrypt at rest, apply retention limits, keep data in the required residency region."],
+ metrics:["Field-level extraction accuracy per document type","% of documents passing first time","Minutes saved per application"],
+ risks:["Poor scans, handwriting and stamps lower accuracy.","Forged documents need issuer verification, not OCR."]},
+p:{name:"Pre-flight check",type:"Rules engine + LLM for explanation",phase:"Phase 2",effort:"M",
+ proto:"checks(): five hard-coded checks and a simple score formula (ok = 1, warn = 0.5, error = 0).",
+ prod:"A deterministic readiness engine runs every check (completeness, consistency, cross-document, regulator-specific). The LLM summarises and prioritises in plain language. Checks grow from analysis of past rejection reasons.",
+ steps:["Collect application state: bundle, rule confirmations, zone, documents with validations.","Run the checks. Each returns severity (ok/warn/error), a message key and a fix target.","Compute the score and group issues by what blocks submission.","LLM writes a short prioritised summary from the issue list only.","Errors block submission. Warnings can be overridden with a logged reason."],
+ code:`POST /applications/{id}/preflight
+
+200 OK
+{ "score": 80,
+  "can_submit": true,
+  "issues": [
+    { "severity": "warn", "code": "RULES_UNCONFIRMED", "count": 3, "fix": "rules" },
+    { "severity": "warn", "code": "LEASE_SHORT", "fix": "documents" } ],
+  "summary_en": "...", "summary_ar": "..." }`,
+ data:["Check library (versioned)","Historical rejection reasons by regulator","Document validations from the scan service"],
+ guard:["Severity comes from the rules, never from the model.","The score is guidance, not an approval. Label it clearly.","Never auto-submit. Log every override with a reason and the user."],
+ metrics:["First-pass approval rate (with vs without pre-flight)","Score calibration: does an 80 % score really mean fewer rejections?","Top rejection reasons trend"],
+ risks:["A high score that still gets rejected destroys trust, so calibrate against real outcomes."]},
+t:{name:"Smart tracker",type:"Integrations + workflow + ETA model + LLM",phase:"Phase 2–3",effort:"L (regulator integrations)",
+ proto:"S.day counter simulates progress. One application is set to “action needed”. Renewal reminders are static text.",
+ prod:"Regulator status events feed a state machine per application. A simple statistical model estimates the completion date. The LLM turns a regulator's Arabic rejection text into a plain-language action and extracts the document needed.",
+ steps:["Regulators push webhooks, or are polled. A manual status fallback covers those without APIs.","Events go to an event bus. A state machine updates each application (submitted → review → inspection → approved / action needed).","ETA = historical duration quantiles per regulator and activity, adjusted by current backlog. Start with the median before anything fancier.","On “action needed”, the LLM reads the regulator message and returns { summary, required_document, deadline }. Show the original message next to it.","Notifications by push, SMS and email. Fix now opens the upload flow and re-runs document validation before resubmitting.","A scheduler computes renewal dates from approvals and drafts the paperwork 30 days ahead."],
+ code:`// webhook from a regulator
+POST /integrations/food-safety/events
+{ "application_ref": "FS-88121", "status": "ACTION_REQUIRED",
+  "message_ar": "..." }
+
+// after LLM interpretation
+{ "application_id": "app_42", "state": "action_needed",
+  "summary_en": "Floor plan is unreadable. Upload a clearer copy.",
+  "required_document": "plan", "due": "2026-11-12",
+  "eta": "2026-11-19" }`,
+ data:["Regulator APIs or webhooks (or a manual fallback)","Historical durations per regulator and activity","Notification service and templates (ar/en)"],
+ guard:["Always show the regulator's original text next to the AI summary.","Resubmission only after document validation passes.","Escalation path to a human service centre.","Audit log of every status change and notification."],
+ metrics:["Time to resolve an action item","ETA error in days (mean absolute error)","Notification open and action rates"],
+ risks:["Regulator integration is the long pole.","Statuses may be inconsistent across regulators, so normalise them in an adapter layer."]},
+c:{name:"AI assistant (chat)",type:"RAG over the rules registry",phase:"MVP",effort:"S–M",
+ proto:"Scripted replies chosen by keywords (aiReply()).",
+ prod:"Retrieval over the versioned rules registry and package catalogue. The model answers only from retrieved passages and the user's application state, with citations.",
+ steps:["Embed and index rules, package descriptions and FAQs in Arabic and English.","On each question, retrieve the top passages and add the application state (bundle, zone, documents).","LLM answers from those passages only, with rule-id citations.","If nothing relevant is retrieved, say so and offer a human."],
+ code:`POST /ai/chat
+{ "application_id": "app_42", "message": "Do I need a hygiene inspection?" }
+
+200 OK
+{ "answer_en": "Yes. ...", "citations": ["r1"], "handoff": false }`,
+ data:["Rules registry with source text and effective dates","Package catalogue","Application state (read-only)"],
+ guard:["Answers must cite rule ids, and unknown means “I don't know”.","Read-only access to application state. Actions go through the normal UI.","Rate limiting and abuse filtering."],
+ metrics:["Answer groundedness (citations present and correct)","Deflection rate vs service-centre calls","Thumbs up/down"],
+ risks:["Outdated rules text. Re-index when a rule version changes."]}
+};
+const DEVORDER=["q","a","m","d","p","t","c"];
+function devBody(k){const d=DEV[k];
+ return `<div class="dchips"><span class="chip ai">${d.type}</span><span class="chip">${d.phase}</span><span class="chip warn">Effort: ${d.effort}</span></div>
+ <div class="dg"><div><h4>This prototype</h4><p>${d.proto}</p></div><div><h4>Production design</h4><p>${d.prod}</p></div></div>
+ <h4>Pipeline</h4><ol>${d.steps.map(s=>`<li>${s}</li>`).join("")}</ol>
+ <h4>API sketch</h4><pre>${d.code}</pre>
+ <div class="dg3"><div><h4>Data &amp; integrations</h4><ul>${d.data.map(s=>`<li>${s}</li>`).join("")}</ul></div><div><h4>Guardrails</h4><ul>${d.guard.map(s=>`<li>${s}</li>`).join("")}</ul></div><div><h4>Metrics</h4><ul>${d.metrics.map(s=>`<li>${s}</li>`).join("")}</ul></div></div>
+ <h4>Risks</h4><ul>${d.risks.map(s=>`<li>${s}</li>`).join("")}</ul>`;}
+const devBox=(k,open)=>(!S.dev&&!open)?"":`<details class="dev" id="dev-${k}" ${open?"open":""}><summary>🛠 Developer view · ${DEV[k].name}</summary>${devBody(k)}</details>`;
+
+function vDev(){
+  const arch=[["Client","Single-window web app (ar/en, RTL)"],["API gateway / BFF","Auth, rate limits, locale"],["Package & rules engine","Deterministic: bundles, fees, rules, verdicts"],["AI service","Intent, explain, extract, summarise (LLM)"],["Knowledge","Package catalogue · Rules registry · Zoning GIS · Registry aggregates"],["Document service","Upload, scan, store, validate"],["Workflow & events","State machine, ETA, notifications"],["Regulator adapters","APIs / webhooks / manual fallback"],["Audit log","Every AI output, override and status change"]];
+  $("#view").innerHTML=`<div class="wrap pg devpage"><div class="card"><h2>🛠 Developer view</h2><p class="sub">How each AI feature would be built. English only. Toggle “Developer view” in the top bar to see these panels next to each feature in the flow.</p>
+  <div class="tabs">${DEVORDER.map(k=>`<a class="btn sm" href="#dev-${k}">${DEV[k].name}</a>`).join("")}<a class="btn sm" href="#dev-data">Data model</a><a class="btn sm" href="#dev-roll">Rollout</a></div></div>
+  <div class="card" style="margin-top:14px"><h3 style="margin:0 0 6px">Design principle</h3><div class="expl" style="margin:0"><b>The LLM proposes. The rules engine decides.</b> Compliance verdicts, fees, required documents and submission status always come from deterministic, versioned code and data. The model reads, extracts, explains and prioritises, with citations. A person confirms before anything is sent to a regulator.</div></div>
+  <div class="card" style="margin-top:14px"><h3 style="margin:0 0 10px">Architecture</h3><div class="arch">${arch.map((a,i)=>`<div class="ab ${i===2||i===3?"hl":""}"><b>${a[0]}</b><small>${a[1]}</small></div>`).join("")}</div></div>
+  ${DEVORDER.map(k=>`<div style="margin-top:14px">${devBox(k,true)}</div>`).join("")}
+  <div class="card" id="dev-data" style="margin-top:14px"><h3 style="margin:0 0 6px">Core data model</h3><pre>Package   { id, name_ar, name_en, activities[{id, required, question_key, implies[]}], docs[] }
+Activity  { id, code, fee, est_days, regulator_ids[] }
+Rule      { id, regulator_id, applies_to[], text_ar, text_en, verifiable: auto|manual,
+            version, effective_from, source_url }
+Zone      { id, name_ar, name_en, geometry, land_use }
+ZoneRule  { zone_id, activity_id, verdict: ok|conditional|no, rule_id }
+Application { id, package_id, activity_ids[], zone_id, rule_confirmations[], documents[], state }
+AiEvent   { id, feature, input_ref, output, model, version, user_decision, ts }   // audit</pre></div>
+  <div class="card" id="dev-roll" style="margin-top:14px"><h3 style="margin:0 0 6px">Suggested rollout</h3>
+  <table><tr><th>Phase</th><th>Ship</th><th>Why first</th></tr>
+  <tr><td>1 · MVP</td><td>Package catalogue + rules engine, Intent search, Setup Advisor, Assistant (RAG), plain-language explanations</td><td>Value without regulator integrations; low risk</td></tr>
+  <tr><td>2</td><td>Document scan, Pre-flight check, Tracker with first regulator integrations</td><td>Cuts rework and rejection; needs document and regulator access</td></tr>
+  <tr><td>3</td><td>Location Advisor, renewals, proactive reminders</td><td>Depends on GIS and registry data access</td></tr></table>
+  <h3 style="margin:16px 0 6px">Cross-cutting</h3><ul class="dl"><li><b>Evaluation:</b> golden sets in Arabic and English per feature; regression-test every prompt or model change.</li><li><b>Privacy:</b> comply with the applicable personal-data law, minimise what is sent to the model, set retention limits, and keep data in the required region.</li><li><b>Observability:</b> log every AI input, output, model version and user decision (AiEvent) for audit.</li><li><b>Fallback:</b> every AI feature degrades to the manual path if the model is down or unsure.</li></ul>
+  <h3 style="margin:16px 0 6px">Open decisions for the team</h3><ul class="dl"><li>Who owns and versions the package and rules content?</li><li>Which regulators can offer APIs or webhooks, and in what order?</li><li>Where can models and document storage be hosted (data residency)?</li><li>Build or buy OCR and document verification?</li></ul></div></div>`;
+  if(S.devFocus){const e=document.getElementById("dev-"+S.devFocus);S.devFocus=null;if(e)setTimeout(()=>e.scrollIntoView(),0);}
+}
+
+// ---------- Modal ----------
+function openModal(h){const o=$("#ov");o.innerHTML=`<div class="modal">${h}</div>`;o.classList.add("on");o.onclick=e=>{if(e.target===o)closeModal();};const c=o.querySelector(".x");if(c)c.onclick=closeModal;}
+function closeModal(){$("#ov").classList.remove("on");}
+function openAdvisor(){S.adv={step:0,biz:null,ans:[]};advRender();}
+function advRender(){
+  const A=S.adv;
+  if(A.step===0){openModal(`<div class="mh"><h3>✨ ${_("Setup Advisor","مستشار التأسيس")}</h3><button class="x">✕</button></div><p class="sub">${_("What do you want to open?","ماذا تريد أن تفتح؟")}</p>${Object.entries(BIZ).filter(([k,v])=>!v.soon).map(([k,v])=>`<button class="opt" data-k="${k}">${v.ic} ${x(v.name)}</button>`).join("")}${devBox("a")}`);
+    document.querySelectorAll(".opt").forEach(e=>e.onclick=()=>{A.biz=e.dataset.k;A.step=1;advRender();});return;}
+  const opt=BIZ[A.biz].acts.filter(a=>!a.req);
+  if(A.step<=opt.length){const a=opt[A.step-1];
+    openModal(`<div class="mh"><h3>✨ ${_("Setup Advisor","مستشار التأسيس")}</h3><button class="x">✕</button></div><div class="pbar"><i style="width:${A.step/(opt.length+1)*100}%"></i></div><p style="font-size:17px;font-weight:600">${x(Q[a.id])}</p><button class="opt" data-y="1">${_("Yes","نعم")}</button><button class="opt" data-y="0">${_("No","لا")}</button>${devBox("a")}`);
+    document.querySelectorAll(".opt").forEach(e=>e.onclick=()=>{if(e.dataset.y==="1")A.ans.push(a.id);A.step++;advRender();});return;}
+  const bz=BIZ[A.biz],all=bz.acts.filter(a=>a.req||A.ans.includes(a.id));
+  openModal(`<div class="mh"><h3>✨ ${_("Your tailored bundle","حزمتك المخصصة")}</h3><button class="x">✕</button></div><p class="sub">${bz.ic} ${x(bz.name)} · ${all.length} ${_("activities","أنشطة")} · ${all.reduce((s,a)=>s+a.fee,0)} ${_("in government fees","رسومًا حكومية")}</p>
+  ${all.map(a=>`<div class="row"><div class="grow"><div class="t">${x(a.n)}</div></div><div class="price">${a.days} ${_("days","أيام")}</div></div>`).join("")}
+  <div class="actions"><button class="btn" id="mclose">${_("Close","إغلاق")}</button><button class="btn primary" id="muse">${_("Use this bundle","استخدم هذه الحزمة")} ${fwd()}</button></div>${devBox("a")}`);
+  $("#mclose").onclick=closeModal;$("#muse").onclick=()=>{closeModal();pick(A.biz,A.ans,"");};
+}
+function openInbox(){
+  const items=S.apps.map((a,i)=>({a,i,s:st(a)}));
+  openModal(`<div class="mh"><h3>🔔 ${_("Notifications","الإشعارات")}</h3><button class="x">✕</button></div>${items.length?items.sort((p,q)=>(q.s.s==="action")-(p.s.s==="action")).map(({a,i,s})=>`<div class="row"><div class="grow"><div class="t">${s.s==="action"?"⚠️ "+_("Action needed","مطلوب إجراء"):s.s==="approved"?"✅ "+_("Approved","تمت الموافقة"):"⏳ "+_("In progress","قيد التنفيذ")}: ${x(a.reg)}</div>${s.s==="action"?`<div class="d">${_("Please re-upload a clearer copy of","يرجى إعادة رفع نسخة أوضح من")}: ${x(DOCS[a.doc].n)}</div>`:""}</div>${s.s==="action"?`<button class="btn primary sm" data-f="${i}">${_("Fix now","أصلح الآن")}</button>`:""}</div>`).join(""):`<p class="sub">${_("No notifications yet.","لا توجد إشعارات بعد.")}</p>`}`);
+  document.querySelectorAll("[data-f]").forEach(e=>e.onclick=()=>openFix(+e.dataset.f));
+}
+function openFix(i){
+  const a=S.apps[i];
+  openModal(`<div class="mh"><h3>🛠 ${_("Fix now","أصلح الآن")}</h3><button class="x">✕</button></div>
+  <div class="expl" style="margin:0 0 12px"><b>${_("✨ AI read the regulator's message:","✨ قرأ الذكاء الاصطناعي رسالة الجهة:")}</b> ${_(`${x(a.reg)} could not read “${x(DOCS[a.doc].n)}” because the scan is blurry. Nothing else is wrong with your application.`,`لم تتمكن ${x(a.reg)} من قراءة «${x(DOCS[a.doc].n)}» لأن الصورة غير واضحة. لا توجد مشكلة أخرى في طلبك.`)}</div>
+  <p class="sub">${_("Upload a clearer copy. AI checks the quality before it is sent.","ارفع نسخة أوضح. يتحقق الذكاء الاصطناعي من الجودة قبل الإرسال.")}</p>
+  <div class="actions"><button class="btn" id="mclose">${_("Cancel","إلغاء")}</button><button class="btn primary" id="mup">⬆ ${_("Upload & resubmit","ارفع وأعد الإرسال")}</button></div>`);
+  $("#mclose").onclick=closeModal;$("#mup").onclick=()=>{a.fixed=true;closeModal();toast(_("Quality check passed ✅ Resubmitted to the regulator","تم اجتياز فحص الجودة ✅ أُعيد الإرسال إلى الجهة"));render();};
+}
+
+// ---------- Render shell ----------
+function render(){
+  document.documentElement.lang=S.lang;document.documentElement.dir=S.lang==="ar"?"rtl":"ltr";document.title=_("Open Your Business – Prototype","افتح عملك – نموذج أولي");
+  const n=S.apps.length,ac=actionCount();
+  const nv=[["home",_("Home","الرئيسية")],["start",_("Business Journeys","رحلات الأعمال")],["map",_("Business Map","خريطة الأعمال")],["dash",_("My Business","أعمالي")],["dev","🛠 Developer"]];
+  $("#root").innerHTML=`
+  <div class="ribbon">${_("Concept prototype for internal review: sample content, not live services","نموذج مفاهيمي للمراجعة الداخلية: محتوى تجريبي وليس خدمات فعلية")}</div>
+  <div class="top"><div class="wrap"><div class="l"><a data-n="home">${_("Home","الرئيسية")}</a><a data-t="1">${_("Accessibility","إمكانية الوصول")}</a><a data-t="1">${_("Contact Us","اتصل بنا")}</a></div>
+   <div class="r"><div class="toggle"><button aria-pressed="${S.mode==="today"}" data-m="today">${_("Today: service catalogue","اليوم: كتالوج الخدمات")}</button><button aria-pressed="${S.mode==="new"}" data-m="new">${_("Proposed: business packages","المقترح: حزم الأعمال")}</button></div><button class="lang" id="dvt" aria-pressed="${S.dev}" style="${S.dev?"background:#fff;color:var(--primary-color)":""}">🛠 ${_("Developer view","عرض المطورين")}: ${S.dev?_("On","مفعّل"):_("Off","متوقف")}</button><button class="lang" id="lang">${_("العربية","English")}</button></div></div></div>
+  <header class="main"><div class="wrap"><div class="logo" data-n="home"><span class="mark">🏁</span>${_("Open Your Business","افتح عملك")} <span class="chip ai">${_("Prototype","نموذج")}</span></div>
+   <nav class="menu">${nv.map(([k,t])=>`<a data-n="${k}" class="${S.mode==="new"&&S.view===k?"on":""}">${t}${k==="dash"&&n?`<span class="bn">${n}</span>`:""}</a>`).join("")}</nav>
+   <button class="bell" id="bell" title="${_("Notifications","الإشعارات")}">🔔${ac?`<span class="bn">${ac}</span>`:""}</button></div></header>
+  <div id="view"></div>
+  <footer>${_("Prototype for discussion. All fees, durations, regulators, zones and rules are made-up sample data, and the AI replies are scripted.","نموذج للنقاش. جميع الرسوم والمدد والجهات والمناطق والقواعد بيانات تجريبية مختلقة، وردود الذكاء الاصطناعي مكتوبة مسبقًا.")}</footer>`;
+  document.querySelectorAll("[data-n]").forEach(e=>e.onclick=()=>nav(e.dataset.n));
+  document.querySelectorAll("[data-t]").forEach(e=>e.onclick=()=>toast(_("Not part of this prototype","ليس جزءًا من هذا النموذج")));
+  document.querySelectorAll("[data-m]").forEach(e=>e.onclick=()=>{S.mode=e.dataset.m;render();});
+  $("#lang").onclick=()=>{S.lang=S.lang==="ar"?"en":"ar";S.chat=[];if(S.biz)zoneApply();S.intent=null;render();};
+  $("#bell").onclick=openInbox;$("#dvt").onclick=()=>{S.dev=!S.dev;render();};
+  if(S.mode==="today")return renderToday();
+  ({home:vHome,start:vStart,map:vMap,dash:vDash,dev:vDev})[S.view]();
+}
+
+// ---------- Views ----------
+const tilesHtml=()=>`<div class="tiles">${Object.entries(BIZ).map(([k,v])=>`<button class="tile" data-k="${k}" ${v.soon?'style="opacity:.55"':""}><span class="ic">${v.ic}</span><h3>${x(v.name)}</h3><p>${x(v.tag)}</p><div class="meta">${v.soon?`<span class="chip warn">${_("Coming soon","قريبًا")}</span>`:`<span class="chip">${v.acts.length} ${_("activities bundled","أنشطة في الحزمة")}</span><span class="chip ai">${_("AI-assisted","بمساعدة الذكاء الاصطناعي")}</span>`}</div></button>`).join("")}</div>`;
+const wireTiles=r=>r.querySelectorAll("[data-k]").forEach(e=>e.onclick=()=>pick(e.dataset.k));
+
+function vHome(){
+  const ex=[_("open a café in Al Sadd with outdoor seating","افتح مقهى في السد مع جلسات خارجية"),_("start a logistics company with a warehouse","ابدأ شركة لوجستية مع مستودع"),_("sell perfumes online from home","بيع العطور عبر الإنترنت من المنزل")];
+  const F=[["🧭",_("Intent search","البحث بالنية"),_("Describe your idea in your own words. AI picks the package, the zone and the add-ons.","صف فكرتك بكلماتك. يختار الذكاء الاصطناعي الحزمة والمنطقة والإضافات."),"LLM","q"],
+   ["💬",_("Setup Advisor","مستشار التأسيس"),_("A few yes/no questions tailor your bundle so nothing is missed or over-bought.","أسئلة بسيطة بنعم/لا تخصص حزمتك فلا يفوتك شيء ولا تشتري ما لا تحتاج."),"LLM + rules","a"],
+   ["📍",_("Location Advisor","مستشار الموقع"),_("See where your business is allowed, how crowded each zone is, and the best zone for you.","اعرف أين يُسمح بنشاطك ومدى ازدحام كل منطقة وأفضل منطقة لك."),"Geo data + rules","m"],
+   ["📄",_("Document scan","فحص المستندات"),_("Reads uploads, fills your forms, and catches problems such as a lease that ends too soon.","يقرأ المستندات المرفوعة ويملأ النماذج ويكتشف المشاكل مثل عقد إيجار قريب الانتهاء."),"OCR + LLM","d"],
+   ["✅",_("Pre-flight check","الفحص قبل الإرسال"),_("A readiness score and fixes before you submit, to avoid rejection and rework.","درجة جاهزية وإصلاحات قبل الإرسال لتجنب الرفض وإعادة العمل."),"Rules engine + LLM","p"],
+   ["📡",_("Smart tracker","المتابعة الذكية"),_("Progress and ETA per regulator, plus “Action needed → Fix now” in one inbox.","التقدم والموعد المتوقع لكل جهة مع «مطلوب إجراء ← أصلح الآن» في صندوق واحد."),"Workflow + LLM","t"]];
+  $("#view").innerHTML=`<section class="hero"><div class="wrap"><h1>${_("Open your business in days, not months","افتح عملك في أيام لا أشهر")}</h1>
+   <p>${_("Pick a ready-made business package. We bring together every activity, rule and document, and AI does the heavy lifting.","اختر حزمة أعمال جاهزة. نجمع لك كل نشاط وقاعدة ومستند، ويتولى الذكاء الاصطناعي العمل الشاق.")}</p>
+   <div class="ask"><input id="q" placeholder="${_("I want to open a café in Al Sadd…","أريد أن أفتح مقهى في السد…")}"><button class="btn primary" id="qgo">✨ ${_("Ask AI","اسأل الذكاء الاصطناعي")}</button></div>
+   <div class="ex">${ex.map((t,i)=>`<button data-x="${i}">${t}</button>`).join("")}</div><div id="intent" class="intent" style="display:none"></div></div></section>
+  <div class="wrap">${devBox("q")}<section class="sec"><h2>${_("Open your…","افتح…")}</h2><p class="sub">${_("Pick a business package, not a list of services.","اختر حزمة أعمال لا قائمة خدمات.")}</p>${tilesHtml()}</section>
+  <section class="sec"><div class="stage"><button class="on">🏪 ${_("Start a business","ابدأ عملًا")}</button>${[[_("Operate","إدارة العمل")],[_("Modify","تعديل العمل")],[_("Expand","توسيع العمل")],[_("Close","إغلاق العمل")]].map(t=>`<button data-t="1">${t[0]}</button>`).join("")}</div></section>
+  <section class="sec"><h2>✨ ${_("AI that works with the package","ذكاء اصطناعي يعمل مع الحزمة")}</h2><p class="sub">${_("Six features. Each one is clickable in this prototype.","ست ميزات، وكل واحدة قابلة للتجربة في هذا النموذج.")}</p>
+   <div class="feat">${F.map(f=>`<div class="fc"><div style="font-size:26px">${f[0]}</div><h3>${f[1]}</h3><p>${f[2]}</p><div class="meta"><span class="chip ai">${f[3]}</span></div><div><button class="btn sm" data-f="${f[4]}">${_("Try it","جرّبها")} ${fwd()}</button> ${S.dev?`<button class="btn sm ai" data-dv="${f[4]}">🛠 Dev</button>`:""}</div></div>`).join("")}</div></section></div>`;
+  wireTiles($("#view"));
+  $("#view").querySelectorAll("[data-dv]").forEach(e=>e.onclick=()=>{S.devFocus={q:"q",a:"a",m:"m",d:"d",p:"p",t:"t"}[e.dataset.dv];nav("dev");});
+  $("#view").querySelectorAll("[data-t]").forEach(e=>e.onclick=()=>toast(_("Not part of this prototype","ليس جزءًا من هذا النموذج")));
+  const q=$("#q");$("#qgo").onclick=()=>{$("#intent").style.display="block";runIntent(q.value);};q.onkeydown=e=>{if(e.key==="Enter")$("#qgo").click();};
+  $("#view").querySelectorAll("[data-x]").forEach(e=>e.onclick=()=>{q.value=ex[+e.dataset.x];$("#qgo").click();});
+  $("#view").querySelectorAll("[data-f]").forEach(e=>e.onclick=()=>{const k=e.dataset.f;
+    if(k==="q"){q.focus();window.scrollTo(0,0);q.value=ex[0];$("#qgo").click();}
+    else if(k==="a")openAdvisor();else if(k==="m")nav("map");else if(k==="t"){nav("dash");}
+    else{pick("cafe");go(k==="d"?3:4);}});
+  if(S.intent){$("#intent").style.display="block";renderIntent();}
+}
+function go(n){S.step=n;render();window.scrollTo(0,0);}
+
+function renderToday(){
+  $("#view").innerHTML=`<div class="wrap pg"><div class="layout"><main class="card" id="main"></main><aside class="side"><div class="card"><h3 style="margin:0 0 6px">${_("Your selection","اختيارك")}</h3><p class="sub">${_("Nothing selected. No estimate of cost, time or required rules is available.","لا شيء محدد. لا تتوفر تقديرات للتكلفة أو الوقت أو القواعد المطلوبة.")}</p></div></aside></div></div>`;
+  $("#main").innerHTML=`<div class="banner">${_("Today's journey: the investor must already know <b>which activities</b> their business needs.","الرحلة الحالية: على المستثمر أن يعرف مسبقًا <b>الأنشطة</b> التي يحتاجها مشروعه.")}</div><h2>${_("Establish a company","تأسيس شركة")}</h2><p class="sub">${_("Search the activity list and add services one by one.","ابحث في قائمة الأنشطة وأضف الخدمات واحدة تلو الأخرى.")}</p>
+  <div class="field"><input type="text" id="q2" placeholder="${_("Search activities, e.g. “food”…","ابحث عن الأنشطة، مثل «أغذية»…")}"></div><div id="list"></div>
+  <p class="sub" style="margin-top:14px">${_("Problems: ① Jargon and codes ② Easy to miss a required activity ③ Rules are discovered only after applying ④ No guidance, no cost or time view.","المشاكل: ① مصطلحات ورموز ② سهولة تفويت نشاط مطلوب ③ القواعد تُكتشف بعد التقديم فقط ④ لا إرشاد ولا رؤية للتكلفة أو الوقت.")}</p>`;
+  const draw=v=>$("#list").innerHTML=`<table><tr><th>${_("Activity","النشاط")}</th><th></th></tr>`+TODAY_LIST.filter(t=>x(t).toLowerCase().includes(v.toLowerCase())).map(t=>`<tr><td>${x(t)}</td><td><button class="btn sm">${_("Add","إضافة")}</button></td></tr>`).join("")+`</table>`;
+  draw("");$("#q2").oninput=e=>draw(e.target.value);
+}
+
+// ----- Start flow -----
+const STEPS=[[_=>_("Choose","اختر"),_=>_("What do you want to open?","ماذا تريد أن تفتح؟")],[_=>_("Bundle","الحزمة"),_=>_("Activities pulled for you","أنشطة جاهزة لك")],[_=>_("Rules","القواعد"),_=>_("Compliance, simplified","الامتثال بشكل مبسّط")],[_=>_("Documents","المستندات"),_=>_("Scan & auto-fill","فحص وتعبئة تلقائية")],[_=>_("Launch","الإطلاق"),_=>_("Pre-flight & submit","فحص وإرسال")]];
+function vStart(){
+  const sp=S.step;
+  $("#view").innerHTML=`<div class="wrap pg"><nav class="stepper" style="margin-bottom:14px">${STEPS.map((s,i)=>`<button class="step ${sp===i?"on":""}" data-s="${i}" ${(i>0&&!S.biz)?"disabled":""}><b>${i+1}. ${s[0](_)}</b>${s[1](_)}</button>`).join("")}</nav>
+  <div class="layout"><main class="card" id="main"></main><aside class="side" id="side"></aside></div></div>`;
+  document.querySelectorAll("[data-s]").forEach(e=>e.onclick=()=>go(+e.dataset.s));
+  renderMain();renderSide();
+}
+function renderMain(){
+  const m=$("#main");
+  if(S.step===0){m.innerHTML=`<h2>${_("What do you want to open?","ماذا تريد أن تفتح؟")}</h2><p class="sub">${_("Pick a business. We assemble everything it needs: activities, licences and rules.","اختر مشروعًا. نجمع لك كل ما يحتاجه: الأنشطة والتراخيص والقواعد.")}</p>${tilesHtml()}<div class="actions"><span></span><button class="btn ai" id="adv">✨ ${_("Not sure? Ask the Setup Advisor","لست متأكدًا؟ اسأل مستشار التأسيس")}</button></div>`;wireTiles(m);$("#adv").onclick=openAdvisor;return;}
+  if(S.step===1){
+    const req=b().acts.filter(a=>a.req),opt=b().acts.filter(a=>!a.req);
+    const row=a=>`<label class="row"><input type="checkbox" data-a="${a.id}" ${S.sel.has(a.id)?"checked":""} ${a.req?"disabled":""}><div class="grow"><div class="t">${x(a.n)} ${a.req?`<span class="chip">${_("Required","مطلوب")}</span>`:""}</div><div class="d">${x(a.d)}</div></div><div class="price"><b>${a.fee}</b>${a.days} ${_("days","أيام")}</div></label>`;
+    m.innerHTML=`<h2>${b().ic} ${x(b().name)}</h2><p class="sub">${_("We pre-selected what every business of this type needs. Add optional extras to fit your plan.","اخترنا مسبقًا ما يحتاجه كل مشروع من هذا النوع. أضف الإضافات الاختيارية بما يناسب خطتك.")}</p>
+    <div class="group">${_("Included automatically","مضمّن تلقائيًا")}</div>${req.map(row).join("")}<div class="group">${_("Optional add-ons","إضافات اختيارية")}</div>${opt.map(row).join("")}
+    <div class="actions"><button class="btn" id="back">${back()} ${_("Change business","تغيير المشروع")}</button><button class="btn primary" id="next">${_("Continue to rules","المتابعة إلى القواعد")} ${fwd()}</button></div>`;
+    m.querySelectorAll("[data-a]").forEach(e=>e.onchange=()=>{e.checked?S.sel.add(e.dataset.a):S.sel.delete(e.dataset.a);renderSide();});
+    $("#back").onclick=()=>{S.biz=null;go(0);};$("#next").onclick=()=>go(2);return;}
+  if(S.step===2){
+    const rs=rules(),zr=rs.some(r=>r.zone);
+    m.innerHTML=`<h2>${_("Rules that apply to you","القواعد التي تنطبق عليك")}</h2><p class="sub">${_("Only the rules for your chosen activities, grouped by regulator and explained in plain language.","فقط القواعد الخاصة بأنشطتك المختارة، مجمّعة حسب الجهة ومشروحة ببساطة.")}</p>
+    ${zr?`<div class="field"><select id="zsel"><option value="">${_("Choose your planned zone…","اختر المنطقة المخططة…")}</option>${ZONES.map(z=>`<option value="${z.id}" ${S.zone===z.id?"selected":""}>${x(z.n)}</option>`).join("")}</select><button class="btn ai" id="zmap">📍 ${_("Compare on the map","قارن على الخريطة")}</button></div>${S.zoneMsg?`<div class="expl" style="margin:0 0 8px">${S.zoneMsg}</div>`:""}`:""}
+    <div class="actions" style="margin:0 0 6px"><span style="color:var(--muted)">${rs.filter(r=>S.ok.has(r.id)).length}/${rs.length} ${_("confirmed","تم تأكيده")}</span><button class="btn ai sm" id="auto">${_("✨ Auto-check what AI can verify","✨ تحقق تلقائي مما يمكن للذكاء الاصطناعي التأكد منه")}</button></div>
+    ${rs.map(r=>`<div class="row"><input type="checkbox" data-r="${r.id}" ${S.ok.has(r.id)?"checked":""}><div class="grow"><div class="t">${x(r.t)}</div><div class="d">${x(r.reg)} ${r.ai?`<span class="chip ai">${_("AI can verify","يمكن للذكاء الاصطناعي التحقق")}</span>`:`<span class="chip warn">${_("Needs you","يتطلب منك")}</span>`}</div>
+    <button class="btn sm" data-e="${r.id}" style="margin-top:6px">${S.expl.has(r.id)?_("Hide","إخفاء"):_("Explain simply","اشرح ببساطة")}</button>${S.expl.has(r.id)?`<div class="expl"><b>${_("✨ AI in plain words:","✨ الذكاء الاصطناعي بكلمات بسيطة:")}</b> ${x(r.p)}</div>`:""}</div></div>`).join("")}
+    <div class="actions"><button class="btn" id="back">${back()} ${_("Bundle","الحزمة")}</button><button class="btn primary" id="next">${_("Continue to documents","المتابعة إلى المستندات")} ${fwd()}</button></div>`;
+    m.querySelectorAll("[data-r]").forEach(e=>e.onchange=()=>{e.checked?S.ok.add(e.dataset.r):S.ok.delete(e.dataset.r);renderMain();renderSide();});
+    m.querySelectorAll("[data-e]").forEach(e=>e.onclick=()=>{const k=e.dataset.e;S.expl.has(k)?S.expl.delete(k):S.expl.add(k);renderMain();});
+    $("#auto").onclick=()=>{rs.filter(r=>r.ai&&!r.zone).forEach(r=>S.ok.add(r.id));renderMain();renderSide();};
+    if(zr){$("#zsel").onchange=e=>{S.zone=e.target.value;zoneApply();renderMain();renderSide();};$("#zmap").onclick=()=>{S.mapBiz=S.biz;nav("map");};}
+    $("#back").onclick=()=>go(1);$("#next").onclick=()=>go(3);return;}
+  if(S.step===3){
+    const ids=b().docs;
+    m.innerHTML=`<h2>${_("Documents","المستندات")}</h2><p class="sub">${_("Your wallet already holds what we can reuse. Upload the rest and AI reads each file and checks it.","محفظتك تحتوي ما يمكننا إعادة استخدامه. ارفع الباقي ويقرأ الذكاء الاصطناعي كل ملف ويفحصه.")}</p>
+    ${ids.map(i=>{const d=DOCS[i],s=docState(i);
+      const right=d.src==="w"?`<span class="chip">${_("From your wallet","من محفظتك")}</span>`:d.src==="auto"?`<span class="chip ai">${_("Auto-issued from your activities","يُصدر تلقائيًا من أنشطتك")}</span>`:s===0?`<button class="btn sm primary" data-u="${i}">⬆ ${_("Upload","رفع")}</button>`:s===1?`<button class="btn sm" data-u="${i}">⬆ ${_("Upload renewed copy","ارفع نسخة مجددة")}</button>`:`<span class="chip">${_("Verified","تم التحقق")}</span>`;
+      const note=s>0&&d.src==="up"?`<div class="expl" style="margin-top:6px"><b>${_("✨ AI read:","✨ قرأ الذكاء الاصطناعي:")}</b> ${i==="lease"?(s===1?x(d.ex)+"<br>⚠️ "+x(d.warn):x(d.fixed)):x(d.ex)}</div>`:"";
+      return `<div class="doc"><div class="grow"><div class="t">${s>=2?"✅":s===1?"⚠️":"📎"} ${x(d.n)}</div>${note}</div>${right}</div>`;}).join("")}
+    ${devBox("d")}<div class="actions"><button class="btn" id="back">${back()} ${_("Rules","القواعد")}</button><button class="btn primary" id="next">${_("Review & launch","مراجعة وإطلاق")} ${fwd()}</button></div>`;
+    m.querySelectorAll("[data-u]").forEach(e=>e.onclick=()=>{const i=e.dataset.u;S.docs[i]=(S.docs[i]||0)===0&&DOCS[i].warn?1:2;renderMain();renderSide();});
+    $("#back").onclick=()=>go(2);$("#next").onclick=()=>go(4);return;}
+  if(S.step===4){
+    if(S.done){m.innerHTML=`<div class="done"><div class="ic">🎉</div><h2>${_("Application submitted","تم إرسال الطلب")}</h2><p class="sub">${_(`Reference DEMO-${S.ref}. Applications are sent to ${S.apps.length} regulators at once and tracked in one place.`,`الرقم المرجعي DEMO-${S.ref}. أُرسلت الطلبات إلى ${S.apps.length} جهات دفعة واحدة وتُتابع في مكان واحد.`)}</p><button class="btn primary" id="trk">${_("Track my business","تتبع عملي")} ${fwd()}</button></div>`;$("#trk").onclick=()=>nav("dash");return;}
+    const c=checks(),sc=readiness(c),err=c.some(k=>k.l==="err"),mx=seqDays();
+    m.innerHTML=`<h2>${_("Review & launch","مراجعة وإطلاق")}</h2><p class="sub">${x(b().name)} · ${acts().length} ${_("activities","أنشطة")} · ${rules().length} ${_("rules","قواعد")}</p>
+    <div class="grid2"><div><div class="group" style="margin-top:0">✨ ${_("AI pre-flight check","فحص الذكاء الاصطناعي قبل الإرسال")}</div><div class="score">${sc}%</div><div class="sub" style="margin:0 0 8px">${_("Readiness score","درجة الجاهزية")}</div>
+      ${c.map(k=>`<div class="pf"><span>${k.l==="ok"?"✅":k.l==="warn"?"⚠️":"❌"}</span><div class="grow">${k.t}</div>${k.f?`<button class="btn sm" data-fx="${k.f}">${_("Fix","إصلاح")}</button>`:""}</div>`).join("")}</div>
+     <div><div class="group" style="margin-top:0">${_("Time: bundled vs one-by-one","الوقت: الحزمة مقابل واحدًا تلو الآخر")}</div><div class="timeline"><div class="tl"><span style="width:90px">${_("Bundled","الحزمة")}</span><div class="bar" style="width:${parDays()/mx*100}%"></div><span>${parDays()} ${_("d","يوم")}</span></div><div class="tl"><span style="width:90px">${_("Traditional","التقليدي")}</span><div class="bar seq" style="width:100%"></div><span>${mx} ${_("d","يوم")}</span></div></div>
+      <div class="group">${_("What gets submitted","ما سيتم إرساله")}</div><table>${acts().map(a=>`<tr><td>${x(a.n)}</td><td style="text-align:end">${a.fee}</td></tr>`).join("")}</table></div></div>
+    ${devBox("p")}<div class="actions"><button class="btn" id="back">${back()} ${_("Documents","المستندات")}</button><button class="btn primary" id="go" ${err?"disabled style='opacity:.5'":""}>${err?_("Fix errors to submit","أصلح الأخطاء للإرسال"):_("Submit one application","أرسل طلبًا واحدًا")}</button></div>`;
+    m.querySelectorAll("[data-fx]").forEach(e=>e.onclick=()=>go(+e.dataset.fx));
+    $("#back").onclick=()=>go(3);$("#go").onclick=()=>{if(err)return;submitApp();renderMain();render();};}
+}
+function renderSide(){
+  const s=$("#side");if(!s)return;let sum="";
+  if(S.biz&&S.step>0){const sd=seqDays(),pd=parDays();
+    sum=`<div class="card sum"><h3 style="margin:0 0 8px">${b().ic} ${_("Your launch pack","حزمة إطلاقك")}</h3><div><span>${_("Activities","الأنشطة")}</span><b>${acts().length}</b></div><div><span>${_("Rules to meet","القواعد المطلوبة")}</span><b>${rules().length}</b></div><div><span>${_("Est. time (bundled)","الوقت المقدّر (حزمة)")}</span><b>${pd} ${_("days","أيام")}</b></div><div class="big"><span>${_("Gov. fees","الرسوم الحكومية")}</span><b>${fees()}</b></div><div class="save">${_(`⏱ Saves ~${Math.max(0,sd-pd)} days vs one-by-one`,`⏱ يوفّر ~${Math.max(0,sd-pd)} يومًا مقارنة بالتقديم المنفصل`)}</div></div>`;}
+  const sugg=S.biz?b().ai:[[_("Which business should I start with a small budget?","أي مشروع أبدأ به بميزانية صغيرة؟")],[_("What do I need to open a café?","ماذا أحتاج لفتح مقهى؟")]];
+  s.innerHTML=sum+`<div class="card ai-panel"><h3>${_("✨ AI assistant","✨ المساعد الذكي")}</h3><div class="sugg">${sugg.map((t,i)=>`<button data-i="${i}">${Array.isArray(t)?(t.length>1?x(t):t[0]):t}</button>`).join("")}</div><div class="chat">${S.chat.map(c=>`<div class="msg ${c.u?"u":"a"}">${c.t}</div>`).join("")}</div>
+  <div class="field" style="margin:0"><input type="text" id="ci" placeholder="${_("Ask anything…","اسأل أي شيء…")}"><button class="btn primary sm" id="cs">${_("Send","إرسال")}</button></div></div>${devBox("c")}`;
+  s.querySelectorAll("[data-i]").forEach(e=>e.onclick=()=>ask(e.textContent,S.biz?+e.dataset.i:-1));
+  $("#cs").onclick=()=>ask($("#ci").value,-1);$("#ci").onkeydown=e=>{if(e.key==="Enter")ask(e.target.value,-1);};
+}
+
+// ----- Business Map -----
+function vMap(){
+  const biz=mb(),zid=S.mapZone||(S.biz===biz?S.zone:"")||"",best=bestZone(biz);
+  const col={ok:["#d7efe2","#17803d"],cond:["#fbe9cf","#b45309"],no:["#f6d9d9","#b42318"]};
+  $("#view").innerHTML=`<div class="wrap pg"><div class="card"><h2>📍 ${_("Business Map","خريطة الأعمال")}</h2><p class="sub">${_("See where each business is allowed, how crowded each zone is, and what AI recommends. Schematic map with sample data.","اعرف أين يُسمح بكل نشاط ومدى ازدحام كل منطقة وما يوصي به الذكاء الاصطناعي. خريطة تخطيطية ببيانات تجريبية.")}</p>
+  <div class="tabs" style="margin:0 0 12px">${Object.entries(BIZ).filter(([k,v])=>!v.soon).map(([k,v])=>`<button data-b="${k}" class="btn sm ${biz===k?"primary":""}">${v.ic} ${x(v.name)}</button>`).join("")}</div>
+  <div class="mapw"><svg class="map" viewBox="0 0 520 250">${ZONES.map(z=>{const c=col[ZR[biz][z.id]];return `<g data-z="${z.id}"><rect x="${z.x}" y="${z.y}" width="${z.w}" height="${z.h}" rx="12" fill="${c[0]}" stroke="${c[1]}" stroke-width="${zid===z.id?4:1.2}"/><text x="${z.x+z.w/2}" y="${z.y+z.h/2-2}" text-anchor="middle" font-size="14" font-weight="700" fill="#14213D">${x(z.n)}</text><text x="${z.x+z.w/2}" y="${z.y+z.h/2+18}" text-anchor="middle" font-size="12" fill="#14213D">${COMP[biz][z.id]} ${_("similar","مشابهة")}</text>${best.id===z.id?`<text x="${z.x+10}" y="${z.y+22}" font-size="16">⭐</text>`:""}</g>`;}).join("")}</svg>
+  <div class="zinfo" id="zi"></div></div>
+  <div class="tabs" style="margin-top:10px;color:var(--muted);align-items:center"><span class="st ok">${x(STN.ok)}</span><span class="st cond">${x(STN.cond)}</span><span class="st no">${x(STN.no)}</span><span>⭐ ${_("AI recommended","موصى به من الذكاء الاصطناعي")}</span></div>${devBox("m")}</div></div>`;
+  document.querySelectorAll("[data-b]").forEach(e=>e.onclick=()=>{S.mapBiz=e.dataset.b;S.mapZone=null;vMap();});
+  document.querySelectorAll("[data-z]").forEach(e=>e.onclick=()=>{S.mapZone=e.dataset.z;vMap();});
+  const zi=$("#zi");
+  if(!zid){zi.innerHTML=`<div class="expl" style="margin:0"><b>${_("✨ AI recommendation:","✨ توصية الذكاء الاصطناعي:")}</b> ${_(`For ${x(BIZ[biz].name).toLowerCase()}, ${x(best.n)} looks best: allowed, ${COMP[biz][best.id]} similar businesses and traffic ${best.tr}/5.`,`لـ«${x(BIZ[biz].name)}» تبدو ${x(best.n)} الأفضل: مسموحة و${COMP[biz][best.id]} أعمال مشابهة وحركة ${best.tr}/5.`)}</div><p class="sub" style="margin-top:10px">${_("Tap a zone for details.","اضغط على منطقة لعرض التفاصيل.")}</p>`;return;}
+  const z=Z(zid),stt=ZR[biz][zid],n=COMP[biz][zid];
+  zi.innerHTML=`<b>${x(z.n)}</b> <span class="st ${stt}">${x(STN[stt])}</span><div class="d" style="margin:8px 0">${n} ${_("similar businesses","أعمال مشابهة")} · ${_("competition","المنافسة")}: ${x(LVN[lvl(n)])}<br>${_("Foot traffic","حركة المشاة")}: ${"★".repeat(z.tr)}${"☆".repeat(5-z.tr)}</div>
+  <div class="expl" style="margin:0 0 10px"><b>${_("✨ AI says:","✨ يقول الذكاء الاصطناعي:")}</b> ${stt==="ok"?_(`You can open here. ${lvl(n)===2?"Competition is high, so differentiate.":"Competition level is manageable."}`,`يمكنك الافتتاح هنا. ${lvl(n)===2?"المنافسة مرتفعة فميّز نفسك.":"مستوى المنافسة مقبول."}`):_(`Not straightforward here. Consider ${x(best.n)} instead.`,`الأمر ليس بسيطًا هنا. فكّر في ${x(best.n)} بدلًا منها.`)}</div>
+  ${S.biz===biz?`<button class="btn primary" id="uz">${_("Use this location","استخدم هذا الموقع")}</button>`:`<button class="btn" id="stbiz">${_("Start this business here","ابدأ هذا العمل هنا")} ${fwd()}</button>`}`;
+  const u=$("#uz");if(u)u.onclick=()=>{S.zone=zid;zoneApply();S.step=2;nav("start");toast(_("Location saved to your application","تم حفظ الموقع في طلبك"));};
+  const sb=$("#stbiz");if(sb)sb.onclick=()=>pick(biz,[],zid);
+}
+
+// ----- My Business -----
+function vDash(){
+  if(!S.apps.length){$("#view").innerHTML=`<div class="wrap pg"><div class="card done"><div class="ic">🗂</div><h2>${_("No applications yet","لا توجد طلبات بعد")}</h2><p class="sub">${_("Submit a business package and track every regulator here.","أرسل حزمة أعمال وتابع كل جهة من هنا.")}</p><button class="btn primary" id="st">${_("Start a business","ابدأ عملًا")} ${fwd()}</button></div></div>`;$("#st").onclick=()=>nav("start");return;}
+  const L=S.apps.map(a=>({a,s:st(a)})),avg=Math.round(100*L.reduce((t,k)=>t+k.s.p,0)/L.length),ac=L.filter(k=>k.s.s==="action"),left=Math.max(...L.map(k=>Math.max(0,k.a.dur-S.day)))+(ac.length?2:0);
+  const eta=new Date(Date.now()+left*864e5),bz=BIZ[S.apps[0].biz];
+  const nxt=ac.length?_(`Fix “${x(DOCS[ac[0].a.doc].n)}” for ${x(ac[0].a.reg)}. It is the only thing blocking your launch.`,`أصلح «${x(DOCS[ac[0].a.doc].n)}» لدى ${x(ac[0].a.reg)}. هذا هو الشيء الوحيد الذي يعطّل إطلاقك.`):avg>=100?_("Everything is approved. Open your doors 🎉","تمت الموافقة على كل شيء. يمكنك الافتتاح 🎉"):_("Nothing needs you right now. We'll notify you if a regulator asks for something.","لا شيء يتطلب منك الآن. سنخطرك إذا طلبت أي جهة شيئًا.");
+  $("#view").innerHTML=`<div class="wrap pg"><div class="grid2"><div class="card"><h2>${bz.ic} ${x(bz.name)}</h2><div class="score">${avg}%</div><div class="pbar"><i style="width:${avg}%"></i></div>
+   <div class="sub">${_("Expected completion","الإنجاز المتوقع")}: <b>${fmt(eta)}</b> (${left} ${_("days","أيام")})</div>
+   <div class="expl" style="margin-top:12px"><b>${_("✨ Next best action:","✨ أفضل خطوة تالية:")}</b> ${nxt}</div>
+   <div class="actions"><button class="btn" id="rs">${_("Reset demo","إعادة تعيين")}</button><button class="btn primary" id="sim">⏩ ${_("Simulate +3 days","محاكاة +3 أيام")}</button></div></div>
+  <div class="card"><h3 style="margin:0 0 8px">🔔 ${_("Renewal reminders (AI)","تنبيهات التجديد (ذكاء اصطناعي)")}</h3>${bz.renew.map(r=>`<div class="row"><div class="grow"><div class="t">${x(r[0])}</div><div class="d">${_(`Renews ${r[1]} months after approval. We'll remind you 30 days before and prepare the paperwork.`,`يُجدَّد بعد ${r[1]} شهرًا من الموافقة. سنذكّرك قبل 30 يومًا ونجهّز الأوراق.`)}</div></div></div>`).join("")}</div></div>
+  <div class="card" style="margin-top:14px"><h3 style="margin:0 0 8px">${_("Applications by regulator","الطلبات حسب الجهة")}</h3>${L.map(({a,s},i)=>`<div class="row"><div class="grow"><div class="t">${x(a.reg)}</div><div class="d">${s.s==="action"?"⚠️ "+_("Action needed","مطلوب إجراء"):x(STG[s.i])}</div><div class="dots">${[0,1,2,3].map(j=>`<i class="${s.s==="action"&&j===1?"w":j<=s.i&&s.s!=="sub"||j===0?"f":""}"></i>`).join("")}</div></div>${s.s==="action"?`<button class="btn primary sm" data-f="${i}">${_("Fix now","أصلح الآن")}</button>`:""}</div>`).join("")}</div>${devBox("t")}</div>`;
+  $("#sim").onclick=()=>{S.day+=3;const n=actionCount();render();if(n)toast(_("⚠️ A regulator needs something from you","⚠️ هناك جهة تحتاج منك إجراءً"));};
+  $("#rs").onclick=()=>{S.apps=[];S.done=false;S.day=0;render();};
+  document.querySelectorAll("[data-f]").forEach(e=>e.onclick=()=>openFix(+e.dataset.f));
+}
+render();
+</script>
+</body>
+</html>
