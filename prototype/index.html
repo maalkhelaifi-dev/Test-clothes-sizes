@@ -103,7 +103,7 @@ header.hero .lang{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(
 header.hero .toggle{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.4)}
 header.hero .toggle button{color:#dbe7f5}
 header.hero .toggle button[aria-pressed=true]{background:#fff;color:var(--primary-color)}
-.step.on b{color:var(--primary-color)}
+.step.on b{color:var(--ai)}
 footer{color:var(--muted);font-size:12px;text-align:center;padding:6px}
 
 /* ===== portal shell ===== */
@@ -119,7 +119,7 @@ footer{color:var(--muted);font-size:12px;text-align:center;padding:6px}
 .top .lang{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.3);padding:3px 12px;font-size:12px}
 header.main{display:block;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
 header.main .wrap{display:flex;align-items:center;gap:24px;min-height:68px;flex-wrap:wrap}
-.logo{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--primary-color);cursor:pointer}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--ai);cursor:pointer}
 .logo .mark{width:34px;height:34px;border-radius:9px;background:var(--hero);display:grid;place-items:center;color:#fff}
 nav.menu{display:flex;gap:22px;margin-inline-start:auto;font-weight:600;font-size:14.5px;flex-wrap:wrap}
 nav.menu a{padding:22px 0;border-bottom:3px solid transparent;cursor:pointer;color:var(--ink)}
@@ -142,7 +142,7 @@ nav.menu a.on,nav.menu a:hover{color:var(--accent-color);border-color:var(--acce
 .feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
 .fc{border:1px solid var(--line);border-radius:var(--radius);background:var(--card);padding:16px;display:flex;flex-direction:column;gap:6px}
 .fc h3{margin:0;font-size:16px}.fc p{margin:0;color:var(--muted);font-size:13.5px;flex:1}
-.pg{padding:20px 0 30px}
+.pg{padding-block:20px 30px}
 .ov{position:fixed;inset:0;background:rgba(7,22,45,.55);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
 .ov.on{display:flex}
 .modal{background:var(--card);border-radius:14px;max-width:560px;width:100%;max-height:88vh;overflow:auto;padding:20px}
@@ -165,12 +165,12 @@ nav.menu a.on,nav.menu a:hover{color:var(--accent-color);border-color:var(--acce
 .doc:first-of-type{border-top:0}.doc .grow{flex:1;min-width:180px}
 .pf{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--line)}
 .pf:first-of-type{border-top:0}.pf .grow{flex:1}
-.score{font-size:34px;font-weight:700;color:var(--primary-color)}
+.score{font-size:34px;font-weight:700;color:var(--ai)}
 .dots{display:flex;gap:4px;margin-top:6px}.dots i{flex:1;height:6px;border-radius:3px;background:var(--line)}.dots i.f{background:var(--accent-color)}.dots i.w{background:#c0392b}
 .tabs{display:flex;gap:8px;flex-wrap:wrap}
 .tl span:last-child{white-space:nowrap}
 .dev{margin-top:14px;border:1px solid var(--line);border-inline-start:4px solid var(--accent-color);border-radius:10px;background:var(--card);padding:10px 14px;direction:ltr;text-align:left;font-size:14px}
-.dev summary{cursor:pointer;font-weight:700;color:var(--primary-color)}
+.dev summary{cursor:pointer;font-weight:700;color:var(--ai)}
 .dev h4{margin:14px 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
 .dev p{margin:0}.dev ul,.dev ol{margin:0;padding-inline-start:20px}.dev li{margin:3px 0}
 .dev pre,.devpage pre{background:#0a2547;color:#dbe7f5;padding:12px;border-radius:8px;overflow:auto;font-size:12.5px;line-height:1.5;direction:ltr;text-align:left;margin:0}
@@ -184,6 +184,7 @@ nav.menu a.on,nav.menu a:hover{color:var(--accent-color);border-color:var(--acce
 .dl li{margin:4px 0}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:800px){.grid2{grid-template-columns:1fr}}
 select{padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
+@media(max-width:700px){header.main{position:static}header.main .wrap{gap:8px;min-height:0;padding-block:10px}nav.menu{gap:14px;margin-inline-start:0;width:100%}nav.menu a{padding:8px 0}.hero{padding:28px 0 36px}.hero h1{font-size:28px}}
 </style>
 </head>
 <body>
